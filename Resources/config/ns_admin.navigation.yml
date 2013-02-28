@@ -1,0 +1,10 @@
+-
+    label:  "Каталог"
+    action: "categories:index"
+    pages:
+        -
+            label:  Общие
+            action: pages:general
+        -
+            label:  Дополнительно
+            action: pages:additional

@@ -1,7 +1,8 @@
 parameters:
-#    ns_catalog.example.class: NS\CatalogBundle\Example
+    ns_catalog.settings.formtype.collection.class: 'NS\Catalog\Model\SettingsFormTypeCollection'
 
 services:
-#    ns_catalog.example:
-#        class: %ns_catalog.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    ns_catalog.settings.formtype.collection:
+        class: %ns_catalog.settings.formtype.collection.class%
+        tags:
+            - { name: ns_properties.type }

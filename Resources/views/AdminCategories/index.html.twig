@@ -1,0 +1,23 @@
+{% extends 'NSAdminBundle::layout.html.twig' %}
+
+{% block content %}
+	<h3>Управление категориями</h3>
+
+	<div class="row">
+		<div class="span3">
+			{% render 'NSCatalogBundle:AdminCategories:categoryTree' %}
+		</div>
+		<div class="span9">
+			<div class="row">
+				<div class="span6">
+
+				</div>
+				<div class="span3">
+					<div class="well ns-block-types">
+						<h4>Блоки</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

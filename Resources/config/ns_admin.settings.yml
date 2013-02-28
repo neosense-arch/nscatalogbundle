@@ -1,0 +1,11 @@
+-
+    label:  'Каталог товаров'
+    action: 'index:index'
+    pages:
+        -
+            label: 'Типы данных'
+            action: 'type:index'
+            pages:
+                -
+                    label: 'Форма добавления/редактирования'
+                    action: 'type:form'

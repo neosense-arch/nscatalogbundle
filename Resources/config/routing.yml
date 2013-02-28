@@ -1,3 +1,0 @@
-ns_catalog_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: NSCatalogBundle:Default:index }
