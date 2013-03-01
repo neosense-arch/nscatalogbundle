@@ -1,6 +1,6 @@
 -
     label:  "Каталог"
-    action: "categories:index"
+    action: "items:index"
     pages:
         -
             label:  Общие

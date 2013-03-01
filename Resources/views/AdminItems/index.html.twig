@@ -1,0 +1,9 @@
+{% extends 'NSAdminBundle::layout.html.twig' %}
+
+{% block content %}
+	<h3>Управление товарами</h3>
+
+	<div>
+		<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'items', adminAction: 'form' }) }}" class="btn">Добавить товар</a>
+	</div>
+{% endblock %}

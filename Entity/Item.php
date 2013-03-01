@@ -6,11 +6,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * @ORM\Table(name="ns_catalog_categories")
- * @ORM\Entity(repositoryClass="CategoryRepository")
- * @Gedmo\Tree(type="nested")
+ * @ORM\Table(name="ns_catalog_items")
+ * @ORM\Entity(repositoryClass="ItemRepository")
  */
-class Category
+class Item
 {
 	/**
 	 * @var int
@@ -21,45 +20,12 @@ class Category
 	private $id;
 
 	/**
-	 * @Gedmo\TreeLeft
-	 * @ORM\Column(name="t_left", type="integer")
-	 */
-	private $left;
-
-	/**
-	 * @var int
-	 * @Gedmo\TreeLevel
-	 * @ORM\Column(name="t_level", type="integer")
-	 */
-	private $level;
-
-	/**
-	 * @Gedmo\TreeRight
-	 * @ORM\Column(name="t_right", type="integer")
-	 */
-	private $right;
-
-	/**
-	 * @Gedmo\TreeRoot
-	 * @ORM\Column(name="t_root", type="integer", nullable=true)
-	 */
-	private $root;
-
-	/**
 	 * @var Category
 	 *
-	 * @Gedmo\TreeParent
-	 * @ORM\ManyToOne(targetEntity="Category", inversedBy="children")
-	 * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
+	 * @ORM\ManyToOne(targetEntity="Category", inversedBy="items")
+	 * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
-	private $parent;
-
-	/**
-	 * @var Category[]
-	 * @ORM\OneToMany(targetEntity="Category", mappedBy="parent")
-	 * @ORM\OrderBy({"left" = "ASC"})
-	 */
-	private $children;
+	private $category;
 
 	/**
 	 * @var string
@@ -129,42 +95,18 @@ class Category
 	}
 
 	/**
-	 * @param Category $parent
+	 * @param Category $category
 	 */
-	public function setParent(Category $parent)
+	public function setCategory(Category $category)
 	{
-		$this->parent = $parent;
+		$this->category = $category;
 	}
 
 	/**
 	 * @return Category
 	 */
-	public function getParent()
+	public function getCategory()
 	{
-		return $this->parent;
-	}
-
-	/**
-	 * @param Category[] $children
-	 */
-	public function setChildren($children)
-	{
-		$this->children = $children;
-	}
-
-	/**
-	 * @return Category[]
-	 */
-	public function getChildren()
-	{
-		return $this->children;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getLevel()
-	{
-		return $this->level;
+		return $this->category;
 	}
 }
