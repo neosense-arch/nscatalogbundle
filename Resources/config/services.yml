@@ -1,8 +1,20 @@
+imports:
+    - { resource: ns_admin.menu.yml }
+
 parameters:
-    ns_catalog.settings.formtype.collection.class: 'NS\Catalog\Model\SettingsFormTypeCollection'
+    ns_catalog.settings.formtype.collection.class:  'NS\CatalogBundle\Model\SettingsFormTypeCollection'
+    ns_catalog.repository.catalog.class:            'NS\CatalogBundle\Entity\CatalogRepository'
+    ns_catalog.repository.catalog.factory_argument: 'NSCatalogBundle:Catalog'
 
 services:
     ns_catalog.settings.formtype.collection:
         class: %ns_catalog.settings.formtype.collection.class%
         tags:
             - { name: ns_properties.type }
+
+    ns_catalog.repository.catalog:
+        class: %ns_catalog.repository.catalog.class%
+        factory_service: doctrine.orm.default_entity_manager
+        factory_method: 'getRepository'
+        arguments:
+            - %ns_catalog.repository.catalog.factory_argument%
