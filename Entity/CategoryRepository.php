@@ -67,8 +67,8 @@ class CategoryRepository extends EntityRepository
 
 		$query
 			->orderBy('c.root', 'ASC')
-			->orderBy('c.left', 'ASC')
-			->orderBy('c.title', 'ASC');
+			->addOrderBy('c.left', 'ASC')
+			->addOrderBy('c.title', 'ASC');
 
 		return $query;
 	}
