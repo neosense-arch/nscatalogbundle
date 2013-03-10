@@ -49,6 +49,24 @@ class AdminCategoriesApiController extends Controller
 	}
 
 	/**
+	 * Removes page
+	 *
+	 * @return Response
+	 */
+	public function deleteAction()
+	{
+		try {
+			$category = $this->getCategory();
+			$this->getDoctrine()->getManager()->remove($category);
+			$this->getDoctrine()->getManager()->flush();
+			return new JsonResponse(array('result' => 'ok'));
+		}
+		catch (\Exception $e) {
+			return new JsonResponse(array('error' => $e->getMessage()));
+		}
+	}
+
+	/**
 	 * @throws \Exception
 	 * @return Category
 	 */

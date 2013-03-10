@@ -76,6 +76,19 @@
 			});
 		});
 
+		categoryTree.on('delete-click', function(e, categoryId){
+			$.ajax({
+				'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categoriesApi', adminAction: 'delete' }) }}?id=' + categoryId,
+				'type': 'GET'
+			})
+			.done(function(res){
+				if (res.error) {
+					throw res.error;
+				}
+				location.href = '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'catalog', adminAction: 'index' }) }}';
+			});
+		});
+
 		categoryForm.find('.btn-save').click(fnSave);
 	})(jQuery);
 </script>
