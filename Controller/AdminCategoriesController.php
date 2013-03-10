@@ -12,20 +12,24 @@ class AdminCategoriesController extends Controller
 	/**
 	 * Category tree block
 	 *
+	 * @throws \Exception
 	 * @return Response
 	 */
 	public function categoryTreeAction()
 	{
 		$categories = $this->getCategoryRepository()->findForDynatree();
 
-		$categoryId = null;
+		$category = null;
 		if (!empty($_GET['categoryId'])) {
-			$categoryId = $_GET['categoryId'];
+			$category = $this->getCategoryRepository()->findOneById($_GET['categoryId']);
+			if (!$category) {
+				throw new \Exception("Category #{$_GET['categoryId']} wasn't found");
+			}
 		}
 
 		return $this->render('NSCatalogBundle:AdminCategories:category-tree.html.twig', array(
 			'categoriesJson' => json_encode($categories),
-			'categoryId'     => $categoryId,
+			'category'       => $category,
 		));
 	}
 
