@@ -4,7 +4,7 @@
 		'selectedId':  category.id|default(null),
 		'header':     'Категории товаров',
 		'itemsJson':   categoriesJson,
-		'activateUrl': url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categories', adminAction: 'index' }) ~ '?categoryId={key}'
+		'activateUrl': url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'catalog', adminAction: 'index' }) ~ '?categoryId={key}'
 	} %}
 </div>
 
