@@ -40,14 +40,26 @@
 				});
 				categoryForm.modal('hide');
 
-				location.href = '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'catalog', adminAction: 'index' }) }}?categoryId=' + res.id;
+				location.href = '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'catalog', adminAction: 'index' }) }}?categoryId=' + res.categoryId;
 			});
 		};
 
 		$('#ns-category-tree').on('add-click', function(){
 			$('#dlgCategoryFormLabel').text('Добавление категории');
-			categoryForm.modal({
-				remote: '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categoriesApi', adminAction: 'form' }) }}'
+			$.ajax({
+				'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categoriesApi', adminAction: 'form' }) }}',
+				'type': 'GET'
+			})
+			.done(function(res){
+				if (res.error) {
+					throw res.error;
+				}
+				categoryForm.find('.modal-body').html(res);
+				categoryForm.find('form').submit(function(){
+					fnSave();
+					return false;
+				});
+				categoryForm.modal('show');
 			});
 		});
 

@@ -35,7 +35,7 @@ class AdminCategoriesApiController extends Controller
 					}
 					$this->getDoctrine()->getManager()->persist($category);
 					$this->getDoctrine()->getManager()->flush();
-					return new JsonResponse(array('category' => $form->getData()));
+					return new JsonResponse(array('categoryId' => $category->getId()));
 				}
 			}
 
