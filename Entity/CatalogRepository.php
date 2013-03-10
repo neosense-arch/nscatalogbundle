@@ -14,4 +14,13 @@ class CatalogRepository extends EntityRepository
 	{
 		return $this->findOneBy(array('name' => $name));
 	}
+
+	/**
+	 * @param int $id
+	 * @return Catalog|null
+	 */
+	public function findOneById($id)
+	{
+		return $this->findOneBy(array('id' => $id));
+	}
 }

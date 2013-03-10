@@ -1,0 +1,56 @@
+<div class="well">
+	{% include 'NSAdminBundle:Generic:side-tree-widget.html.twig' with {
+		'id':         'ns-category-tree',
+		'header':     'Категории товаров',
+		'itemsJson':   categoriesJson,
+		'activateUrl': url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categories', adminAction: 'index' }) ~ '?categoryId={key}'
+	} %}
+</div>
+
+<div id="dlgCategoryForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="dlgCategoryFormLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3 id="dlgCategoryFormLabel"></h3>
+	</div>
+	<div class="modal-body"></div>
+	<div class="modal-footer">
+		<button class="btn btn-success btn-save">Сохранить</button>
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
+	</div>
+</div>
+
+<script type="text/javascript">
+	(function($){
+		var categoryForm = $('#dlgCategoryForm');
+
+		var fnSave = function(){
+			$.ajax({
+				'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categoriesApi', adminAction: 'form' }) }}',
+				'type': 'POST',
+				'data': categoryForm.find('form').serialize()
+			})
+			.done(function(res){
+				if (res.error) {
+					throw res.error;
+				}
+				categoryForm.find('.modal-body').html(res);
+				categoryForm.find('form').submit(function(){
+					fnSave();
+					return false;
+				});
+				categoryForm.modal('hide');
+
+				location.href = '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'catalog', adminAction: 'index' }) }}?categoryId=' + res.id;
+			});
+		};
+
+		$('#ns-category-tree').on('add-click', function(){
+			$('#dlgCategoryFormLabel').text('Добавление категории');
+			categoryForm.modal({
+				remote: '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categoriesApi', adminAction: 'form' }) }}'
+			});
+		});
+
+		categoryForm.find('.btn-save').click(fnSave);
+	})(jQuery);
+</script>

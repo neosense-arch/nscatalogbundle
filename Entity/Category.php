@@ -69,7 +69,7 @@ class Category
 
 	/**
 	 * @var string
-	 * @ORM\Column(type="string")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	private $name;
 
@@ -79,6 +79,13 @@ class Category
 	 * @ORM\Column(length=128, unique=true)
 	 */
 	private $slug;
+
+	/**
+	 * @var Catalog
+	 * @ORM\ManyToOne(targetEntity="Catalog", inversedBy="categories")
+	 * @ORM\JoinColumn(name="catalog_id", referencedColumnName="id", onDelete="CASCADE")
+	 */
+	private $catalog;
 
 	/**
 	 * @return int
@@ -131,7 +138,7 @@ class Category
 	/**
 	 * @param Category $parent
 	 */
-	public function setParent(Category $parent)
+	public function setParent(Category $parent = null)
 	{
 		$this->parent = $parent;
 	}
@@ -166,5 +173,32 @@ class Category
 	public function getLevel()
 	{
 		return $this->level;
+	}
+
+	/**
+	 * @param \NS\CatalogBundle\Entity\Catalog $catalog
+	 */
+	public function setCatalog($catalog)
+	{
+		$this->catalog = $catalog;
+	}
+
+	/**
+	 * @return \NS\CatalogBundle\Entity\Catalog
+	 */
+	public function getCatalog()
+	{
+		return $this->catalog;
+	}
+
+	/**
+	 * Retrieves options label (for combobox)
+	 *
+	 * @param  string $levelIndicator
+	 * @return string
+	 */
+	public function getOptionLabel($levelIndicator = '--')
+	{
+		return str_repeat($levelIndicator, $this->level) . ' ' . $this->getTitle();
 	}
 }

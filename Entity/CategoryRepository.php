@@ -3,16 +3,74 @@
 namespace NS\CatalogBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 class CategoryRepository extends EntityRepository
 {
 	/**
 	 * @return array
 	 */
-	public function findCategoriesForDynatree()
+	public function findForDynatree()
 	{
 		$categories = $this->findBy(array(), array('root' => 'ASC', 'left' => 'ASC', 'title' => 'ASC'));
 		return $this->mapCategories($categories);
+	}
+
+	/**
+	 * @return Category
+	 */
+	public function findRootOrCreate()
+	{
+		$root = $this->findRoot();
+		if ($root) {
+			return $root;
+		}
+
+		return $this->addRoot();
+	}
+
+	/**
+	 * @param string $catalogName
+	 * @return Category[]
+	 */
+	public function findByCatalogName($catalogName)
+	{
+		return $this
+			->getFindByCatalogNameQuery($catalogName)
+			->getQuery()
+			->execute();
+	}
+
+	/**
+	 * @param int $id
+	 * @return Category|null
+	 */
+	public function findOneById($id)
+	{
+		return $this->findOneBy(array('id' => $id));
+	}
+
+	/**
+	 * @param string $catalogName
+	 * @return QueryBuilder
+	 */
+	public function getFindByCatalogNameQuery($catalogName = null)
+	{
+		$query = $this->createQueryBuilder('c');
+
+		if ($catalogName) {
+			$query
+				->join('c.catalog', 'cc')
+				->where('cc.name = :name')
+				->setParameter('name', $catalogName);
+		}
+
+		$query
+			->orderBy('c.root', 'ASC')
+			->orderBy('c.left', 'ASC')
+			->orderBy('c.title', 'ASC');
+
+		return $query;
 	}
 
 	/**
@@ -40,19 +98,6 @@ class CategoryRepository extends EntityRepository
 		}
 
 		return $res;
-	}
-
-	/**
-	 * @return Category
-	 */
-	public function findRootOrCreate()
-	{
-		$root = $this->findRoot();
-		if ($root) {
-			return $root;
-		}
-
-		return $this->addRoot();
 	}
 
 	/**

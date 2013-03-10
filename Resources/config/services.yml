@@ -2,9 +2,12 @@ imports:
     - { resource: ns_admin.menu.yml }
 
 parameters:
-    ns_catalog.settings.formtype.collection.class:  'NS\CatalogBundle\Model\SettingsFormTypeCollection'
-    ns_catalog.repository.catalog.class:            'NS\CatalogBundle\Entity\CatalogRepository'
-    ns_catalog.repository.catalog.factory_argument: 'NSCatalogBundle:Catalog'
+    ns_catalog.settings.formtype.collection.class:   'NS\CatalogBundle\Model\SettingsFormTypeCollection'
+    ns_catalog.repository.catalog.class:             'NS\CatalogBundle\Entity\CatalogRepository'
+    ns_catalog.repository.catalog.factory_argument:  'NSCatalogBundle:Catalog'
+    ns_catalog.repository.category.class:            'NS\CatalogBundle\Entity\CategoryRepository'
+    ns_catalog.repository.category.factory_argument: 'NSCatalogBundle:Category'
+    ns_catalog.form.type.category.class:             'NS\CatalogBundle\Form\Type\CategoryType'
 
 services:
     ns_catalog.settings.formtype.collection:
@@ -18,3 +21,15 @@ services:
         factory_method: 'getRepository'
         arguments:
             - %ns_catalog.repository.catalog.factory_argument%
+
+    ns_catalog.repository.category:
+        class: %ns_catalog.repository.category.class%
+        factory_service: doctrine.orm.default_entity_manager
+        factory_method: 'getRepository'
+        arguments:
+            - %ns_catalog.repository.category.factory_argument%
+
+    ns_catalog.form.type.category:
+        class: %ns_catalog.form.type.category.class%
+        calls:
+            - [setCategoryRepository, [@ns_catalog.repository.category]]
