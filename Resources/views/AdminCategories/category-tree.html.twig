@@ -22,7 +22,8 @@
 
 <script type="text/javascript">
 	(function($){
-		var categoryForm = $('#dlgCategoryForm');
+		var categoryForm    = $('#dlgCategoryForm');
+		var modalCategoryId = null;
 
 		var fnHandleResponse = function(res) {
 			if (res.error) {
@@ -37,19 +38,19 @@
 
 		var fnSave = function(){
 			$.ajax({
-				'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categoriesApi', adminAction: 'form' }) }}',
+				'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categoriesApi', adminAction: 'form' }) }}' + (modalCategoryId ? '?id=' + modalCategoryId : ''),
 				'type': 'POST',
 				'data': categoryForm.find('form').serialize()
 			})
 			.done(function(res){
 				fnHandleResponse(res);
 				categoryForm.modal('hide');
-
 				location.href = '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'catalog', adminAction: 'index' }) }}?categoryId=' + res.categoryId;
 			});
 		};
 
-		$('#ns-category-tree').on('add-click', function(){
+		var categoryTree = $('#ns-category-tree');
+		categoryTree.on('add-click', function(){
 			$('#dlgCategoryFormLabel').text('Добавление категории');
 			$.ajax({
 				'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categoriesApi', adminAction: 'form' }) }}',
@@ -57,6 +58,20 @@
 			})
 			.done(function(res){
 				fnHandleResponse(res);
+				modalCategoryId = null;
+				categoryForm.modal('show');
+			});
+		});
+
+		categoryTree.on('edit-click', function(e, categoryId){
+			$('#dlgCategoryFormLabel').text('Редактирование категории');
+			$.ajax({
+				'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categoriesApi', adminAction: 'form' }) }}?id=' + categoryId,
+				'type': 'GET'
+			})
+			.done(function(res){
+				fnHandleResponse(res);
+				modalCategoryId = categoryId;
 				categoryForm.modal('show');
 			});
 		});
