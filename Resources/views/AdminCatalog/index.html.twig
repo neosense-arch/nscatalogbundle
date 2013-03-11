@@ -12,6 +12,29 @@
 				<a href="#" class="btn" id="btnAddItem">Добавить товар</a>
 			</div>
 
+			<table class="table table-striped table-hover">
+				<thead>
+				<tr>
+					<th style="width:200px">Название</th>
+					<th>&nbsp;</th>
+					<th style="width:100px">Операции</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for item in items %}
+					<tr>
+						<td>{{ item.title }}</td>
+						<td>&nbsp;</td>
+						<td>
+							<div class="btn-group">
+								<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSNewsBundle', adminController: 'news', adminAction: 'form'}) }}?id={{ item.id }}" class="btn btn-mini"><i class="icon-pencil"></i></a>
+								<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSNewsBundle', adminController: 'news', adminAction: 'delete'}) }}?id={{ item.id }}" class="btn btn-mini"><i class="icon-trash"></i></a>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
 		</div>
 	</div>
 
@@ -61,7 +84,7 @@
 			$('#btnAddItem').click(function(){
 				$('#dlgItemFormLabel').text('Добавление товара');
 				$.ajax({
-					url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}?categoryId={{ category.id }}',
+					url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}{% if category %}?categoryId={{ category.id }}{% endif %}',
 					type: 'GET'
 				})
 				.done(function(res){

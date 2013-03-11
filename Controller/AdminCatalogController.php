@@ -30,7 +30,7 @@ class AdminCatalogController extends Controller
 
 		$category = $this->getCategory();
 
-		$items = $this->getItemRepository()->findAll();
+		$items = $this->getItemRepository()->findByCategory($category);
 
 		return $this->render('NSCatalogBundle:AdminCatalog:index.html.twig', array(
 			'items'       => $items,
@@ -61,7 +61,7 @@ class AdminCatalogController extends Controller
 	private function getCategory()
 	{
 		if (empty($_GET['categoryId'])) {
-			return $this->getCategoryRepository()->findRootOrCreate();
+			return null;
 		}
 
 		$category = $this->getCategoryRepository()->findOneById($_GET['categoryId']);
