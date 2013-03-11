@@ -5,6 +5,7 @@ namespace NS\CatalogBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use NS\PropertiesBundle\Entity\PropertyType;
+use Symfony\Component\Form\AbstractType;
 
 /**
  * @ORM\Table(name="ns_catalog_catalogs")

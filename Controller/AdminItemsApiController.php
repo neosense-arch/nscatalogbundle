@@ -18,28 +18,32 @@ class AdminItemsApiController extends Controller
 	const CATALOG_NAME = 'goods';
 
 	/**
+	 * @throws \Exception
 	 * @return Response
 	 */
 	public function formAction()
 	{
 		try {
-			$itemType = new ItemType();
-			$itemType->setCatalogName(self::CATALOG_NAME);
-
 			$item = $this->getItem();
-			$form = $this->createForm($itemType, $item);
+			$itemForm = $this->createItemForm($item);
+
+			$itemSettingsForm = $this->createItemSettingsForm($item->getSettings());
 
 			if ($this->getRequest()->getMethod() === 'POST') {
-				$form->bind($this->getRequest());
-				if ($form->isValid()) {
+				$itemForm->bind($this->getRequest());
+				$itemSettingsForm->bind($this->getRequest());
+
+				if ($itemForm->isValid() && $itemSettingsForm->isValid()) {
+					$item->setSettings($itemSettingsForm->getData());
 					$this->getDoctrine()->getManager()->persist($item);
 					$this->getDoctrine()->getManager()->flush();
 					return new JsonResponse(array('itemId' => $item->getId()));
 				}
 			}
 
-			return $this->render('NSAdminBundle:Generic:form-api.html.twig', array(
-				'form' => $form->createView()
+			return $this->render('NSCatalogBundle:AdminItemsApi:form.html.twig', array(
+				'itemForm' => $itemForm->createView(),
+				'itemSettingsForm' => $itemSettingsForm->createView(),
 			));
 		}
 		catch (\Exception $e) {
@@ -94,6 +98,33 @@ class AdminItemsApiController extends Controller
 	}
 
 	/**
+	 * @param \NS\CatalogBundle\Entity\Item $item
+	 * @return \Symfony\Component\Form\Form
+	 */
+	private function createItemForm(Item $item)
+	{
+		$itemType = new ItemType();
+		$itemType->setCatalogName(self::CATALOG_NAME);
+
+		return $this->createForm($itemType, $item);
+	}
+
+	/**
+	 * @return \Symfony\Component\Form\Form
+	 * @throws \Exception
+	 */
+	private function createItemSettingsForm()
+	{
+		$catalog = $this->getCatalogRepository()->findOneByName(self::CATALOG_NAME);
+		if (!$catalog) {
+			throw new \Exception(sprintf("Catalog '%s' wasn't found", self::CATALOG_NAME));
+		}
+
+		$itemSettingsType = $this->get($catalog->getFormTypeName());
+		return $this->createForm($itemSettingsType);
+	}
+
+	/**
 	 * @return ItemRepository
 	 */
 	private function getItemRepository()
@@ -107,5 +138,13 @@ class AdminItemsApiController extends Controller
 	private function getCategoryRepository()
 	{
 		return $this->getDoctrine()->getRepository('NSCatalogBundle:Category');
+	}
+
+	/**
+	 * @return CatalogRepository
+	 */
+	private function getCatalogRepository()
+	{
+		return $this->getDoctrine()->getRepository('NSCatalogBundle:Catalog');
 	}
 }

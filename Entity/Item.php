@@ -41,6 +41,12 @@ class Item
 	private $slug;
 
 	/**
+	 * @var string
+	 * @ORM\Column(type="text")
+	 */
+	private $settings;
+
+	/**
 	 * @return int
 	 */
 	public function getId()
@@ -86,5 +92,21 @@ class Item
 	public function getCategory()
 	{
 		return $this->category;
+	}
+
+	/**
+	 * @param mixed $settings
+	 */
+	public function setSettings($settings)
+	{
+		$this->settings = serialize($settings);
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getSettings()
+	{
+		return unserialize($this->settings);
 	}
 }
