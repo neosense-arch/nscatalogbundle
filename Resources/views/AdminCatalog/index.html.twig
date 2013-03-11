@@ -27,8 +27,8 @@
 						<td>&nbsp;</td>
 						<td>
 							<div class="btn-group">
-								<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSNewsBundle', adminController: 'news', adminAction: 'form'}) }}?id={{ item.id }}" class="btn btn-mini"><i class="icon-pencil"></i></a>
-								<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSNewsBundle', adminController: 'news', adminAction: 'delete'}) }}?id={{ item.id }}" class="btn btn-mini"><i class="icon-trash"></i></a>
+								<a href="#" class="btn btn-mini btn-edit-item" data-id="{{ item.id }}"><i class="icon-pencil"></i></a>
+								{#<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSNewsBundle', adminController: 'news', adminAction: 'delete'}) }}?id={{ item.id }}" class="btn btn-mini"><i class="icon-trash"></i></a>#}
 							</div>
 						</td>
 					</tr>
@@ -92,6 +92,21 @@
 					modalItemId = null;
 					itemForm.modal('show');
 				});
+
+				return false;
+			});
+
+			$('.btn-edit-item').click(function(){
+				$('#dlgItemFormLabel').text('Редактирование товара');
+				$.ajax({
+					url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}?id=' + $(this).data('id') + '&categoryId={% if category %}{{ category.id }}{% endif %}',
+					type: 'GET'
+				})
+				.done($.proxy(function(res){
+					fnHandleResponse(res);
+					modalItemId = $(this).data('id');
+					itemForm.modal('show');
+				}, this));
 
 				return false;
 			});

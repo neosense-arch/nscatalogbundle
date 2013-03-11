@@ -27,7 +27,7 @@ class AdminItemsApiController extends Controller
 			$item = $this->getItem();
 			$itemForm = $this->createItemForm($item);
 
-			$itemSettingsForm = $this->createItemSettingsForm($item->getSettings());
+			$itemSettingsForm = $this->createItemSettingsForm($item);
 
 			if ($this->getRequest()->getMethod() === 'POST') {
 				$itemForm->bind($this->getRequest());
@@ -110,10 +110,11 @@ class AdminItemsApiController extends Controller
 	}
 
 	/**
-	 * @return \Symfony\Component\Form\Form
+	 * @param \NS\CatalogBundle\Entity\Item $item
 	 * @throws \Exception
+	 * @return \Symfony\Component\Form\Form
 	 */
-	private function createItemSettingsForm()
+	private function createItemSettingsForm(Item $item)
 	{
 		$catalog = $this->getCatalogRepository()->findOneByName(self::CATALOG_NAME);
 		if (!$catalog) {
@@ -121,7 +122,7 @@ class AdminItemsApiController extends Controller
 		}
 
 		$itemSettingsType = $this->get($catalog->getFormTypeName());
-		return $this->createForm($itemSettingsType);
+		return $this->createForm($itemSettingsType, $item->getSettings() ?: null);
 	}
 
 	/**
