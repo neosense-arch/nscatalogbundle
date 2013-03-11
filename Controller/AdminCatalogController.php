@@ -4,6 +4,7 @@ namespace NS\CatalogBundle\Controller;
 
 use NS\CatalogBundle\Entity\Catalog;
 use NS\CatalogBundle\Entity\CatalogRepository;
+use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\ItemRepository;
 use NS\CatalogBundle\Form\Type\CategoryType;
@@ -27,12 +28,15 @@ class AdminCatalogController extends Controller
 		/** @var $form Form */
 		$form = $this->get($catalog->getFormTypeName());
 
+		$category = $this->getCategory();
+
 		$items = $this->getItemRepository()->findAll();
 
 		return $this->render('NSCatalogBundle:AdminCatalog:index.html.twig', array(
 			'items'       => $items,
 			'catalog'     => $catalog,
 			'catalogForm' => $form,
+			'category'    => $category,
 		));
 	}
 
@@ -51,13 +55,21 @@ class AdminCatalogController extends Controller
 	}
 
 	/**
-	 * @return ItemRepository
+	 * @return Category
+	 * @throws \Exception
 	 */
-	private function getItemRepository()
+	private function getCategory()
 	{
-		return $this->getDoctrine()
-			->getManager()
-			->getRepository('NSCatalogBundle:Item');
+		if (empty($_GET['categoryId'])) {
+			return $this->getCategoryRepository()->findRootOrCreate();
+		}
+
+		$category = $this->getCategoryRepository()->findOneById($_GET['categoryId']);
+		if (!$category) {
+			throw new \Exception("Category #{$_GET['categoryId']} wasn't found");
+		}
+
+		return $category;
 	}
 
 	/**
@@ -68,5 +80,25 @@ class AdminCatalogController extends Controller
 		return $this->getDoctrine()
 			->getManager()
 			->getRepository('NSCatalogBundle:Catalog');
+	}
+
+	/**
+	 * @return CategoryRepository
+	 */
+	private function getCategoryRepository()
+	{
+		return $this->getDoctrine()
+			->getManager()
+			->getRepository('NSCatalogBundle:Category');
+	}
+
+	/**
+	 * @return ItemRepository
+	 */
+	private function getItemRepository()
+	{
+		return $this->getDoctrine()
+			->getManager()
+			->getRepository('NSCatalogBundle:Item');
 	}
 }

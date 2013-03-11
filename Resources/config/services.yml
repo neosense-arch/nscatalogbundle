@@ -8,6 +8,7 @@ parameters:
     ns_catalog.repository.category.class:            'NS\CatalogBundle\Entity\CategoryRepository'
     ns_catalog.repository.category.factory_argument: 'NSCatalogBundle:Category'
     ns_catalog.form.type.category.class:             'NS\CatalogBundle\Form\Type\CategoryType'
+    ns_catalog.form.type.category.select.class:      'NS\CatalogBundle\Form\Type\CategorySelectType'
 
 services:
     ns_catalog.settings.formtype.collection:
@@ -31,5 +32,10 @@ services:
 
     ns_catalog.form.type.category:
         class: %ns_catalog.form.type.category.class%
+
+    ns_catalog.form.type.category.select:
+        class: %ns_catalog.form.type.category.select.class%
         calls:
             - [setCategoryRepository, [@ns_catalog.repository.category]]
+        tags:
+            - { name: form.type, alias: category_select }

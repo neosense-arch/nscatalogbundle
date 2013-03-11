@@ -9,9 +9,70 @@
 		</div>
 		<div class="span9">
 			<div>
-				<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'items', adminAction: 'form' }) }}" class="btn">Добавить товар</a>
+				<a href="#" class="btn" id="btnAddItem">Добавить товар</a>
 			</div>
 
 		</div>
 	</div>
+
+	<div id="dlgItemForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="dlgItemFormLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3 id="dlgItemFormLabel"></h3>
+		</div>
+		<div class="modal-body"></div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Отменить</button>
+			<button class="btn btn-success btn-save">Сохранить</button>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		(function($){
+			var itemForm    = $('#dlgItemForm');
+			var modalItemId = null;
+
+			var fnHandleResponse = function(res) {
+				if (res.error) {
+					throw res.error;
+				}
+				itemForm.find('.modal-body').html(res);
+				itemForm.find('form').submit(function(){
+					fnSave();
+					return false;
+				});
+			};
+
+			var fnSave = function(){
+				$.ajax({
+					'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}' + (modalItemId ? '?id=' + modalItemId : ''),
+					'type': 'POST',
+					'data': itemForm.find('form').serialize()
+				})
+				.done(function(res){
+					fnHandleResponse(res);
+					itemForm.modal('hide');
+					location.reload();
+				});
+			};
+
+			itemForm.find('.btn-save').click(fnSave);
+
+			$('#btnAddItem').click(function(){
+				$('#dlgItemFormLabel').text('Добавление товара');
+				$.ajax({
+					url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}?categoryId={{ category.id }}',
+					type: 'GET'
+				})
+				.done(function(res){
+					fnHandleResponse(res);
+					modalItemId = null;
+					itemForm.modal('show');
+				});
+
+				return false;
+			});
+
+		}(jQuery));
+	</script>
 {% endblock %}

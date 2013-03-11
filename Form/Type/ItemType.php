@@ -9,7 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class CategoryType extends AbstractType
+class ItemType extends AbstractType
 {
 	/**
 	 * @var string
@@ -29,9 +29,9 @@ class CategoryType extends AbstractType
 				'label'    => 'Название',
 				'required' => true,
 			))
-			->add('parent', 'category_select', array(
-				'label' => 'Родительская категория',
-				'required' => false,
+			->add('category', 'category_select', array(
+				'label' => 'Категория',
+				'required' => true,
 				'catalog_name' => $this->catalogName,
 			))
         ;
@@ -43,7 +43,7 @@ class CategoryType extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'NS\CatalogBundle\Entity\Category'
+            'data_class' => 'NS\CatalogBundle\Entity\Item'
         ));
     }
 
@@ -52,7 +52,7 @@ class CategoryType extends AbstractType
 	 */
 	public function getName()
     {
-        return 'ns_catalogbundle_categorytype';
+        return 'ns_catalogbundle_itemtype';
     }
 
 	/**

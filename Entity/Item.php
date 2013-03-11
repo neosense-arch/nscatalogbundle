@@ -35,12 +35,6 @@ class Item
 
 	/**
 	 * @var string
-	 * @ORM\Column(type="string")
-	 */
-	private $name;
-
-	/**
-	 * @var string
 	 * @Gedmo\Slug(fields={"title"})
 	 * @ORM\Column(length=128, unique=true)
 	 */
@@ -68,22 +62,6 @@ class Item
 	public function getTitle()
 	{
 		return $this->title;
-	}
-
-	/**
-	 * @param string $name
-	 */
-	public function setName($name)
-	{
-		$this->name = $name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getName()
-	{
-		return $this->name;
 	}
 
 	/**
