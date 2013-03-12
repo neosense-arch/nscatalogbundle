@@ -28,7 +28,7 @@
 						<td>
 							<div class="btn-group">
 								<a href="#" class="btn btn-mini btn-edit-item" data-id="{{ item.id }}"><i class="icon-pencil"></i></a>
-								{#<a href="{{ url('ns_admin_bundle', { adminBundle: 'NSNewsBundle', adminController: 'news', adminAction: 'delete'}) }}?id={{ item.id }}" class="btn btn-mini"><i class="icon-trash"></i></a>#}
+								<a href="#" class="btn btn-mini btn-delete-item" data-id="{{ item.id }}"><i class="icon-trash"></i></a>
 							</div>
 						</td>
 					</tr>
@@ -106,6 +106,24 @@
 					fnHandleResponse(res);
 					modalItemId = $(this).data('id');
 					itemForm.modal('show');
+				}, this));
+
+				return false;
+			});
+
+			$('.btn-delete-item').click(function(){
+				if (!confirm('Вы уверены?')) {
+					return false;
+				}
+				$.ajax({
+					url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'delete' }) }}?id=' + $(this).data('id'),
+					type: 'POST'
+				})
+				.done($.proxy(function(res){
+					if (res.error) {
+						throw res.error;
+					}
+					location.reload();
 				}, this));
 
 				return false;
