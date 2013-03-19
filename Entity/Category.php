@@ -88,6 +88,12 @@ class Category
 	private $catalog;
 
 	/**
+	 * @var Item[]
+	 * @ORM\OneToMany(targetEntity="Item", mappedBy="category")
+	 */
+	private $items;
+
+	/**
 	 * @return int
 	 */
 	public function getId()

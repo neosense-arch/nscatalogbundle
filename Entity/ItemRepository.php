@@ -3,6 +3,7 @@
 namespace NS\CatalogBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 
 class ItemRepository extends EntityRepository
 {
@@ -20,7 +21,9 @@ class ItemRepository extends EntityRepository
 	 */
 	public function findAll()
 	{
-		return $this->findBy(array(), array('id' => 'DESC'));
+		return $this
+			->getFindByCategoryQuery()
+			->execute();
 	}
 
 	/**
@@ -29,6 +32,27 @@ class ItemRepository extends EntityRepository
 	 */
 	public function findByCategory(Category $category = null)
 	{
-		return $this->findBy(array('category' => $category), array('id' => 'DESC'));
+		return $this
+			->getFindByCategoryQuery($category)
+			->execute();
+	}
+
+	/**
+	 * @param  Category $category
+	 * @return Query
+	 */
+	public function getFindByCategoryQuery(Category $category = null)
+	{
+		$queryBuilder = $this
+			->createQueryBuilder('i')
+			->orderBy('i.id', 'DESC');
+
+		if ($category) {
+			$queryBuilder
+				->where('i.Category = :category')
+				->setParameter('category', $category);
+		}
+
+		return $queryBuilder->getQuery();
 	}
 }

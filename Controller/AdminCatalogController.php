@@ -7,10 +7,7 @@ use NS\CatalogBundle\Entity\CatalogRepository;
 use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\ItemRepository;
-use NS\CatalogBundle\Form\Type\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminCatalogController extends Controller
@@ -25,15 +22,23 @@ class AdminCatalogController extends Controller
 		$catalog = $this->getCatalog();
 
 		// catalog form
-		/** @var $form Form */
 		$form = $this->get($catalog->getFormTypeName());
 
 		$category = $this->getCategory();
 
-		$items = $this->getItemRepository()->findByCategory($category);
+		// items with pagination
+		$query = $this
+			->getItemRepository()
+			->getFindByCategoryQuery($category);
+
+		$pagination = $this->get('knp_paginator')->paginate(
+			$query,
+			(!empty($_GET['page']) ? $_GET['page'] : 1),
+			50
+		);
 
 		return $this->render('NSCatalogBundle:AdminCatalog:index.html.twig', array(
-			'items'       => $items,
+			'pagination'  => $pagination,
 			'catalog'     => $catalog,
 			'catalogForm' => $form,
 			'category'    => $category,
