@@ -15,7 +15,7 @@
 			<table class="table table-striped table-hover">
 				<thead>
 				<tr>
-					<th style="width:200px">Название</th>
+					{% include 'NSCatalogBundle:AdminCatalog:index-header.html.twig' %}
 					<th>&nbsp;</th>
 					<th style="width:100px">Операции</th>
 				</tr>
@@ -23,7 +23,7 @@
 				<tbody>
 				{% for item in items %}
 					<tr>
-						<td>{{ item.title }}</td>
+						{% include 'NSCatalogBundle:AdminCatalog:index-row.html.twig' %}
 						<td>&nbsp;</td>
 						<td>
 							<div class="btn-group">
