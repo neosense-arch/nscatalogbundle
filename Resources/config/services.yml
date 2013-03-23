@@ -9,6 +9,7 @@ parameters:
     ns_catalog.repository.category.factory_argument: 'NSCatalogBundle:Category'
     ns_catalog.form.type.category.class:             'NS\CatalogBundle\Form\Type\CategoryType'
     ns_catalog.form.type.category.select.class:      'NS\CatalogBundle\Form\Type\CategorySelectType'
+    ns_catalog.twig.extension.inline_edit.class:     'NS\CatalogBundle\Twig\Extension\InlineEditExtension'
 
 services:
     ns_catalog.settings.formtype.collection:
@@ -39,3 +40,9 @@ services:
             - [setCategoryRepository, [@ns_catalog.repository.category]]
         tags:
             - { name: form.type, alias: category_select }
+
+    ns_catalog.twig.extension.inline_edit:
+        class: %ns_catalog.twig.extension.inline_edit.class%
+        arguments: [@service_container]
+        tags:
+            - { name: twig.extension, alias: ns_catalog_inline_edit }

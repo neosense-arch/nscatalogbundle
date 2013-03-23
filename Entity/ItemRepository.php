@@ -45,12 +45,12 @@ class ItemRepository extends EntityRepository
 	{
 		$queryBuilder = $this
 			->createQueryBuilder('i')
-			->orderBy('i.id', 'DESC');
+			->orderBy('i.title', 'ASC');
 
 		if ($category) {
 			$queryBuilder
-				->where('i.Category = :category')
-				->setParameter('category', $category);
+				->where('i.category = ?1')
+				->setParameter(1, $category->getId());
 		}
 
 		return $queryBuilder->getQuery();
