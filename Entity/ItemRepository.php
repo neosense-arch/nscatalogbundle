@@ -55,4 +55,32 @@ class ItemRepository extends EntityRepository
 
 		return $queryBuilder->getQuery();
 	}
+
+	/**
+	 * @param string $key
+	 * @param mixed  $value
+	 * @param int    $limit
+	 * @param int    $skip
+	 * @return Item[]
+	 * @throws \Exception
+	 */
+	public function findBySettings($key, $value, $limit = null, $skip = 0)
+	{
+		$items = $this->findAll();
+
+		$filtered = array_filter($items, function(Item $item) use($key, $value){
+			$settings = $item->getSettings();
+			$method = 'get' . ucfirst($key);
+			if (!method_exists($settings, $method)) {
+				throw new \Exception(sprintf("Method '%s::%s' wasn't found", get_class($settings), $method));
+			}
+			return $settings->$method() == $value;
+		});
+
+		if ($limit) {
+			return array_slice($filtered, $skip, $limit);
+		}
+
+		return $filtered;
+	}
 }
