@@ -1,5 +1,15 @@
 {% extends 'NSAdminBundle::layout.html.twig' %}
 
+{% block styles %}
+	{{ parent() }}
+	<link href="{{ asset('bundles/nscatalog/css/inline-edit.css') }}" type="text/css" rel="stylesheet" media="screen"/>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript" src="{{ asset('bundles/nscatalog/js/inline-edit.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 	<h3>Управление товарами</h3>
 

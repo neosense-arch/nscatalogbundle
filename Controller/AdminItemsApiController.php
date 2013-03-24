@@ -52,6 +52,42 @@ class AdminItemsApiController extends Controller
 	}
 
 	/**
+	 * @throws \Exception
+	 * @return Response
+	 */
+	public function updateBooleanValueAction()
+	{
+		try {
+			if (empty($_REQUEST['id'])) {
+				return new JsonResponse(array('error' => "Required param 'id' wasn't found"));
+			}
+			if (!isset($_REQUEST['value'])) {
+				return new JsonResponse(array('error' => "Required param 'value' wasn't found"));
+			}
+			if (empty($_REQUEST['field'])) {
+				return new JsonResponse(array('error' => "Required param 'field' wasn't found"));
+			}
+
+			$item = $this->getItem();
+
+			$method = 'set' . ucfirst($_REQUEST['field']);
+			$settings = $item->getSettings();
+			$settings->$method(!!$_REQUEST['value']);
+			$item->setSettings($settings);
+
+			$this->getDoctrine()->getManager()->persist($item);
+			$this->getDoctrine()->getManager()->flush();
+
+			$method = 'is' . ucfirst($_REQUEST['field']);
+
+			return new JsonResponse(array('value' => (int)$item->getSettings()->$method()));
+		}
+		catch (\Exception $e) {
+			return new JsonResponse(array('error' => $e->getMessage()));
+		}
+	}
+
+	/**
 	 * Removes page
 	 *
 	 * @return Response
@@ -77,19 +113,19 @@ class AdminItemsApiController extends Controller
 	{
 		$item = new Item();
 
-		if (!empty($_GET['id'])) {
+		if (!empty($_REQUEST['id'])) {
 			$item = $this
 				->getItemRepository()
-				->findOneById($_GET['id']);
+				->findOneById($_REQUEST['id']);
 			if (!$item) {
-				throw new \Exception("Item #{$_GET['id']} wasn't found");
+				throw new \Exception("Item #{$_REQUEST['id']} wasn't found");
 			}
 		}
 
-		if (!empty($_GET['categoryId'])) {
-			$category = $this->getCategoryRepository()->findOneById($_GET['categoryId']);
+		if (!empty($_REQUEST['categoryId'])) {
+			$category = $this->getCategoryRepository()->findOneById($_REQUEST['categoryId']);
 			if (!$category) {
-				throw new \Exception("Category #{$_GET['categoryId']} wasn't found");
+				throw new \Exception("Category #{$_REQUEST['categoryId']} wasn't found");
 			}
 			$item->setCategory($category);
 		}
