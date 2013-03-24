@@ -81,19 +81,20 @@ class inlineEditExtension extends \Twig_Extension
 	/**
 	 * @param Item   $item
 	 * @param string $field
+	 * @param string $value
 	 * @param array  $options
 	 * @return string
 	 */
-	public function iePrice(Item $item, $field, $options = array())
+	public function iePrice(Item $item, $field, $value, $options = array())
     {
-		$options = array_merge(array(
-		), $options);
+		$options = $this->processOptions(array(), $options);
 
 		/** @var $renderer EngineInterface */
 		$renderer = $this->container->get('templating');
 		return $renderer->render('NSCatalogBundle:InlineEdit:ie-price.html.twig', array(
 			'item'    => $item,
 			'field'   => $field,
+			'value'   => $value,
 			'options' => $options,
 		));
     }
