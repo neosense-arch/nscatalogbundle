@@ -47,9 +47,7 @@ class inlineEditExtension extends \Twig_Extension
 	public function ieBoolean(Item $item, $field, $options = array())
     {
 		$options = array_merge(array(
-			'class'        => 'icon-ok',
-			'opacityTrue'  => '0.7',
-			'opacityFalse' => '0.1',
+			'class' => 'icon-ok',
 		), $options);
 
 		/** @var $renderer EngineInterface */

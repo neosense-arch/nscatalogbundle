@@ -1,6 +1,7 @@
 .ns-ie-boolean {
 	cursor: pointer;
 	padding: 3px 3px 3px 0;
+	text-align: center;
 }
 .ns-ie-boolean .border {
 	border: solid 1px transparent;
@@ -16,4 +17,7 @@
 }
 .ns-ie-boolean i[data-value="0"] {
 	opacity: 0.1;
+}
+.ns-ie-price {
+	text-align: right;
 }
