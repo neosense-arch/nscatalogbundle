@@ -41,6 +41,12 @@ class Item
 	private $slug;
 
 	/**
+	 * @var boolean
+	 * @ORM\Column(type="boolean")
+	 */
+	private $visible = true;
+
+	/**
 	 * @var string
 	 * @ORM\Column(type="text")
 	 */
@@ -92,6 +98,22 @@ class Item
 	public function getCategory()
 	{
 		return $this->category;
+	}
+
+	/**
+	 * @param boolean $visible
+	 */
+	public function setVisible($visible)
+	{
+		$this->visible = $visible;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getVisible()
+	{
+		return $this->visible;
 	}
 
 	/**

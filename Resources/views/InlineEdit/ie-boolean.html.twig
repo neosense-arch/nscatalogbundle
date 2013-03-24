@@ -1,10 +1,10 @@
 <div class="ns-ie-boolean">
 	<span class="border">
 		<i class="{{ options.class }}"
-		   data-url="{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'updateBooleanValue' }) }}"
+		   data-url="{{ options.url }}"
 		   data-id="{{ item.id }}"
 		   data-field="{{ field }}"
-		   data-value="{{ attribute(item.settings, field) | number_format(0) }}"
+		   data-value="{{ value | number_format(0) }}"
 		></i>
 	</span>
 </div>

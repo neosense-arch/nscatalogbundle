@@ -55,7 +55,7 @@ class AdminItemsApiController extends Controller
 	 * @throws \Exception
 	 * @return Response
 	 */
-	public function updateBooleanValueAction()
+	public function updateCustomSettingAction()
 	{
 		try {
 			if (empty($_REQUEST['id'])) {
@@ -72,15 +72,43 @@ class AdminItemsApiController extends Controller
 
 			$method = 'set' . ucfirst($_REQUEST['field']);
 			$settings = $item->getSettings();
-			$settings->$method(!!$_REQUEST['value']);
+			$settings->$method($_REQUEST['value']);
 			$item->setSettings($settings);
 
 			$this->getDoctrine()->getManager()->persist($item);
 			$this->getDoctrine()->getManager()->flush();
+			return new JsonResponse(array('result' => 'ok'));
+		}
+		catch (\Exception $e) {
+			return new JsonResponse(array('error' => $e->getMessage()));
+		}
+	}
 
-			$method = 'is' . ucfirst($_REQUEST['field']);
+	/**
+	 * @throws \Exception
+	 * @return Response
+	 */
+	public function updateBasePropertyAction()
+	{
+		try {
+			if (empty($_REQUEST['id'])) {
+				return new JsonResponse(array('error' => "Required param 'id' wasn't found"));
+			}
+			if (!isset($_REQUEST['value'])) {
+				return new JsonResponse(array('error' => "Required param 'value' wasn't found"));
+			}
+			if (empty($_REQUEST['field'])) {
+				return new JsonResponse(array('error' => "Required param 'field' wasn't found"));
+			}
 
-			return new JsonResponse(array('value' => (int)$item->getSettings()->$method()));
+			$item = $this->getItem();
+
+			$method = 'set' . ucfirst($_REQUEST['field']);
+			$item->$method($_REQUEST['value']);
+
+			$this->getDoctrine()->getManager()->persist($item);
+			$this->getDoctrine()->getManager()->flush();
+			return new JsonResponse(array('result' => 'ok'));
 		}
 		catch (\Exception $e) {
 			return new JsonResponse(array('error' => $e->getMessage()));

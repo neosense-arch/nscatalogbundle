@@ -4,6 +4,7 @@ namespace NS\CatalogBundle\Twig\Extension;
 use NS\CatalogBundle\Entity\Item;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class NSCatalogInlineEditExtension
@@ -12,6 +13,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class inlineEditExtension extends \Twig_Extension
 {
+	const TYPE_ITEM_BASE_PROPERTY   = 'property';
+	const TYPE_ITEM_CUSTOM_SETTING  = 'setting';
+
 	/**
 	 * @var ContainerInterface
 	 */
@@ -35,18 +39,20 @@ class inlineEditExtension extends \Twig_Extension
         return array(
 			'ie_boolean' => new \Twig_Function_Method($this, 'ieBoolean', array('is_safe' => array('html'))),
 			'ie_price'   => new \Twig_Function_Method($this, 'iePrice',   array('is_safe' => array('html'))),
+			'ie_visible' => new \Twig_Function_Method($this, 'ieVisible', array('is_safe' => array('html'))),
 		);
     }
 
 	/**
-	 * @param Item   $item
-	 * @param string $field
-	 * @param array  $options
+	 * @param Item    $item
+	 * @param string  $field
+	 * @param boolean $value
+	 * @param array   $options
 	 * @return string
 	 */
-	public function ieBoolean(Item $item, $field, $options = array())
+	public function ieBoolean(Item $item, $field, $value, $options = array())
     {
-		$options = array_merge(array(
+		$options = $this->processOptions(array(
 			'class' => 'icon-ok',
 		), $options);
 
@@ -55,7 +61,20 @@ class inlineEditExtension extends \Twig_Extension
 		return $renderer->render('NSCatalogBundle:InlineEdit:ie-boolean.html.twig', array(
 			'item'    => $item,
 			'field'   => $field,
+			'value'   => $value,
 			'options' => $options,
+		));
+    }
+
+	/**
+	 * @param Item $item
+	 * @return string
+	 */
+	public function ieVisible(Item $item)
+    {
+		return $this->ieBoolean($item, 'visible', $item->getVisible(), array(
+			'class' => 'icon-eye-open',
+			'type'  => self::TYPE_ITEM_BASE_PROPERTY,
 		));
     }
 
@@ -79,8 +98,6 @@ class inlineEditExtension extends \Twig_Extension
 		));
     }
 
-
-
     /**
      * Returns the name of the extension.
      *
@@ -88,6 +105,63 @@ class inlineEditExtension extends \Twig_Extension
      */
     public function getName()
     {
-        return 'ns_catalog_inline_edit';
+		return 'ns_catalog_inline_edit';
     }
+
+	/**
+	 * @return array
+	 */
+	private function getDefaultOptions()
+	{
+		return array(
+			'type' => self::TYPE_ITEM_CUSTOM_SETTING,
+			'url'  => null,
+		);
+	}
+
+	/**
+	 * @param array $default
+	 * @param array $callerOptions
+	 * @return array
+	 */
+	private function processOptions(array $default, array $callerOptions)
+	{
+		$options = array_merge(
+			$this->getDefaultOptions(),
+			$default,
+			$callerOptions
+		);
+
+		if (empty($options['url'])) {
+			$options['url'] = $this->getUrl($options['type']);
+		}
+
+		return $options;
+	}
+
+	/**
+	 * @param  string $type
+	 * @return string
+	 * @throws \Exception
+	 */
+	private function getUrl($type)
+	{
+		$actions = array(
+			self::TYPE_ITEM_BASE_PROPERTY  => 'updateBaseProperty',
+			self::TYPE_ITEM_CUSTOM_SETTING => 'updateCustomSetting',
+		);
+
+		if (empty($actions[$type])) {
+			$availableTypes = join("', '", array_keys($actions));
+			throw new \Exception("Wrong type '{$type}', use one of '{$availableTypes}'");
+		}
+
+		/** @var $router RouterInterface */
+		$router = $this->container->get('router');
+		return $router->generate('ns_admin_bundle', array(
+			'adminBundle'     => 'NSCatalogBundle',
+			'adminController' => 'itemsApi',
+			'adminAction'     => $actions[$type],
+		));
+	}
 }

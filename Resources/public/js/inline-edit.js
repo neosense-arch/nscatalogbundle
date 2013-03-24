@@ -4,21 +4,22 @@
 		var ieBoolean = $('.ns-ie-boolean');
 		ieBoolean.click(function(){
 			var el = $(this).find('i');
+			var val = 1 - el.data('value');
 			$.ajax({
 				url:  el.data('url'),
 				type: 'POST',
 				data: {
 					'id':    el.data('id'),
 					'field': el.data('field'),
-					'value': 1 - el.data('value')
+					'value': val
 				}
 			})
 			.done($.proxy(function(res){
 				if (res.error) {
 					throw res.error;
 				}
-				el.data('value', res.value);
-				el.attr('data-value', res.value);
+				el.data('value', val);
+				el.attr('data-value', val);
 			}, this));
 		});
 
