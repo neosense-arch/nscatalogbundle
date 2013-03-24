@@ -31,7 +31,7 @@ class BlocksController extends Controller
 		return $this->render('NSCatalogBundle:Blocks:mainItemsBlock.html.twig', array(
 			'block'    => $block,
 			'settings' => $settings,
-			'items'    => $itemRepository->findBySettings('main', true, $settings->getCount())
+			'items'    => $itemRepository->findVisibleBySettings('main', true, $settings->getCount())
 		));
 	}
 
