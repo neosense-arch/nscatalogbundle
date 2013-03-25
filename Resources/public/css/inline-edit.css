@@ -19,6 +19,7 @@
 	opacity: 0.1;
 }
 .ns-ie-text a {
+	color: #000;
 	position: relative;
 	top: 3px;
 }
