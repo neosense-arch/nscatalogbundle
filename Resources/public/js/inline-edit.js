@@ -34,32 +34,36 @@
 			$(this).hide();
 			$(this).parent().find('input').show().focus().select();
 		});
-		var fnIeTextInputChange = function(){
-			var el = $(this);
-			el.hide();
-			$.ajax({
-				url:  el.data('url'),
-				type: 'POST',
-				data: {
-					'id':    el.data('id'),
-					'field': el.data('field'),
-					'value': el.val().replace(',', '.').replace(' ', '')
-				}
-			})
-			.done($.proxy(function(res){
-				if (res.error) {
-					throw res.error;
-				}
-				el.parent().find('a').show().text(el.val());
-			}, this));
-		};
 		$('.ns-ie-text input')
-			.blur(fnIeTextInputChange)
+			.blur(function(){
+				var el = $(this);
+				el.hide();
+				el.parent().find('a').show();
+			})
 			.keypress(function(e) {
 				var code = (e.keyCode ? e.keyCode : e.which);
 				if (code == 13) {
 					$(this).blur();
 				}
-			});
+			})
+			.change(function(){
+				var el = $(this);
+				$.ajax({
+					url:  el.data('url'),
+					type: 'POST',
+					data: {
+						'id':    el.data('id'),
+						'field': el.data('field'),
+						'value': el.val()
+					}
+				})
+				.done($.proxy(function(res){
+					if (res.error) {
+						throw res.error;
+					}
+					el.parent().find('a').text(el.val());
+				}, this));
+			})
+		;
 	});
 })(jQuery);

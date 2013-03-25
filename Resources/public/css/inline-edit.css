@@ -18,13 +18,6 @@
 .ns-ie-boolean i[data-value="0"] {
 	opacity: 0.1;
 }
-.ns-ie-price {
-	text-align: right;
-}
-.ns-ie-price input {
-	text-align: right;
-	width: 60px;
-}
 .ns-ie-text a {
 	position: relative;
 	top: 3px;
@@ -32,7 +25,17 @@
 .ns-ie-text input {
 	display: none;
 	height: 16px;
-	margin: 0;
+	margin: 0 -10px 0 0;
 	position: relative;
+	left: -7px;
+	width: auto;
+}
+.ns-ie-text.ns-ie-price {
+	text-align: right;
+}
+.ns-ie-text.ns-ie-price input {
 	left: 7px;
+	margin-right: 0;
+	text-align: right;
+	width: 60px;
 }

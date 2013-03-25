@@ -1,7 +1,7 @@
 <div class="ns-ie-text ns-ie-price">
 	<a href="#">
-		{{ value | number_format(2, ',', ' ') }}
+		{{ value | number_format(2, '.', '') }}
 	</a>
-	<input type="text" value="{{ value | number_format(2, ',', ' ') }}"
+	<input type="text" value="{{ value | number_format(2, '.', '') }}"
 		   data-id="{{ item.id }}" data-field="{{ field }}" data-url="{{ options.url }}" />
 </div>

@@ -39,6 +39,7 @@ class inlineEditExtension extends \Twig_Extension
         return array(
 			'ie_boolean' => new \Twig_Function_Method($this, 'ieBoolean', array('is_safe' => array('html'))),
 			'ie_price'   => new \Twig_Function_Method($this, 'iePrice',   array('is_safe' => array('html'))),
+			'ie_text'    => new \Twig_Function_Method($this, 'ieText',   array('is_safe' => array('html'))),
 			'ie_visible' => new \Twig_Function_Method($this, 'ieVisible', array('is_safe' => array('html'))),
 		);
     }
@@ -92,6 +93,27 @@ class inlineEditExtension extends \Twig_Extension
 		/** @var $renderer EngineInterface */
 		$renderer = $this->container->get('templating');
 		return $renderer->render('NSCatalogBundle:InlineEdit:ie-price.html.twig', array(
+			'item'    => $item,
+			'field'   => $field,
+			'value'   => $value,
+			'options' => $options,
+		));
+    }
+
+	/**
+	 * @param Item   $item
+	 * @param string $field
+	 * @param string $value
+	 * @param array  $options
+	 * @return string
+	 */
+	public function ieText(Item $item, $field, $value, $options = array())
+    {
+		$options = $this->processOptions(array(), $options);
+
+		/** @var $renderer EngineInterface */
+		$renderer = $this->container->get('templating');
+		return $renderer->render('NSCatalogBundle:InlineEdit:ie-text.html.twig', array(
 			'item'    => $item,
 			'field'   => $field,
 			'value'   => $value,
