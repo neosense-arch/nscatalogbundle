@@ -41,6 +41,7 @@ class inlineEditExtension extends \Twig_Extension
 			'ie_price'   => new \Twig_Function_Method($this, 'iePrice',   array('is_safe' => array('html'))),
 			'ie_text'    => new \Twig_Function_Method($this, 'ieText',   array('is_safe' => array('html'))),
 			'ie_visible' => new \Twig_Function_Method($this, 'ieVisible', array('is_safe' => array('html'))),
+			'ie_title'   => new \Twig_Function_Method($this, 'ieTitle', array('is_safe' => array('html'))),
 		);
     }
 
@@ -74,6 +75,18 @@ class inlineEditExtension extends \Twig_Extension
 	public function ieVisible(Item $item)
     {
 		return $this->ieBoolean($item, 'visible', $item->getVisible(), array(
+			'class' => 'icon-eye-open',
+			'type'  => self::TYPE_ITEM_BASE_PROPERTY,
+		));
+    }
+
+	/**
+	 * @param Item $item
+	 * @return string
+	 */
+	public function ieTitle(Item $item)
+    {
+		return $this->ieText($item, 'title', $item->getTitle(), array(
 			'class' => 'icon-eye-open',
 			'type'  => self::TYPE_ITEM_BASE_PROPERTY,
 		));
