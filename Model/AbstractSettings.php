@@ -1,0 +1,82 @@
+<?php
+
+namespace NS\CatalogBundle\Model;
+
+
+abstract class AbstractSettings
+{
+	/**
+	 * @return array
+	 */
+	public function toArray()
+	{
+		$res = array();
+
+		foreach (get_object_vars($this) as $var) {
+			if ($this->settingExists($var)) {
+				$res[$var] = $this->getSetting($var);
+			}
+		}
+
+		return $res;
+	}
+
+	/**
+	 * @param array $settings
+	 */
+	public function fromArray(array $settings)
+	{
+		foreach ($settings as $name => $value) {
+			$this->setSetting($name, $value);
+		}
+	}
+
+	/**
+	 * @param string $name
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function getSetting($name)
+	{
+		$getMethod = 'get' . ucfirst($name);
+		if (method_exists($this, $getMethod)) {
+			return $this->$getMethod();
+		}
+
+		$isMethod = 'is' . ucfirst($name);
+		if (method_exists($this, $isMethod)) {
+			return $this->$isMethod();
+		}
+
+		throw new \Exception(sprintf(
+			"Property '%s::%s' wasn't found (methods %s, %s wasn't found)",
+			get_class($this),
+			$name,
+			$getMethod,
+			$isMethod
+		));
+	}
+
+	/**
+	 * @param string $name
+	 * @param mixed  $value
+	 */
+	public function setSetting($name, $value)
+	{
+		$method = 'set' . ucfirst($name);
+		if (method_exists($this, $method)) {
+			$this->$method($value);
+		}
+	}
+
+	/**
+	 * @param string $name
+	 * @return bool
+	 */
+	public function settingExists($name)
+	{
+		return property_exists($this, $name)
+			&& (method_exists($this, 'get' . ucfirst($name))
+				|| method_exists($this, 'is' . ucfirst($name)));
+	}
+}
