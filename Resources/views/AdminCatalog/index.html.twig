@@ -20,8 +20,8 @@
 		<div class="span9">
 			<div class="navbar">
 				<div class="navbar-inner">
-					<form class="navbar-search pull-left">
-						<input type="text" class="search-query" placeholder="Поиск" />
+					<form class="navbar-search pull-left" method="GET">
+						<input type="text" class="search-query" name="search" placeholder="Поиск" value="{{ search }}" />
 					</form>
 
 					<a href="#" class="btn pull-right" id="btnAddItem"><i class="icon-plus"></i> Добавить товар</a>

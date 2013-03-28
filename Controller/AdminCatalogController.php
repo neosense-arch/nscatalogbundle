@@ -26,10 +26,12 @@ class AdminCatalogController extends Controller
 
 		$category = $this->getCategory();
 
+		$search = !empty($_GET['search']) ? $_GET['search'] : null;
+
 		// items with pagination
 		$query = $this
 			->getItemRepository()
-			->getFindByCategoryQuery($category);
+			->getFindByCategoryQuery($category, $search);
 
 		$pagination = $this->get('knp_paginator')->paginate(
 			$query,
@@ -42,6 +44,7 @@ class AdminCatalogController extends Controller
 			'catalog'     => $catalog,
 			'catalogForm' => $form,
 			'category'    => $category,
+			'search'      => $search,
 		));
 	}
 
