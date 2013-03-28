@@ -5,25 +5,15 @@ namespace NS\CatalogBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use NS\CatalogBundle\Model\AbstractSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Form\FormTypeInterface;
 
+/**
+ * Class ItemRepository
+ *
+ * @package NS\CatalogBundle\Entity
+ */
 class ItemRepository extends EntityRepository
 {
-	/**
-	 * @var ContainerInterface
-	 */
-	private $container;
-
-	/**
-	 * @param ContainerInterface $container
-	 */
-	public function setContainer(ContainerInterface $container)
-	{
-		$this->container = $container;
-	}
-
 	/**
 	 * @param  int $id
 	 * @return Item
@@ -103,8 +93,19 @@ class ItemRepository extends EntityRepository
 	 */
 	public function findBySettings($key, $value, $limit = null, $skip = 0)
 	{
-		$items = $this->findAll();
-		return $this->filterItemsBySettings($items, $key, $value, $limit, $skip);
+		$queryBuilder = $this->getQueryBuilder()
+			->andWhere('s.name = :name')
+			->setParameter('name', $key)
+			->andWhere('s.value = :value')
+			->setParameter('value', $value);
+
+		if ($limit) {
+			$queryBuilder
+				->setMaxResults($limit)
+				->setFirstResult($skip);
+		}
+
+		return $queryBuilder->getQuery()->getResult();
 	}
 
 	/**
@@ -116,34 +117,19 @@ class ItemRepository extends EntityRepository
 	 */
 	public function findVisibleBySettings($key, $value, $limit = null, $skip = 0)
 	{
-		$items = $this->findAllVisible();
-		return $this->filterItemsBySettings($items, $key, $value, $limit, $skip);
-	}
-
-	/**
-	 * @param Item[] $items
-	 * @param string $key
-	 * @param mixed  $value
-	 * @param int    $limit
-	 * @param int    $skip
-	 * @return Item[]
-	 * @throws \Exception
-	 */
-	private function filterItemsBySettings($items, $key, $value, $limit = null, $skip = 0)
-	{
-		$filtered = array_filter($items, function(Item $item) use($key, $value){
-			$settings = $item->getSettings();
-			$method = 'get' . ucfirst($key);
-			if (!method_exists($settings, $method)) {
-				throw new \Exception(sprintf("Method '%s::%s' wasn't found", get_class($settings), $method));
-			}
-			return $settings->$method() == $value;
-		});
+		$queryBuilder = $this->getQueryBuilder()
+			->andWhere('i.visible = true')
+			->andWhere('s.name = :name')
+			->setParameter('name', $key)
+			->andWhere('s.value = :value')
+			->setParameter('value', $value);
 
 		if ($limit) {
-			return array_slice($filtered, $skip, $limit);
+			$queryBuilder
+				->setMaxResults($limit)
+				->setFirstResult($skip);
 		}
 
-		return $filtered;
+		return $queryBuilder->getQuery()->getResult();
 	}
 }

@@ -39,8 +39,6 @@ services:
         factory_method: 'getRepository'
         arguments:
             - %ns_catalog.repository.item.factory_argument%
-        calls:
-            - [setContainer, [@service_container]]
 
     ns_catalog.form.type.category:
         class: %ns_catalog.form.type.category.class%
