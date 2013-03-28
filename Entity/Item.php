@@ -2,12 +2,15 @@
 
 namespace NS\CatalogBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use NS\CatalogBundle\Model\AbstractSettings;
 
 /**
  * @ORM\Table(name="ns_catalog_items")
  * @ORM\Entity(repositoryClass="ItemRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class Item
 {
@@ -48,7 +51,12 @@ class Item
 
 	/**
 	 * @var string
-	 * @ORM\Column(type="text")
+	 * @ORM\OneToMany(targetEntity="Setting", mappedBy="item", cascade={"persist", "remove"})
+	 */
+	private $rawSettings;
+
+	/**
+	 * @var AbstractSettings
 	 */
 	private $settings;
 
@@ -117,18 +125,87 @@ class Item
 	}
 
 	/**
-	 * @param mixed $settings
+	 * @param Setting[] $rawSettings
 	 */
-	public function setSettings($settings)
+	public function setRawSettings($rawSettings)
 	{
-		$this->settings = serialize($settings);
+		$this->rawSettings = $rawSettings;
 	}
 
 	/**
-	 * @return mixed
+	 * @return Setting[]|ArrayCollection
+	 */
+	public function getRawSettings()
+	{
+		return $this->rawSettings;
+	}
+
+	/**
+	 * @param string $name
+	 * @return Setting
+	 */
+	public function getRawSetting($name)
+	{
+		foreach ($this->getRawSettings() as $setting) {
+			if ($setting->getName() === $name) {
+				return $setting;
+			}
+		}
+
+		$setting = new Setting();
+		$setting->setItem($this);
+		$setting->setName($name);
+
+		return $setting;
+	}
+
+	/**
+	 * @param AbstractSettings $settings
+	 */
+	public function setSettings(AbstractSettings $settings)
+	{
+		$rawSettings = array();
+		foreach ($settings->toArray() as $key => $value) {
+			$setting = $this->getRawSetting($key);
+			$setting->setValue($value);
+			$rawSettings[] = $setting;
+		}
+		$this->setRawSettings($rawSettings);
+
+		$this->settings = $settings;
+	}
+
+	/**
+	 * @return AbstractSettings
 	 */
 	public function getSettings()
 	{
-		return unserialize($this->settings);
+		return $this->settings;
+	}
+
+	/**
+	 * @ORM\PostLoad
+	 */
+	public function mapSettingsOnPostLoad()
+	{
+		$category = $this->getCategory();
+		if (!$category) {
+			throw new \Exception("Item #{$this->getId()} has no category");
+		}
+
+		$catalog = $category->getCatalog();
+		if (!$catalog) {
+			throw new \Exception("Category #{$category->getId()} has no catalog");
+		}
+
+		$modelClassName = $catalog->getSettingsModelClassName();
+
+		/** @var $settings AbstractSettings */
+		$settings = new $modelClassName();
+		foreach ($this->getRawSettings() as $setting) {
+			$settings->setSetting($setting->getName(), $setting->getValue());
+		}
+
+		$this->settings = $settings;
 	}
 }

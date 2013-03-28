@@ -22,7 +22,7 @@ class AdminCatalogController extends Controller
 		$catalog = $this->getCatalog();
 
 		// catalog form
-		$form = $this->get($catalog->getFormTypeName());
+		$form = $this->get($catalog->getSettingsFormTypeName());
 
 		$category = $this->getCategory();
 

@@ -12,9 +12,9 @@ abstract class AbstractSettings
 	{
 		$res = array();
 
-		foreach (get_object_vars($this) as $var) {
-			if ($this->settingExists($var)) {
-				$res[$var] = $this->getSetting($var);
+		foreach (get_object_vars($this) as $key => $value) {
+			if ($this->settingExists($key)) {
+				$res[$key] = $this->getSetting($key);
 			}
 		}
 
@@ -33,7 +33,7 @@ abstract class AbstractSettings
 
 	/**
 	 * @param string $name
-	 * @return mixed
+	 * @return string
 	 * @throws \Exception
 	 */
 	public function getSetting($name)

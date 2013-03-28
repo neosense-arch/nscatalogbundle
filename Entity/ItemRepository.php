@@ -5,9 +5,25 @@ namespace NS\CatalogBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
+use NS\CatalogBundle\Model\AbstractSettings;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\FormTypeInterface;
 
 class ItemRepository extends EntityRepository
 {
+	/**
+	 * @var ContainerInterface
+	 */
+	private $container;
+
+	/**
+	 * @param ContainerInterface $container
+	 */
+	public function setContainer(ContainerInterface $container)
+	{
+		$this->container = $container;
+	}
+
 	/**
 	 * @param  int $id
 	 * @return Item
@@ -47,6 +63,17 @@ class ItemRepository extends EntityRepository
 		return $this
 			->getFindByCategoryQuery($category)
 			->execute();
+	}
+
+	/**
+	 * @return QueryBuilder
+	 */
+	private function getQueryBuilder()
+	{
+		return $this
+			->createQueryBuilder('i')
+			->leftJoin('i.rawSettings', 's')
+			->orderBy('i.title', 'ASC');
 	}
 
 	/**
@@ -118,15 +145,5 @@ class ItemRepository extends EntityRepository
 		}
 
 		return $filtered;
-	}
-
-	/**
-	 * @return QueryBuilder
-	 */
-	private function getQueryBuilder()
-	{
-		return $this
-			->createQueryBuilder('i')
-			->orderBy('i.title', 'ASC');
 	}
 }

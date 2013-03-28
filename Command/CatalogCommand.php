@@ -82,7 +82,7 @@ class CatalogCommand extends ContainerAwareCommand
 			$catalog = new Catalog();
 			$catalog->setName($name);
 			$catalog->setTitle($title);
-			$catalog->setFormTypeName($formTypeName);
+			$catalog->setSettingsFormTypeName($formTypeName);
 
 			/** @var $em EntityManager */
 			$em = $container->get('doctrine')->getManager();

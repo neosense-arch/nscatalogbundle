@@ -185,7 +185,7 @@ class AdminItemsApiController extends Controller
 			throw new \Exception(sprintf("Catalog '%s' wasn't found", self::CATALOG_NAME));
 		}
 
-		$itemSettingsType = $this->get($catalog->getFormTypeName());
+		$itemSettingsType = $this->get($catalog->getSettingsFormTypeName());
 		return $this->createForm($itemSettingsType, $item->getSettings() ?: null);
 	}
 

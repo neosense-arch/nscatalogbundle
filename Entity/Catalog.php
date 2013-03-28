@@ -37,7 +37,13 @@ class Catalog
 	 * @var string
 	 * @ORM\Column(type="string")
 	 */
-	private $formTypeName;
+	private $settingsFormTypeName;
+
+	/**
+	 * @var string
+	 * @ORM\Column(type="string")
+	 */
+	private $settingsModelClassName;
 
 	/**
 	 * @var Category[]
@@ -104,16 +110,32 @@ class Catalog
 	/**
 	 * @param string $formTypeName
 	 */
-	public function setFormTypeName($formTypeName)
+	public function setSettingsFormTypeName($formTypeName)
 	{
-		$this->formTypeName = $formTypeName;
+		$this->settingsFormTypeName = $formTypeName;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getFormTypeName()
+	public function getSettingsFormTypeName()
 	{
-		return $this->formTypeName;
+		return $this->settingsFormTypeName;
+	}
+
+	/**
+	 * @param string $settingsModelClassName
+	 */
+	public function setSettingsModelClassName($settingsModelClassName)
+	{
+		$this->settingsModelClassName = $settingsModelClassName;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSettingsModelClassName()
+	{
+		return $this->settingsModelClassName;
 	}
 }

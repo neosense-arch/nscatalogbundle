@@ -7,6 +7,8 @@ parameters:
     ns_catalog.repository.catalog.factory_argument:  'NSCatalogBundle:Catalog'
     ns_catalog.repository.category.class:            'NS\CatalogBundle\Entity\CategoryRepository'
     ns_catalog.repository.category.factory_argument: 'NSCatalogBundle:Category'
+    ns_catalog.repository.item.class:                'NS\CatalogBundle\Entity\ItemRepository'
+    ns_catalog.repository.item.factory_argument:     'NSCatalogBundle:Item'
     ns_catalog.form.type.category.class:             'NS\CatalogBundle\Form\Type\CategoryType'
     ns_catalog.form.type.category.select.class:      'NS\CatalogBundle\Form\Type\CategorySelectType'
     ns_catalog.twig.extension.inline_edit.class:     'NS\CatalogBundle\Twig\Extension\InlineEditExtension'
@@ -30,6 +32,15 @@ services:
         factory_method: 'getRepository'
         arguments:
             - %ns_catalog.repository.category.factory_argument%
+
+    ns_catalog.repository.item:
+        class: %ns_catalog.repository.item.class%
+        factory_service: doctrine.orm.default_entity_manager
+        factory_method: 'getRepository'
+        arguments:
+            - %ns_catalog.repository.item.factory_argument%
+        calls:
+            - [setContainer, [@service_container]]
 
     ns_catalog.form.type.category:
         class: %ns_catalog.form.type.category.class%

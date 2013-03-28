@@ -22,7 +22,7 @@ class Setting
 	/**
 	 * @var Item
 	 *
-	 * @ORM\ManyToOne(targetEntity="Item", inversedBy="settings")
+	 * @ORM\ManyToOne(targetEntity="Item", inversedBy="rawSettings")
 	 * @ORM\JoinColumn(name="item_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	private $item;
@@ -35,7 +35,7 @@ class Setting
 
 	/**
 	 * @var string
-	 * @ORM\Column(type="text")
+	 * @ORM\Column(type="text", nullable=true)
 	 */
 	private $value;
 
