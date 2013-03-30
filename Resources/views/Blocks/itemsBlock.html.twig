@@ -5,3 +5,7 @@
 	<li>{{ item.title }}</li>
 {% endfor %}
 </ul>
+
+{% if pagination is defined %}
+	{{ knp_pagination_render(pagination) }}
+{% endif %}
