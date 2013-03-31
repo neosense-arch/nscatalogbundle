@@ -42,12 +42,35 @@ class CategoryRepository extends EntityRepository
 	}
 
 	/**
+	 * @param  Category $category
+	 * @return Category[]
+	 */
+	public function findByCategory(Category $category = null)
+	{
+		return $this
+			->getFindByCatalogNameQuery()
+			->where('c.parent = ?1')
+			->setParameter(1, $category)
+			->getQuery()
+			->execute();
+	}
+
+	/**
 	 * @param int $id
 	 * @return Category|null
 	 */
 	public function findOneById($id)
 	{
 		return $this->findOneBy(array('id' => $id));
+	}
+
+	/**
+	 * @param string $slug
+	 * @return Category|null
+	 */
+	public function findOneBySlug($slug)
+	{
+		return $this->findOneBy(array('slug' => $slug));
 	}
 
 	/**

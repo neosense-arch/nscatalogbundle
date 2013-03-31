@@ -1,0 +1,11 @@
+<h2>{{ block.title }}</h2>
+
+<div>
+	<ul>
+		{% for category in categories %}
+			<li>
+				<a href="{{ url('ns_catalog_category', { slug: category.slug }) }}">{{ category.title }}</a>
+			</li>
+		{% endfor %}
+	</ul>
+</div>

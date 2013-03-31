@@ -20,3 +20,10 @@ blocks:
         template: NSCatalogBundle:Blocks:categoriesMenuBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsModel
+    -
+        name: NSCatalogBundle:Blocks:categoriesBlock
+        title: Категории
+        form: "ns_catalogbundle_blockcategoriestype"
+        template: NSCatalogBundle:Blocks:categoriesBlock.phtml.twig
+        settingsFormClass: NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsForm
+        settingsModelClass: NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel

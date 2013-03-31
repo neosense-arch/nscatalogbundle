@@ -4,6 +4,7 @@ namespace NS\CatalogBundle\Controller;
 
 use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuFactory;
+use NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsModel;
 use NS\CatalogBundle\Entity\Category;
@@ -97,8 +98,8 @@ class BlocksController extends Controller
 		$rootNode = new CategoryNode($categoryRepository->findRootOrCreate(), $router);
 		$menu = $factory->createFromNode($rootNode);
 
-		/** @var $category Category */
-		$category = $this->getRequest()->attributes->get('category');
+		$slug = $this->getRequest()->attributes->get('slug');
+		$category = $categoryRepository->findOneBySlug($slug);
 		$matcher = new Matcher();
 		if ($category) {
 			$matcher->addVoter(new CategoryVoter($category));
@@ -109,6 +110,32 @@ class BlocksController extends Controller
 			'settings' => $settings,
 			'menu'     => $menu,
 			'matcher'  => $matcher,
+		));
+	}
+
+	/**
+	 * Categories block
+	 *
+	 * @param  Block $block
+	 * @return Response
+	 */
+	public function categoriesBlockAction(Block $block)
+	{
+		/** @var $settings CategoriesBlockSettingsModel */
+		$settings = $this->getBlockManager()->getBlockSettings($block);
+
+		/** @var $categoryRepository CategoryRepository */
+		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
+
+		$slug = $this->getRequest()->attributes->get('slug');
+		$category = $categoryRepository->findOneBySlug($slug);
+
+		$categories = $categoryRepository->findByCategory($category);
+
+		return $this->render('NSCatalogBundle:Blocks:categoriesBlock.html.twig', array(
+			'block'      => $block,
+			'settings'   => $settings,
+			'categories' => $categories,
 		));
 	}
 
