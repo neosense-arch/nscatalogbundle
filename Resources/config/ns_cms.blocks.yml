@@ -13,3 +13,10 @@ blocks:
         template: NSCatalogBundle:Blocks:newItemsBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsModel
+    -
+        name: NSCatalogBundle:Blocks:categoriesMenuBlock
+        title: Меню категорий
+        form: "ns_catalogbundle_blockcategoriesmenutype"
+        template: NSCatalogBundle:Blocks:categoriesMenuBlock.phtml.twig
+        settingsFormClass: NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsForm
+        settingsModelClass: NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsModel
