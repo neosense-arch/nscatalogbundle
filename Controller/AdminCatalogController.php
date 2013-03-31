@@ -7,6 +7,8 @@ use NS\CatalogBundle\Entity\CatalogRepository;
 use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\ItemRepository;
+use NS\CatalogBundle\Form\Type\CategorySelectType;
+use NS\CatalogBundle\Form\Type\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,12 +41,16 @@ class AdminCatalogController extends Controller
 			50
 		);
 
+		// category choice
+		$categoryForm = $this->createForm(new CategorySelectType());
+
 		return $this->render('NSCatalogBundle:AdminCatalog:index.html.twig', array(
-			'pagination'  => $pagination,
-			'catalog'     => $catalog,
-			'catalogForm' => $form,
-			'category'    => $category,
-			'search'      => $search,
+			'pagination'   => $pagination,
+			'catalog'      => $catalog,
+			'catalogForm'  => $form,
+			'category'     => $category,
+			'search'       => $search,
+			'categoryForm' => $categoryForm->createView(),
 		));
 	}
 

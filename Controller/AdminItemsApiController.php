@@ -135,6 +135,40 @@ class AdminItemsApiController extends Controller
 
 	/**
 	 * @throws \Exception
+	 * @return Response
+	 */
+	public function updateCategoryAction()
+	{
+		try {
+			if (empty($_REQUEST['id'])) {
+				return new JsonResponse(array('error' => "Required param 'id' wasn't found"));
+			}
+			if (!isset($_REQUEST['categoryId'])) {
+				return new JsonResponse(array('error' => "Required param 'categoryId' wasn't found"));
+			}
+
+			$category = $this->getCategoryRepository()->findOneById($_REQUEST['categoryId']);
+			if (!$category) {
+				return new JsonResponse(array('error' => "Category #{$_REQUEST['categoryId']} wasn't found"));
+			}
+
+			$ids = explode(',', $_REQUEST['id']);
+			$items = $this->getItemRepository()->findByIds($ids);
+
+			foreach ($items as $item) {
+				$item->setCategory($category);
+			}
+
+			$this->getDoctrine()->getManager()->flush();
+			return new JsonResponse(array('result' => 'ok'));
+		}
+		catch (\Exception $e) {
+			return new JsonResponse(array('error' => $e->getMessage()));
+		}
+	}
+
+	/**
+	 * @throws \Exception
 	 * @return Item
 	 */
 	private function getItem()

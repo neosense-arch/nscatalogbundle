@@ -24,6 +24,21 @@ class ItemRepository extends EntityRepository
 	}
 
 	/**
+	 * @param  int[] $ids
+	 * @return Item[]
+	 */
+	public function findByIds(array $ids)
+	{
+		$queryBuilder = $this->createQueryBuilder('i');
+
+		$queryBuilder
+			->where($queryBuilder->expr()->in('i.id', '?1'))
+			->setParameter(1, $ids);
+
+		return $queryBuilder->getQuery()->getResult();
+	}
+
+	/**
 	 * @return Item[]
 	 */
 	public function findAll()
