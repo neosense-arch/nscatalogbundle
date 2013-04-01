@@ -92,6 +92,7 @@ class ItemRepository extends EntityRepository
 
 		if ($category) {
 			$queryBuilder
+				->join('i.category', 'c')
 				->andWhere('i.category = ?1')
 				->setParameter(1, $category->getId());
 		}

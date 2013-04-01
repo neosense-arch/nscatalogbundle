@@ -6,6 +6,7 @@ use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuFactory;
 use NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsModel;
+use NS\CatalogBundle\Block\Settings\ItemsBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsModel;
 use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
@@ -136,6 +137,41 @@ class BlocksController extends Controller
 			'block'      => $block,
 			'settings'   => $settings,
 			'categories' => $categories,
+		));
+	}
+
+	/**
+	 * Category items block
+	 *
+	 * @param  Block $block
+	 * @return Response
+	 */
+	public function itemsBlockAction(Block $block)
+	{
+		/** @var $settings ItemsBlockSettingsModel */
+		$settings = $this->getBlockManager()->getBlockSettings($block);
+
+		/** @var $categoryRepository CategoryRepository */
+		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
+
+		$slug = $this->getRequest()->attributes->get('slug');
+		$category = $categoryRepository->findOneBySlug($slug);
+
+		/** @var $itemRepository ItemRepository */
+		$itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
+		$query = $itemRepository->getFindByCategoryQuery($category);
+
+//		$pagination = $this->get('knp_paginator')->paginate(
+//			$query,
+//			(!empty($_GET['page']) ? $_GET['page'] : 1),
+//			$settings->getCount()
+//		);
+
+		return $this->render('NSCatalogBundle:Blocks:itemsBlock.html.twig', array(
+			'block'      => $block,
+			'settings'   => $settings,
+			'items'      => $query->getResult(),
+//			'pagination' => $pagination,
 		));
 	}
 
