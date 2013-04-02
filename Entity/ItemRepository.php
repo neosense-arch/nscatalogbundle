@@ -77,7 +77,6 @@ class ItemRepository extends EntityRepository
 	{
 		return $this
 			->createQueryBuilder('i')
-			->leftJoin('i.rawSettings', 's')
 			->orderBy('i.title', 'ASC');
 	}
 
@@ -99,6 +98,7 @@ class ItemRepository extends EntityRepository
 
 		if ($search) {
 			$queryBuilder
+				->leftJoin('i.rawSettings', 's')
 				->andWhere('i.title LIKE :query1')
 				->setParameter('query1', '%' . $search . '%')
 				->orWhere('s.value LIKE :query2')
@@ -133,6 +133,7 @@ class ItemRepository extends EntityRepository
 	public function findVisibleBySettings($key, $value, $limit = null, $skip = 0)
 	{
 		$queryBuilder = $this->getQueryBuilder()
+			->leftJoin('i.rawSettings', 's')
 			->andWhere('i.visible = true')
 			->andWhere('s.name = :name')
 			->setParameter('name', $key)
@@ -189,6 +190,7 @@ class ItemRepository extends EntityRepository
 	private function getFindBySettingsQueryBuilder($key, $value, $limit = null, $skip = 0)
 	{
 		$queryBuilder = $this->getQueryBuilder()
+			->leftJoin('i.rawSettings', 's')
 			->andWhere('s.name = :name')
 			->setParameter('name', $key)
 			->andWhere('s.value = :value')

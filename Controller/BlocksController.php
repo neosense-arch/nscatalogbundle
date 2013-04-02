@@ -161,17 +161,17 @@ class BlocksController extends Controller
 		$itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
 		$query = $itemRepository->getFindByCategoryQuery($category);
 
-//		$pagination = $this->get('knp_paginator')->paginate(
-//			$query,
-//			(!empty($_GET['page']) ? $_GET['page'] : 1),
-//			$settings->getCount()
-//		);
+		$pagination = $this->get('knp_paginator')->paginate(
+			$query,
+			(!empty($_GET['page']) ? $_GET['page'] : 1),
+			$settings->getCount()
+		);
 
 		return $this->render('NSCatalogBundle:Blocks:itemsBlock.html.twig', array(
 			'block'      => $block,
 			'settings'   => $settings,
-			'items'      => $query->getResult(),
-//			'pagination' => $pagination,
+			'items'      => $pagination,
+			'pagination' => $pagination,
 		));
 	}
 
