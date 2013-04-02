@@ -1,9 +1,0 @@
-parameters:
-    ns_catalog.menu.resolver.catalog.class: 'NS\CatalogBundle\Menu\Resolver\CatalogMenuResolver'
-
-services:
-    ns_catalog.menu.resolver.catalog:
-        class: %ns_catalog.menu.resolver.catalog.class%
-        arguments: [@ns_admin.service, @knp_menu.factory, @ns_catalog.repository.catalog, @router]
-        tags:
-            - { name: ns_admin.menu.resolver }

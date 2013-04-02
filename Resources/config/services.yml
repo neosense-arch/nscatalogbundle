@@ -1,6 +1,3 @@
-imports:
-    - { resource: ns_admin.menu.yml }
-
 parameters:
     ns_catalog.settings.formtype.collection.class:   'NS\CatalogBundle\Model\SettingsFormTypeCollection'
     ns_catalog.repository.catalog.class:             'NS\CatalogBundle\Entity\CatalogRepository'
