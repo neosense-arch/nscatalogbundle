@@ -11,7 +11,7 @@ use Symfony\Component\Routing\RouterInterface;
  *
  * @package NS\CatalogBundle\Twig\Extension
  */
-class inlineEditExtension extends \Twig_Extension
+class InlineEditExtension extends \Twig_Extension
 {
 	const TYPE_ITEM_BASE_PROPERTY   = 'property';
 	const TYPE_ITEM_CUSTOM_SETTING  = 'setting';

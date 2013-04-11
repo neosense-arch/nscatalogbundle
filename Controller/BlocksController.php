@@ -6,6 +6,7 @@ use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuFactory;
 use NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsModel;
+use NS\CatalogBundle\Block\Settings\ItemBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\ItemsBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsModel;
 use NS\CatalogBundle\Entity\Category;
@@ -99,7 +100,7 @@ class BlocksController extends Controller
 		$rootNode = new CategoryNode($categoryRepository->findRootOrCreate(), $router);
 		$menu = $factory->createFromNode($rootNode);
 
-		$slug = $this->getRequest()->attributes->get('slug');
+		$slug = $this->getRequest()->attributes->get('categorySlug');
 		$category = $categoryRepository->findOneBySlug($slug);
 		$matcher = new Matcher();
 		if ($category) {
@@ -128,8 +129,8 @@ class BlocksController extends Controller
 		/** @var $categoryRepository CategoryRepository */
 		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
 
-		$slug = $this->getRequest()->attributes->get('slug');
-		$category = $categoryRepository->findOneBySlug($slug);
+		$categorySlug = $this->getRequest()->attributes->get('categorySlug');
+		$category = $categoryRepository->findOneBySlug($categorySlug);
 
 		$categories = $categoryRepository->findByCategory($category);
 
@@ -154,7 +155,7 @@ class BlocksController extends Controller
 		/** @var $categoryRepository CategoryRepository */
 		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
 
-		$slug = $this->getRequest()->attributes->get('slug');
+		$slug = $this->getRequest()->attributes->get('categorySlug');
 		$category = $categoryRepository->findOneBySlug($slug);
 
 		/** @var $itemRepository ItemRepository */
@@ -172,6 +173,38 @@ class BlocksController extends Controller
 			'settings'   => $settings,
 			'items'      => $pagination,
 			'pagination' => $pagination,
+		));
+	}
+
+	/**
+	 * Item detail info block
+	 *
+	 * @param  Block $block
+	 * @return Response
+	 */
+	public function itemBlockAction(Block $block)
+	{
+		/** @var $settings ItemBlockSettingsModel */
+		$settings = $this->getBlockManager()->getBlockSettings($block);
+
+		/** @var $categoryRepository CategoryRepository */
+		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
+
+		$categorySlug = $this->getRequest()->attributes->get('categorySlug');
+		$category = $categoryRepository->findOneBySlug($categorySlug);
+
+		/** @var $itemRepository ItemRepository */
+		$itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
+		$item = $itemRepository->findOneBySlug($this->getRequest()->attributes->get('itemSlug'));
+
+		if ($item->getCategory() !== $category) {
+			$item = null;
+		}
+
+		return $this->render('NSCatalogBundle:Blocks:itemBlock.html.twig', array(
+			'block'      => $block,
+			'settings'   => $settings,
+			'item'       => $item,
 		));
 	}
 

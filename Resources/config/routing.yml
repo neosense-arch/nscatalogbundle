@@ -1,3 +1,7 @@
 ns_catalog_category:
-    pattern:  '/catalog/{slug}'
+    pattern:  '/catalog/{categorySlug}'
     defaults: { _controller: NSCmsBundle:Pages:pageName, name: category }
+
+ns_catalog_item:
+    pattern:  '/catalog/{categorySlug}/{itemSlug}'
+    defaults: { _controller: NSCmsBundle:Pages:pageName, name: item }

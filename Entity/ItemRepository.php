@@ -24,6 +24,15 @@ class ItemRepository extends EntityRepository
 	}
 
 	/**
+	 * @param  string $slug
+	 * @return Item
+	 */
+	public function findOneBySlug($slug)
+	{
+		return $this->findOneBy(array('slug' => $slug));
+	}
+
+	/**
 	 * @param  int[] $ids
 	 * @return Item[]
 	 */

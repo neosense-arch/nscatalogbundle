@@ -85,7 +85,7 @@ class CategoryNode implements NodeInterface
 	private function getUrl()
 	{
 		return $this->router->generate(self::CATEGORY_PAGE_ROUTE, array(
-			'slug' => $this->category->getSlug(),
+			'categorySlug' => $this->category->getSlug(),
 		));
 	}
 }
