@@ -9,6 +9,7 @@ parameters:
     ns_catalog.form.type.category.class:             'NS\CatalogBundle\Form\Type\CategoryType'
     ns_catalog.form.type.category.select.class:      'NS\CatalogBundle\Form\Type\CategorySelectType'
     ns_catalog.twig.extension.inline_edit.class:     'NS\CatalogBundle\Twig\Extension\InlineEditExtension'
+    ns_catalog.twig.extension.dimensions.class:      'NS\CatalogBundle\Twig\Extension\DimensionsExtension'
 
 services:
     ns_catalog.settings.formtype.collection:
@@ -52,3 +53,8 @@ services:
         arguments: [@service_container]
         tags:
             - { name: twig.extension, alias: ns_catalog_inline_edit }
+
+    ns_catalog.twig.extension.dimensions:
+        class: %ns_catalog.twig.extension.dimensions.class%
+        tags:
+            - { name: twig.extension, alias: dimensions }
