@@ -34,3 +34,10 @@ blocks:
         template: NSCatalogBundle:Blocks:itemsBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\ItemsBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\ItemsBlockSettingsModel
+    -
+        name: NSCatalogBundle:Blocks:itemBlock
+        title: Карточка товара
+        form: "ns_catalogbundle_blockitemtype"
+        template: NSCatalogBundle:Blocks:itemBlock.phtml.twig
+        settingsFormClass: NS\CatalogBundle\Block\Settings\ItemBlockSettingsForm
+        settingsModelClass: NS\CatalogBundle\Block\Settings\ItemBlockSettingsModel

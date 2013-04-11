@@ -1,0 +1,7 @@
+{% if item %}
+	<h2>{{ item.title }}</h2>
+
+	<p>{{ item.category.title }}</p>
+{% else %}
+	<p>Товар не найден</p>
+{% endif %}
