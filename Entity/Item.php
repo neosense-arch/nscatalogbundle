@@ -53,7 +53,7 @@ class Item
 	 * @var string
 	 * @ORM\OneToMany(targetEntity="Setting", mappedBy="item", cascade={"persist", "remove"})
 	 */
-	private $rawSettings;
+	private $rawSettings = array();
 
 	/**
 	 * @var AbstractSettings
