@@ -6,6 +6,7 @@ use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuFactory;
 use NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsModel;
+use NS\CatalogBundle\Block\Settings\CategoryBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\ItemBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\ItemsBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsModel;
@@ -138,6 +139,30 @@ class BlocksController extends Controller
 			'block'      => $block,
 			'settings'   => $settings,
 			'categories' => $categories,
+		));
+	}
+
+	/**
+	 * Category block
+	 *
+	 * @param  Block $block
+	 * @return Response
+	 */
+	public function categoryBlockAction(Block $block)
+	{
+		/** @var $settings CategoryBlockSettingsModel */
+		$settings = $this->getBlockManager()->getBlockSettings($block);
+
+		/** @var $categoryRepository CategoryRepository */
+		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
+
+		$categorySlug = $this->getRequest()->attributes->get('categorySlug');
+		$category = $categoryRepository->findOneBySlug($categorySlug);
+
+		return $this->render('NSCatalogBundle:Blocks:categoryBlock.html.twig', array(
+			'block'    => $block,
+			'settings' => $settings,
+			'category' => $category,
 		));
 	}
 
