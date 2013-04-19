@@ -94,6 +94,12 @@ class Category
 	private $items;
 
 	/**
+	 * @var string
+	 * @ORM\Column(type="text", nullable=true)
+	 */
+	private $description;
+
+	/**
 	 * @return int
 	 */
 	public function getId()
@@ -139,6 +145,22 @@ class Category
 	public function getSlug()
 	{
 		return $this->slug;
+	}
+
+	/**
+	 * @param string $description
+	 */
+	public function setDescription($description)
+	{
+		$this->description = $description;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDescription()
+	{
+		return $this->description;
 	}
 
 	/**

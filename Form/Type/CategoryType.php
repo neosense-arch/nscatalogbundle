@@ -34,6 +34,10 @@ class CategoryType extends AbstractType
 				'required' => false,
 				'catalog_name' => $this->catalogName,
 			))
+			->add('description', 'tinymce', array(
+				'label' => 'Описание',
+				'required' => false,
+			))
         ;
     }
 
