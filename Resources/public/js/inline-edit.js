@@ -33,6 +33,7 @@
 		ieTextLink.click(function(){
 			$(this).hide();
 			$(this).parent().find('input').show().focus().select();
+			return false;
 		});
 		$('.ns-ie-text input')
 			.blur(function(){
@@ -62,6 +63,10 @@
 						throw res.error;
 					}
 					el.parent().find('a').text(el.val());
+
+					if (el.data('reload')) {
+						location.reload();
+					}
 				}, this));
 			})
 		;

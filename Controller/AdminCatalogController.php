@@ -8,10 +8,14 @@ use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\ItemRepository;
 use NS\CatalogBundle\Form\Type\CategorySelectType;
-use NS\CatalogBundle\Form\Type\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class AdminCatalogController
+ *
+ * @package NS\CatalogBundle\Controller
+ */
 class AdminCatalogController extends Controller
 {
 	/**
