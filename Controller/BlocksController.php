@@ -12,8 +12,10 @@ use NS\CatalogBundle\Block\Settings\ItemsBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsModel;
 use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
+use NS\CatalogBundle\Entity\Item;
 use NS\CatalogBundle\Menu\CategoryNode;
 use NS\CatalogBundle\Menu\Matcher\Voter\CategoryVoter;
+use NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsModel;
 use NS\CmsBundle\Entity\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +27,10 @@ use NS\CatalogBundle\Block\Settings\MainItemsBlockSettingsModel;
 use NS\CatalogBundle\Entity\ItemRepository;
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * Class BlocksController
+ * @package NS\CatalogBundle\Controller
+ */
 class BlocksController extends Controller
 {
 	/**
@@ -230,6 +236,33 @@ class BlocksController extends Controller
 			'block'      => $block,
 			'settings'   => $settings,
 			'item'       => $item,
+		));
+	}
+
+	/**
+	 * @param  Block $block
+	 * @return Response
+	 */
+	public function fullListBlockAction(Block $block)
+	{
+		/** @var $settings CountBlockSettingsModel */
+		$settings = $this->getBlockManager()->getBlockSettings($block);
+
+		/** @var $itemRepository ItemRepository */
+		$itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
+		$query = $itemRepository->getFindFullCatalogQuery();
+
+		$pagination = $this->get('knp_paginator')->paginate(
+			$query,
+			(!empty($_GET['page']) ? $_GET['page'] : 1),
+			$settings->getCount()
+		);
+
+		return $this->render('NSCatalogBundle:Blocks:fullListBlock.html.twig', array(
+			'block'      => $block,
+			'settings'   => $settings,
+			'items'      => $pagination,
+			'pagination' => $pagination,
 		));
 	}
 

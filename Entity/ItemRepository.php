@@ -190,6 +190,29 @@ class ItemRepository extends EntityRepository
 	}
 
 	/**
+	 * @param int $limit
+	 * @param int $skip
+	 * @return Query
+	 */
+	public function getFindFullCatalogQuery($limit = null, $skip = 0)
+	{
+		$queryBuilder = $this
+			->createQueryBuilder('i')
+			->join('i.category', 'c')
+			->where('i.visible = true')
+			->addOrderBy('c.title')
+			->addOrderBy('i.title');
+
+		if ($limit) {
+			$queryBuilder
+				->setMaxResults($limit)
+				->setFirstResult($skip);
+		}
+
+		return $queryBuilder->getQuery();
+	}
+
+	/**
 	 * @param string $key
 	 * @param mixed  $value
 	 * @param int    $limit
@@ -198,7 +221,8 @@ class ItemRepository extends EntityRepository
 	 */
 	private function getFindBySettingsQueryBuilder($key, $value, $limit = null, $skip = 0)
 	{
-		$queryBuilder = $this->getQueryBuilder()
+		$queryBuilder = $this
+			->getQueryBuilder()
 			->leftJoin('i.rawSettings', 's')
 			->andWhere('s.name = :name')
 			->setParameter('name', $key)

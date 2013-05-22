@@ -48,3 +48,9 @@ blocks:
         template: NSCatalogBundle:Blocks:categoryBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\CategoryBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoryBlockSettingsModel
+    -
+        name: NSCatalogBundle:Blocks:fullListBlock
+        title: Полный список товаров
+        template: NSCatalogBundle:Blocks:fullListBlock.phtml.twig
+        settingsFormClass: NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsForm
+        settingsModelClass: NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsModel
