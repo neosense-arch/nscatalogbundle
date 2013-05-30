@@ -229,4 +229,20 @@ class Category
 	{
 		return str_repeat($levelIndicator, $this->level) . ' ' . $this->getTitle();
 	}
+
+	/**
+	 * @param $items
+	 */
+	public function setItems($items)
+	{
+		$this->items = $items;
+	}
+
+	/**
+	 * @return Item[]
+	 */
+	public function getItems()
+	{
+		return $this->items;
+	}
 }
