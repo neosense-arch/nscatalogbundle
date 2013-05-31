@@ -6,13 +6,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use NS\CatalogBundle\Model\AbstractSettings;
+use NS\SearchBundle\Agent\ModelInterface;
 
 /**
  * @ORM\Table(name="ns_catalog_items")
  * @ORM\Entity(repositoryClass="ItemRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Item
+class Item implements ModelInterface
 {
 	/**
 	 * @var int
@@ -207,5 +208,13 @@ class Item
 		}
 
 		$this->settings = $settings;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getSearchModelId()
+	{
+		return $this->getId();
 	}
 }

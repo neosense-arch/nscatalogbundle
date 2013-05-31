@@ -79,4 +79,9 @@ abstract class AbstractSettings
 			&& (method_exists($this, 'get' . ucfirst($name))
 				|| method_exists($this, 'is' . ucfirst($name)));
 	}
+
+	/**
+	 * @return string
+	 */
+	abstract public function getSearchDocumentContents();
 }

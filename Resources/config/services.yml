@@ -10,6 +10,12 @@ parameters:
     ns_catalog.form.type.category.select.class:      'NS\CatalogBundle\Form\Type\CategorySelectType'
     ns_catalog.twig.extension.inline_edit.class:     'NS\CatalogBundle\Twig\Extension\InlineEditExtension'
     ns_catalog.twig.extension.dimensions.class:      'NS\CatalogBundle\Twig\Extension\DimensionsExtension'
+    
+    # search agent classes
+    ns_catalog.search.item.type:                     'ns_catalog:item'
+    ns_catalog.search.item.model.class:              'NS\CatalogBundle\Entity\Block'
+    ns_catalog.search.item.mapper.class:             'NS\CatalogBundle\Search\ItemMapper'
+    ns_catalog.search.item.repository.class:         'NS\CatalogBundle\Search\ItemRepository'
 
 services:
     ns_catalog.settings.formtype.collection:
@@ -58,3 +64,24 @@ services:
         class: %ns_catalog.twig.extension.dimensions.class%
         tags:
             - { name: twig.extension, alias: dimensions }
+
+    # item search agent
+    ns_catalog.search.item.agent:
+        class: %ns_search.agent.class%
+        arguments:
+            - %ns_catalog.search.item.type%
+            - %ns_catalog.search.item.model.class%
+            - @ns_catalog.search.item.mapper
+            - @ns_catalog.search.item.repository
+        tags:
+            - { name: ns_search.agent }
+
+    ns_catalog.search.item.mapper:
+        class: %ns_catalog.search.item.mapper.class%
+        arguments:
+            - @router
+
+    ns_catalog.search.item.repository:
+        class: %ns_catalog.search.item.repository.class%
+        arguments:
+            - @ns_catalog.repository.item
