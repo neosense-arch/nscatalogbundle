@@ -84,4 +84,9 @@ abstract class AbstractSettings
 	 * @return string
 	 */
 	abstract public function getSearchDocumentContents();
+
+	/**
+	 * @return string
+	 */
+	abstract public function getSearchDocumentDescription();
 }

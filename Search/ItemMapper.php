@@ -55,7 +55,7 @@ class ItemMapper implements MapperInterface
 	{
 		return new DocumentView(
 			$item->getTitle(),
-			$item->getSettings()->getSearchDocumentContents(),
+			$item->getSettings()->getSearchDocumentDescription(),
 			null,
 			$this->router->generate('ns_catalog_item', array(
 				'categorySlug' => $item->getCategory()->getSlug(),
