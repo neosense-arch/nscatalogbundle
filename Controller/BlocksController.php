@@ -204,6 +204,7 @@ class BlocksController extends Controller
 			'settings'   => $settings,
 			'items'      => $pagination,
 			'pagination' => $pagination,
+			'category'   => $category,
 		));
 	}
 
