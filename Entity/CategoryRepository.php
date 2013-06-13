@@ -12,7 +12,14 @@ class CategoryRepository extends EntityRepository
 	 */
 	public function findForDynatree()
 	{
-		$categories = $this->findBy(array(), array('root' => 'ASC', 'left' => 'ASC', 'title' => 'ASC'));
+		$categories = $this->findBy(
+			array(),
+			array(
+				'root'  => 'ASC',
+				'title' => 'ASC'
+			)
+		);
+
 		return $this->mapCategories($categories);
 	}
 
@@ -90,7 +97,6 @@ class CategoryRepository extends EntityRepository
 
 		$query
 			->orderBy('c.root', 'ASC')
-			->addOrderBy('c.left', 'ASC')
 			->addOrderBy('c.title', 'ASC');
 
 		return $query;
