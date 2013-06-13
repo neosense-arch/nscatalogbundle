@@ -118,6 +118,36 @@ class ItemRepository extends EntityRepository
 	}
 
 	/**
+	 * @param  Category $category
+	 * @param  string   $search
+	 * @return Query
+	 */
+	public function getFindVisibleByCategoryQuery(Category $category = null, $search = null)
+	{
+		$queryBuilder = $this->getQueryBuilder();
+
+		if ($category) {
+			$queryBuilder
+				->join('i.category', 'c')
+				->andWhere('i.category = ?1')
+				->setParameter(1, $category->getId());
+		}
+
+		if ($search) {
+			$queryBuilder
+				->leftJoin('i.rawSettings', 's')
+				->andWhere('i.title LIKE :query1')
+				->setParameter('query1', '%' . $search . '%')
+				->orWhere('s.value LIKE :query2')
+				->setParameter('query2', '%' . $search . '%');
+		}
+
+		$queryBuilder->andWhere('i.visible = true');
+
+		return $queryBuilder->getQuery();
+	}
+
+	/**
 	 * @param string $key
 	 * @param mixed  $value
 	 * @param int    $limit

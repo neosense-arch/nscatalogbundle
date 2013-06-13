@@ -191,7 +191,7 @@ class BlocksController extends Controller
 
 		/** @var $itemRepository ItemRepository */
 		$itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
-		$query = $itemRepository->getFindByCategoryQuery($category);
+		$query = $itemRepository->getFindVisibleByCategoryQuery($category);
 
 		$pagination = $this->get('knp_paginator')->paginate(
 			$query,
