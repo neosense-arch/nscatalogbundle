@@ -1,3 +1,27 @@
+{#
+	Common vars
+	* block [NS\CmsBundle\Entity\Block]
+	* settings [NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsModel]
+
+	Root-level vars
+	* menu [Knp\Menu\MenuItem]
+	* matcher [Knp\Menu\Matcher\Matcher]
+
+	Menu child items (via menu.children iterator)
+	* item.label
+	* item.uri
+	* item.hasChildren
+	* item.children
+	* item.extras
+
+	Extra data
+	* category [NS\CmsBundle\Entity\Category]
+		* id
+		* level
+		* title
+		* slug
+#}
+
 <h2>{{ block.title }}</h2>
 
 {% macro menu_items(items, matcher) %}
