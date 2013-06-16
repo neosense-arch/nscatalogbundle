@@ -22,6 +22,18 @@ class ItemsBlockSettingsForm extends AbstractType
 				'label'    => 'Количество товаров',
 				'required' => false,
 			))
+			->add('useCategory', 'checkbox', array(
+				'label'    => 'Реагировать на текущую категорию',
+				'required' => false,
+			))
+			->add('settingName', 'text', array(
+				'label'    => 'Имя свойства',
+				'required' => false,
+			))
+			->add('settingValue', 'text', array(
+				'label'    => 'Значение свойства',
+				'required' => false,
+			))
 		;
     }
 

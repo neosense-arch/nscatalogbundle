@@ -29,7 +29,7 @@ blocks:
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel
     -
         name: NSCatalogBundle:Blocks:itemsBlock
-        title: Товары категории
+        title: Товары
         form: "ns_catalogbundle_blockitemstype"
         template: NSCatalogBundle:Blocks:itemsBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\ItemsBlockSettingsForm
