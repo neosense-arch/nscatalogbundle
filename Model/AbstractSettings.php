@@ -2,7 +2,10 @@
 
 namespace NS\CatalogBundle\Model;
 
-
+/**
+ * Class AbstractSettings
+ * @package NS\CatalogBundle\Model
+ */
 abstract class AbstractSettings
 {
 	/**
@@ -90,10 +93,16 @@ abstract class AbstractSettings
 	/**
 	 * @return string
 	 */
-	abstract public function getSearchDocumentContents();
+	public function getSearchDocumentContents()
+	{
+		return null;
+	}
 
 	/**
 	 * @return string
 	 */
-	abstract public function getSearchDocumentDescription();
+	public function getSearchDocumentDescription()
+	{
+		return null;
+	}
 }
