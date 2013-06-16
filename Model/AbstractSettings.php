@@ -6,11 +6,18 @@ namespace NS\CatalogBundle\Model;
 abstract class AbstractSettings
 {
 	/**
+	 * @throws \Exception
 	 * @return array
 	 */
 	public function toArray()
 	{
 		$res = array();
+
+		$objectVars = get_object_vars($this);
+		if (!$objectVars) {
+			$class = get_called_class();
+			throw new \Exception("Settings model '{$class}' properties wasn't found. You must use protected access mode for properties");
+		}
 
 		foreach (get_object_vars($this) as $key => $value) {
 			if ($this->settingExists($key)) {
