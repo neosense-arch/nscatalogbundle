@@ -2,8 +2,14 @@
 
 namespace NS\CatalogBundle\Command;
 
+use Doctrine\ORM\EntityManager;
 use NS\CatalogBundle\Entity\Catalog;
 use NS\CatalogBundle\Entity\CatalogRepository;
+use NS\CmsBundle\Entity\Area;
+use NS\CmsBundle\Entity\Block;
+use NS\CmsBundle\Entity\BlockType;
+use NS\CmsBundle\Entity\Page;
+use NS\CmsBundle\Entity\PageRepository;
 use Sensio\Bundle\GeneratorBundle\Command\GenerateBundleCommand;
 use Sensio\Bundle\GeneratorBundle\Command\Helper\DialogHelper;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -107,7 +113,52 @@ class InstallCommand extends ContainerAwareCommand
 		// @todo generate catalog settings model
 		// @todo add 'goods' catalog
 
+		$output->writeln("\n");
+
+		// pages
+		$rootPage     = $this->getPageRepository()->findRootPageOrCreate();
+		$mainPage     = $this->findPageOrCreate($output, 'main',     $rootPage,    'Главная');
+		$catalogPage  = $this->findPageOrCreate($output, 'catalog',  $mainPage,    'Каталог');
+		$itemPage     = $this->findPageOrCreate($output, 'item',     $catalogPage, 'Страница товара');
+		$categoryPage = $this->findPageOrCreate($output, 'category', $catalogPage, 'Страница категории');
+
+		// adding blocks
+		$area = new Area();
+		$area->setTitle('Контент');
+		$area->setName('content');
+		$output->writeln("Adding default blocks to area '<comment>content<comment>'");
+
+		// @todo add blocks
+
+		$output->writeln("<info>Done!</info>\n");
+
 		return 0;
+	}
+
+	/**
+	 * @param OutputInterface $output
+	 * @param string          $name
+	 * @param Page            $parent
+	 * @param string          $title
+	 * @return Page
+	 */
+	private function findPageOrCreate(OutputInterface $output, $name, Page $parent, $title)
+	{
+		$output->writeln("Searching for page '<comment>{$name}</comment>'");
+		$page = $this->getPageRepository()->findOneByName($name);
+		if (!$page) {
+			$output->writeln("Page wasn't found. Creating page named '<comment>{$name}</comment>' with parent '<comment>{$parent->getName()}</comment>'");
+
+			$page = new Page();
+			$page->setName($name);
+			$page->setParent($parent);
+			$page->setTitle($title);
+
+			$this->getEntityManager()->persist($page);
+			$this->getEntityManager()->flush();
+		}
+		$output->writeln("Page '<comment>$name</comment>' <comment>#{$page->getId()}</comment> found\n");
+		return $page;
 	}
 
 	/**
@@ -118,6 +169,26 @@ class InstallCommand extends ContainerAwareCommand
 		return $this
 			->getContainer()
 			->get('ns_catalog.repository.catalog');
+	}
+
+	/**
+	 * @return PageRepository
+	 */
+	private function getPageRepository()
+	{
+		return $this
+			->getContainer()
+			->get('ns_cms.repository.page');
+	}
+
+	/**
+	 * @return EntityManager
+	 */
+	private function getEntityManager()
+	{
+		return $this
+			->getContainer()
+			->get('doctrine.orm.entity_manager');
 	}
 
 	/**
