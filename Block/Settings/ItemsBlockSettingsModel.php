@@ -25,6 +25,19 @@ class ItemsBlockSettingsModel
 	private $settingValue;
 
 	/**
+	 * @var string
+	 */
+	private $template;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		$this->template = 'NSCatalogBundle:Blocks:itemsBlock.html.twig';
+	}
+
+	/**
 	 * @param string $count
 	 */
 	public function setCount($count)
@@ -86,5 +99,21 @@ class ItemsBlockSettingsModel
 	public function getSettingValue()
 	{
 		return $this->settingValue;
+	}
+
+	/**
+	 * @param string $template
+	 */
+	public function setTemplate($template)
+	{
+		$this->template = $template;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTemplate()
+	{
+		return $this->template;
 	}
 }

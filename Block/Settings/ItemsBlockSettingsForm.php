@@ -34,6 +34,10 @@ class ItemsBlockSettingsForm extends AbstractType
 				'label'    => 'Значение свойства',
 				'required' => false,
 			))
+			->add('template', 'text', array(
+				'label'    => 'Шаблон',
+				'required' => false,
+			))
 		;
     }
 
