@@ -114,6 +114,33 @@ class BlocksController extends Controller
 			$matcher->addVoter(new CategoryVoter($category));
 		}
 
+		// items
+		$items = $menu->getChildren();
+
+		// sorting items
+		$sorted = array();
+		$sortItems = explode(',', $settings->getSortOrder());
+		foreach ($sortItems as $slug) {
+			foreach ($items as $item) {
+				/** @var Category $category */
+				$category = $item->getExtra('category');
+				if ($category->getSlug() === $slug) {
+					$sorted[] = $item;
+					break;
+				}
+			}
+		}
+
+		foreach ($items as $item) {
+			/** @var Category $category */
+			$category = $item->getExtra('category');
+			if (!in_array($category->getSlug(), $sortItems)) {
+				$sorted[] = $item;
+			}
+		}
+
+		$menu->setChildren($sorted);
+
 		return $this->render('NSCatalogBundle:Blocks:categoriesMenuBlock.html.twig', array(
 			'block'    => $block,
 			'settings' => $settings,

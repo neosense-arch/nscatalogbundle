@@ -17,6 +17,12 @@ class CategoriesMenuBlockSettingsForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
     {
+		$builder
+			->add('sortOrder', 'text', array(
+				'label'    => 'Сортировка',
+				'required' => false,
+			))
+		;
     }
 
 	/**
