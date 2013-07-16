@@ -6,8 +6,9 @@ use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use NS\AdminBundle\Menu\Resolver\MenuResolverInterface;
 use NS\AdminBundle\Service\AdminService;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Symfony\Component\Yaml\Yaml;
+use NS\CatalogBundle\Entity\Catalog;
+use NS\CatalogBundle\Entity\CatalogRepository;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class CatalogMenuResolver
@@ -27,13 +28,27 @@ class CatalogMenuResolver implements MenuResolverInterface
 	private $factory;
 
 	/**
-	 * @param AdminService     $adminService
-	 * @param FactoryInterface $factory
+	 * @var CatalogRepository
 	 */
-	public function __construct(AdminService $adminService, FactoryInterface $factory)
+	private $catalogRepository;
+
+	/**
+	 * @var RouterInterface
+	 */
+	private $router;
+
+	/**
+	 * @param AdminService      $adminService
+	 * @param FactoryInterface  $factory
+	 * @param CatalogRepository $catalogRepository
+	 * @param RouterInterface   $router
+	 */
+	public function __construct(AdminService $adminService, FactoryInterface $factory, CatalogRepository $catalogRepository, RouterInterface $router)
 	{
 		$this->adminService = $adminService;
 		$this->factory = $factory;
+		$this->catalogRepository = $catalogRepository;
+		$this->router = $router;
 	}
 
 	/**
@@ -42,81 +57,20 @@ class CatalogMenuResolver implements MenuResolverInterface
 	 */
 	public function resolve(ItemInterface $menu)
 	{
-		return;
+		/** @var Catalog $catalog */
+		foreach ($this->catalogRepository->findAll() as $catalog) {
+			$uri = $this->router->generate('ns_admin_bundle', array(
+				'adminBundle'     => 'NSCatalogBundle',
+				'adminController' => 'catalog',
+				'adminAction'     => 'index',
+			));
+			$uri .= '?catalog=' . $catalog->getName();
 
-		// adding bundles' menus
-		foreach ($this->adminService->getActiveBundles() as $bundle) {
-			$fileName = $this->getBundleNavigationFileName($bundle);
-			if (file_exists($fileName)) {
-				$yml = file_get_contents($fileName);
-				foreach (Yaml::parse($yml) as $data) {
-					$menu->addChild($this->createMenuItem($data, $bundle->getName()));
-				}
-			}
+			$menu->addChild($this->factory->createItem(uniqid(), array(
+				'label' => $catalog->getTitle(),
+				'uri' => $uri,
+				'displayChildren' => false
+			)));
 		}
-	}
-
-	/**
-	 * @param array  $data
-	 * @param string $bundleName
-	 * @return ItemInterface
-	 */
-	private function createMenuItem(array $data, $bundleName)
-	{
-		$item = $this->convertDataFormat($data, $bundleName);
-		return $this->factory->createFromArray($item);
-	}
-
-	/**
-	 * Converts data format from ns_admin.navigation format to KNP-Menu
-	 *
-	 * @param  array  $data
-	 * @param  string $bundleName
-	 * @throws \Exception
-	 * @return array
-	 */
-	private function convertDataFormat(array $data, $bundleName)
-	{
-		// required params
-		if (empty($data['label'])) {
-			throw new \Exception('Required attribute "label" is missing');
-		}
-		if (empty($data['action'])) {
-			throw new \Exception('Required attribute "action" is missing');
-		}
-
-		// if action value is empty ("mycontroller:" or "mycontroller")
-		// using default value "index"
-		$action = trim($data['action'], ':');
-
-		// exploding route params (with default action value)
-		$params = explode(':', $action) + array(null, 'index');
-		$adminController = $params[0];
-		$adminAction = $params[1];
-
-		// retrieving knp-menu formatted item config array
-		$item = array(
-			'name'  => uniqid(),
-			'label' => $data['label'],
-			'route' => 'ns_admin_bundle',
-			'routeParameters' => array(
-				'adminBundle'     => $bundleName,
-				'adminController' => $adminController,
-				'adminAction'     => $adminAction,
-			),
-			'extras' => array(
-				'controller' => $this->adminService->getAdminRouteController($bundleName, $adminController, $adminAction),
-			),
-			'displayChildren' => false
-		);
-
-		// recursively adding child items
-		if (!empty($data['pages'])) {
-			foreach ($data['pages'] as $page) {
-				$item['children'][] = $this->convertDataFormat($page, $bundleName);
-			}
-		}
-
-		return $item;
 	}
 }

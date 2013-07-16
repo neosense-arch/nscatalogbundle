@@ -74,9 +74,10 @@ services:
         tags:
             - { name: twig.extension, alias: dimensions }
 
+    # menu resolvers
     ns_catalog.menu.resolver.catalog:
             class: %ns_catalog.menu.resolver.catalog.class%
-            arguments: [@ns_admin.service, @knp_menu.factory]
+            arguments: [@ns_admin.service, @knp_menu.factory, @ns_catalog.repository.catalog, @router]
             tags:
                 - { name: ns_admin.menu.resolver }
 
