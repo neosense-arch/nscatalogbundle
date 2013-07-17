@@ -48,7 +48,7 @@ class AdminSettingsTypeController extends Controller
 
 		// validating form
 		if ($this->getRequest()->getMethod() === 'POST') {
-			$form->bind($this->getRequest());
+			$form->submit($this->getRequest());
 			if ($form->isValid()) {
 				$this->getDoctrine()->getManager()->persist($type);
 				$this->getDoctrine()->getManager()->flush();

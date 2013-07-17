@@ -30,8 +30,8 @@ class AdminItemsApiController extends Controller
 			$itemSettingsForm = $this->createItemSettingsForm($item);
 
 			if ($this->getRequest()->getMethod() === 'POST') {
-				$itemForm->bind($this->getRequest());
-				$itemSettingsForm->bind($this->getRequest());
+				$itemForm->submit($this->getRequest());
+				$itemSettingsForm->submit($this->getRequest());
 
 				if ($itemForm->isValid() && $itemSettingsForm->isValid()) {
 					$item->setSettings($itemSettingsForm->getData());

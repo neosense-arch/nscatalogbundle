@@ -28,7 +28,7 @@ class AdminCategoriesApiController extends Controller
 			$form = $this->createForm($this->get('ns_catalog.form.type.category'), $category);
 
 			if ($this->getRequest()->getMethod() === 'POST') {
-				$form->bind($this->getRequest());
+				$form->submit($this->getRequest());
 				if ($form->isValid()) {
 					if (!$category->getParent()) {
 						$category->setParent($this->getCategoryRepository()->findRootOrCreate());
