@@ -65,7 +65,12 @@ class AdminCatalogController extends Controller
 	 */
 	private function getCatalog()
 	{
-		$catalog = $this->getCatalogRepository()->findOneByName('goods');
+		$catalogName = 'goods';
+		if (!empty($_GET['catalog'])) {
+			$catalogName = $_GET['catalog'];
+		}
+
+		$catalog = $this->getCatalogRepository()->findOneByName($catalogName);
 		if (!$catalog) {
 			throw new \Exception("Catalog named 'goods' wasn't found");
 		}
