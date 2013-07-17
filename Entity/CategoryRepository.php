@@ -8,12 +8,20 @@ use Doctrine\ORM\QueryBuilder;
 class CategoryRepository extends EntityRepository
 {
 	/**
+	 * @param Catalog $catalog
 	 * @return array
 	 */
-	public function findForDynatree()
+	public function findForDynatree(Catalog $catalog = null)
 	{
+		$criteria = array();
+		if ($catalog) {
+			$criteria = array(
+				'catalog' => $catalog,
+			);
+		}
+
 		$categories = $this->findBy(
-			array(),
+			$criteria,
 			array(
 				'root'  => 'ASC',
 				'title' => 'ASC'

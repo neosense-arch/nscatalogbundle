@@ -2,6 +2,7 @@
 
 namespace NS\CatalogBundle\Controller;
 
+use NS\CatalogBundle\Entity\Catalog;
 use NS\CatalogBundle\Entity\CatalogRepository;
 use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
