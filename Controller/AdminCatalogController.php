@@ -38,7 +38,7 @@ class AdminCatalogController extends Controller
 		// items with pagination
 		$query = $this
 			->getItemRepository()
-			->getFindByCategoryQuery($category, $search);
+			->getFindByCategoryQuery($category, $search, $catalog);
 
 		$pagination = $this->get('knp_paginator')->paginate(
 			$query,
@@ -72,7 +72,7 @@ class AdminCatalogController extends Controller
 
 		$catalog = $this->getCatalogRepository()->findOneByName($catalogName);
 		if (!$catalog) {
-			throw new \Exception("Catalog named 'goods' wasn't found");
+			throw new \Exception("Catalog named '{$catalogName}' wasn't found");
 		}
 
 		return $catalog;

@@ -86,7 +86,7 @@ class ItemRepository extends EntityRepository
 	 * @param  string   $search
 	 * @return Query
 	 */
-	public function getFindByCategoryQuery(Category $category = null, $search = null)
+	public function getFindByCategoryQuery(Category $category = null, $search = null, Catalog $catalog = null)
 	{
 		$queryBuilder = new ItemQueryBuilder($this->_em);
 
@@ -96,6 +96,13 @@ class ItemRepository extends EntityRepository
 
 		if ($search) {
 			$queryBuilder->search($search);
+		}
+
+		if ($catalog) {
+			$queryBuilder
+				->join('c.catalog', 'ca')
+				->andWhere('ca.name = :catalog')
+				->setParameter('catalog', $catalog->getName());
 		}
 
 		return $queryBuilder->getQuery();
