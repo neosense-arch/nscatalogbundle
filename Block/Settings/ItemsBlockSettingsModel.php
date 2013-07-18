@@ -30,6 +30,11 @@ class ItemsBlockSettingsModel
 	private $template;
 
 	/**
+	 * @var string
+	 */
+	private $order;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct()
@@ -115,5 +120,78 @@ class ItemsBlockSettingsModel
 	public function getTemplate()
 	{
 		return $this->template;
+	}
+
+	/**
+	 * @param string $order
+	 */
+	public function setOrder($order)
+	{
+		$this->order = $order;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getOrder()
+	{
+		return $this->order;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getOrderField()
+	{
+		$order = $this->mapOrder();
+		if (count($order)) {
+			return $order[0];
+		}
+		return null;
+	}
+
+	/**
+	 * @return null
+	 */
+	public function getOrderDirection()
+	{
+		$order = $this->mapOrder();
+		if (count($order) > 1) {
+			$map = array(
+				'asc'  => SORT_ASC,
+				'desc' => SORT_DESC,
+			);
+			if (!empty($map[$order[1]])) {
+				return $map[$order[1]];
+			}
+		}
+		return SORT_ASC;
+	}
+
+	/**
+	 * @return null
+	 */
+	public function getOrderType()
+	{
+		$order = $this->mapOrder();
+		if (count($order) > 2) {
+			$map = array(
+				'numeric' => SORT_NUMERIC,
+				'string'  => SORT_STRING,
+			);
+			if (!empty($map[$order[2]])) {
+				return $map[$order[2]];
+			}
+		}
+		return SORT_STRING;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function mapOrder()
+	{
+		$order = str_replace(array('  ', ',', ';', ':', '/'), ' ', $this->getOrder());
+		return explode(' ', $order);
 	}
 }

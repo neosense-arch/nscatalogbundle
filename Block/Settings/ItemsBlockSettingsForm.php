@@ -38,6 +38,10 @@ class ItemsBlockSettingsForm extends AbstractType
 				'label'    => 'Шаблон',
 				'required' => false,
 			))
+			->add('order', 'text', array(
+				'label'    => 'Сортировка',
+				'required' => false,
+			))
 		;
     }
 
