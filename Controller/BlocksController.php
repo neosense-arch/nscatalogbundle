@@ -2,6 +2,8 @@
 
 namespace NS\CatalogBundle\Controller;
 
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\Paginator;
 use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuFactory;
 use NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel;
@@ -231,16 +233,27 @@ class BlocksController extends Controller
 				);
 		}
 
+		/** @var PaginationInterface $pagination */
 		$pagination = $this->get('knp_paginator')->paginate(
 			$query,
 			(!empty($_GET['page']) ? $_GET['page'] : 1),
 			$settings->getCount()
 		);
 
+		$items = array();
+		$sort = array();
+		/** @var Item $item */
+		foreach ($pagination as $item) {
+			$items[] = $item;
+			$sort[] = $item->getSettings()->getSetting('price');
+		}
+
+		array_multisort($sort, SORT_ASC, SORT_NUMERIC, $items);
+
 		return $this->render($settings->getTemplate(), array(
 			'block'      => $block,
 			'settings'   => $settings,
-			'items'      => $pagination,
+			'items'      => $items,
 			'pagination' => $pagination,
 			'category'   => $category,
 		));
