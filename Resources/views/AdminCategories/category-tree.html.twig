@@ -4,7 +4,7 @@
 		'selectedId':  category.id|default(null),
 		'header':     'Категории товаров',
 		'itemsJson':   categoriesJson,
-		'activateUrl': url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'catalog', adminAction: 'index' }) ~ '?categoryId={key}'
+		'activateUrl': url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'catalog', adminAction: 'index' }) ~ '?catalog=' ~ catalog.name ~ '&categoryId={key}'
 	} %}
 </div>
 
@@ -53,7 +53,7 @@
 		categoryTree.on('add-click', function(){
 			$('#dlgCategoryFormLabel').text('Добавление категории');
 			$.ajax({
-				'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categoriesApi', adminAction: 'form' }) }}',
+				'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'categoriesApi', adminAction: 'form' }) }}?catalog={{ catalog.name }}',
 				'type': 'GET'
 			})
 			.done(function(res){

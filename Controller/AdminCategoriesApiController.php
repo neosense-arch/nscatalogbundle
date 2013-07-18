@@ -21,6 +21,9 @@ class AdminCategoriesApiController extends Controller
 	public function formAction()
 	{
 		try {
+			// catalog object
+			$catalog = $this->getCatalog();
+
 			/** @var $categoryType CategoryType */
 			$categoryType = $this->get('ns_catalog.form.type.category');
 			$categoryType->setCatalogName(self::CATALOG_NAME);
@@ -84,14 +87,29 @@ class AdminCategoriesApiController extends Controller
 			}
 		}
 
-		$catalog = $this->getCatalogRepository()->findOneByName(self::CATALOG_NAME);
-		if (!$catalog) {
-			throw new \Exception(sprintf("Catalog '{%s}' wasn't found", self::CATALOG_NAME));
-		}
-
+		$catalog = $this->getCatalog();
 		$category->setCatalog($catalog);
 
 		return $category;
+	}
+
+	/**
+	 * @return Catalog
+	 * @throws \Exception
+	 */
+	private function getCatalog()
+	{
+		$catalogName = 'goods';
+		if (!empty($_GET['catalog'])) {
+			$catalogName = $_GET['catalog'];
+		}
+
+		$catalog = $this->getCatalogRepository()->findOneByName($catalogName);
+		if (!$catalog) {
+			throw new \Exception("Catalog named '{$catalogName}' wasn't found");
+		}
+
+		return $catalog;
 	}
 
 	/**
