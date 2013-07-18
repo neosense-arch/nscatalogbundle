@@ -240,15 +240,18 @@ class BlocksController extends Controller
 			$settings->getCount()
 		);
 
-		$items = array();
-		$sort = array();
-		/** @var Item $item */
-		foreach ($pagination as $item) {
-			$items[] = $item;
-			$sort[] = $item->getSettings()->getSetting('price');
-		}
+		$items = $pagination;
+		if ($settings->getOrder()) {
+			$items = array();
+			$sort = array();
+			/** @var Item $item */
+			foreach ($pagination as $item) {
+				$items[] = $item;
+				$sort[] = $item->getSettings()->getSetting('price');
+			}
 
-		array_multisort($sort, SORT_ASC, SORT_NUMERIC, $items);
+			array_multisort($sort, SORT_ASC, SORT_NUMERIC, $items);
+		}
 
 		return $this->render($settings->getTemplate(), array(
 			'block'      => $block,
