@@ -3,8 +3,10 @@
 namespace NS\CatalogBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
+use NS\CatalogBundle\QueryBuilder\ItemQueryBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,7 +18,7 @@ class ItemRepository extends EntityRepository
 {
 	/**
 	 * @param  int $id
-	 * @return Item
+	 * @return Item|null
 	 */
 	public function findOneById($id)
 	{
@@ -25,7 +27,7 @@ class ItemRepository extends EntityRepository
 
 	/**
 	 * @param  string $slug
-	 * @return Item
+	 * @return Item|null
 	 */
 	public function findOneBySlug($slug)
 	{
@@ -38,8 +40,7 @@ class ItemRepository extends EntityRepository
 	 */
 	public function findByIds(array $ids)
 	{
-		$queryBuilder = $this->createQueryBuilder('i');
-
+		$queryBuilder = new ItemQueryBuilder($this->_em);
 		$queryBuilder
 			->where($queryBuilder->expr()->in('i.id', '?1'))
 			->setParameter(1, $ids);
@@ -62,7 +63,8 @@ class ItemRepository extends EntityRepository
 	 */
 	public function findAllVisible()
 	{
-		return $this->getQueryBuilder()
+		$queryBuilder = new ItemQueryBuilder($this->_em);
+		return $queryBuilder
 			->andWhere('i.visible = true')
 			->getQuery()
 			->getResult();
@@ -80,69 +82,21 @@ class ItemRepository extends EntityRepository
 	}
 
 	/**
-	 * @return QueryBuilder
-	 */
-	private function getQueryBuilder()
-	{
-		return $this
-			->createQueryBuilder('i')
-			->orderBy('i.title', 'ASC');
-	}
-
-	/**
 	 * @param  Category $category
 	 * @param  string   $search
 	 * @return Query
 	 */
 	public function getFindByCategoryQuery(Category $category = null, $search = null)
 	{
-		$queryBuilder = $this->getQueryBuilder();
+		$queryBuilder = new ItemQueryBuilder($this->_em);
 
 		if ($category) {
-			$queryBuilder
-				->join('i.category', 'c')
-				->andWhere('i.category = ?1')
-				->setParameter(1, $category->getId());
+			$queryBuilder->andWhereCategory($category);
 		}
 
 		if ($search) {
-			$queryBuilder
-				->leftJoin('i.rawSettings', 's')
-				->andWhere('i.title LIKE :query1')
-				->setParameter('query1', '%' . $search . '%')
-				->orWhere('s.value LIKE :query2')
-				->setParameter('query2', '%' . $search . '%');
+			$queryBuilder->search($search);
 		}
-
-		return $queryBuilder->getQuery();
-	}
-
-	/**
-	 * @param  Category $category
-	 * @param  string   $search
-	 * @return Query
-	 */
-	public function getFindVisibleByCategoryQuery(Category $category = null, $search = null)
-	{
-		$queryBuilder = $this->getQueryBuilder();
-
-		if ($category) {
-			$queryBuilder
-				->join('i.category', 'c')
-				->andWhere('i.category = ?1')
-				->setParameter(1, $category->getId());
-		}
-
-		if ($search) {
-			$queryBuilder
-				->leftJoin('i.rawSettings', 's')
-				->andWhere('i.title LIKE :query1')
-				->setParameter('query1', '%' . $search . '%')
-				->orWhere('s.value LIKE :query2')
-				->setParameter('query2', '%' . $search . '%');
-		}
-
-		$queryBuilder->andWhere('i.visible = true');
 
 		return $queryBuilder->getQuery();
 	}
@@ -167,11 +121,13 @@ class ItemRepository extends EntityRepository
 	 * @param mixed  $value
 	 * @param int    $limit
 	 * @param int    $skip
+	 * @param int    $skip
 	 * @return Item[]
 	 */
 	public function findVisibleBySettings($key, $value, $limit = null, $skip = 0)
 	{
-		$queryBuilder = $this->getQueryBuilder()
+		$queryBuilder = new ItemQueryBuilder($this->_em);
+		$queryBuilder
 			->leftJoin('i.rawSettings', 's')
 			->andWhere('i.visible = true')
 			->andWhere('s.name = :name')
@@ -226,8 +182,9 @@ class ItemRepository extends EntityRepository
 	 */
 	public function getFindFullCatalogQuery($limit = null, $skip = 0)
 	{
-		$queryBuilder = $this
-			->createQueryBuilder('i')
+		$queryBuilder = new ItemQueryBuilder($this->_em);
+
+		$queryBuilder
 			->join('i.category', 'c')
 			->where('i.visible = true')
 			->addOrderBy('c.title')
@@ -251,8 +208,8 @@ class ItemRepository extends EntityRepository
 	 */
 	private function getFindBySettingsQueryBuilder($key, $value, $limit = null, $skip = 0)
 	{
-		$queryBuilder = $this
-			->getQueryBuilder()
+		$queryBuilder = new ItemQueryBuilder($this->_em);
+		$queryBuilder
 			->leftJoin('i.rawSettings', 's')
 			->andWhere('s.name = :name')
 			->setParameter('name', $key)

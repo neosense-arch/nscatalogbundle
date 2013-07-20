@@ -8,6 +8,7 @@ use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\ItemRepository;
 use NS\CatalogBundle\Form\Type\CategorySelectType;
+use NS\CatalogBundle\QueryBuilder\ItemQueryBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,6 +34,8 @@ class AdminCatalogController extends Controller
 		$category = $this->getCategory();
 
 		$search = !empty($_GET['search']) ? $_GET['search'] : null;
+
+
 
 		// items with pagination
 		$query = $this

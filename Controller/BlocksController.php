@@ -2,6 +2,7 @@
 
 namespace NS\CatalogBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\Paginator;
 use Knp\Menu\Matcher\Matcher;
@@ -17,6 +18,7 @@ use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\Item;
 use NS\CatalogBundle\Menu\CategoryNode;
 use NS\CatalogBundle\Menu\Matcher\Voter\CategoryVoter;
+use NS\CatalogBundle\QueryBuilder\ItemQueryBuilder;
 use NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsModel;
 use NS\CmsBundle\Entity\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -186,7 +188,9 @@ class BlocksController extends Controller
 	public function categoryBlockAction(Block $block)
 	{
 		/** @var $settings CategoryBlockSettingsModel */
-		$settings = $this->getBlockManager()->getBlockSettings($block);
+		$settings = $this
+			->getBlockManager()
+			->getBlockSettings($block);
 
 		/** @var $categoryRepository CategoryRepository */
 		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
@@ -210,20 +214,22 @@ class BlocksController extends Controller
 	public function itemsBlockAction(Block $block)
 	{
 		/** @var $settings ItemsBlockSettingsModel */
-		$settings = $this->getBlockManager()->getBlockSettings($block);
+		$settings = $this
+			->getBlockManager()
+			->getBlockSettings($block);
 
-		/** @var $categoryRepository CategoryRepository */
-		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
+		$categorySlug = $this->getRequest()->attributes->get('categorySlug');
+		$category = $this
+			->getCategoryRepository()
+			->findOneBySlug($categorySlug);
 
-		$slug = $this->getRequest()->attributes->get('categorySlug');
-		$category = $categoryRepository->findOneBySlug($slug);
-
-		/** @var $itemRepository ItemRepository */
-		$itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
+		$itemRepository = $this->getItemRepository();
 
 		if ($settings->getUseCategory()) {
-			$query = $itemRepository
-				->getFindVisibleByCategoryQuery($category);
+			$query = $this->createItemQueryBuilder()
+				->andWhereCategory($category)
+				->andVisible()
+				->getQuery();
 		}
 		else {
 			$query = $itemRepository
@@ -327,5 +333,34 @@ class BlocksController extends Controller
 	private function getBlockManager()
 	{
 		return $this->container->get('ns_cms.manager.block');
+	}
+
+	/**
+	 * @return CategoryRepository
+	 */
+	private function getCategoryRepository()
+	{
+		return $this
+			->getDoctrine()
+			->getManager()
+			->getRepository('NSCatalogBundle:Category');
+	}
+
+	/**
+	 * @return ItemRepository
+	 */
+	private function getItemRepository()
+	{
+		return $this->get('ns_catalog.repository.item');
+	}
+
+	/**
+	 * @return ItemQueryBuilder
+	 */
+	private function createItemQueryBuilder()
+	{
+		/** @var EntityManager $em */
+		$em = $this->get('doctrine.orm.entity_manager');
+		return new ItemQueryBuilder($em);
 	}
 }

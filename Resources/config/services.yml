@@ -1,27 +1,32 @@
 parameters:
-    ns_catalog.settings.formtype.collection.class:   'NS\CatalogBundle\Model\SettingsFormTypeCollection'
-    ns_catalog.repository.catalog.class:             'NS\CatalogBundle\Entity\CatalogRepository'
-    ns_catalog.repository.catalog.factory_argument:  'NSCatalogBundle:Catalog'
-    ns_catalog.repository.category.class:            'NS\CatalogBundle\Entity\CategoryRepository'
-    ns_catalog.repository.category.factory_argument: 'NSCatalogBundle:Category'
-    ns_catalog.repository.item.class:                'NS\CatalogBundle\Entity\ItemRepository'
-    ns_catalog.repository.item.factory_argument:     'NSCatalogBundle:Item'
-    ns_catalog.form.type.category.class:             'NS\CatalogBundle\Form\Type\CategoryType'
-    ns_catalog.form.type.category.select.class:      'NS\CatalogBundle\Form\Type\CategorySelectType'
-    ns_catalog.twig.extension.inline_edit.class:     'NS\CatalogBundle\Twig\Extension\InlineEditExtension'
-    ns_catalog.twig.extension.dimensions.class:      'NS\CatalogBundle\Twig\Extension\DimensionsExtension'
-    
+    ns_catalog.form.type.category.class:               'NS\CatalogBundle\Form\Type\CategoryType'
+    ns_catalog.form.type.category.select.class:        'NS\CatalogBundle\Form\Type\CategorySelectType'
+    ns_catalog.repository.catalog.class:               'NS\CatalogBundle\Entity\CatalogRepository'
+    ns_catalog.repository.catalog.factory_argument:    'NSCatalogBundle:Catalog'
+    ns_catalog.repository.category.class:              'NS\CatalogBundle\Entity\CategoryRepository'
+    ns_catalog.repository.category.factory_argument:   'NSCatalogBundle:Category'
+    ns_catalog.repository.item.class:                  'NS\CatalogBundle\Entity\ItemRepository'
+    ns_catalog.repository.item.factory_argument:       'NSCatalogBundle:Item'
+    ns_catalog.settings.formtype.collection.class:     'NS\CatalogBundle\Model\SettingsFormTypeCollection'
+    ns_catalog.twig.extension.dimensions.class:        'NS\CatalogBundle\Twig\Extension\DimensionsExtension'
+    ns_catalog.twig.extension.inline_edit.class:       'NS\CatalogBundle\Twig\Extension\InlineEditExtension'
+
     # search agent classes
-    ns_catalog.search.item.type:                     'ns_catalog:item'
-    ns_catalog.search.item.model.class:              'NS\CatalogBundle\Entity\Block'
-    ns_catalog.search.item.mapper.class:             'NS\CatalogBundle\Search\ItemMapper'
-    ns_catalog.search.item.repository.class:         'NS\CatalogBundle\Search\ItemRepository'
+    ns_catalog.search.item.type:                       'ns_catalog:item'
+    ns_catalog.search.item.model.class:                'NS\CatalogBundle\Entity\Block'
+    ns_catalog.search.item.mapper.class:               'NS\CatalogBundle\Search\ItemMapper'
+    ns_catalog.search.item.repository.class:           'NS\CatalogBundle\Search\ItemRepository'
 
 services:
-    ns_catalog.settings.formtype.collection:
-        class: %ns_catalog.settings.formtype.collection.class%
+    ns_catalog.form.type.category:
+        class: %ns_catalog.form.type.category.class%
+
+    ns_catalog.form.type.category.select:
+        class: %ns_catalog.form.type.category.select.class%
+        calls:
+            - [setCategoryRepository, [@ns_catalog.repository.category]]
         tags:
-            - { name: ns_properties.type }
+            - { name: form.type, alias: category_select }
 
     ns_catalog.repository.catalog:
         class: %ns_catalog.repository.catalog.class%
@@ -44,15 +49,10 @@ services:
         arguments:
             - %ns_catalog.repository.item.factory_argument%
 
-    ns_catalog.form.type.category:
-        class: %ns_catalog.form.type.category.class%
-
-    ns_catalog.form.type.category.select:
-        class: %ns_catalog.form.type.category.select.class%
-        calls:
-            - [setCategoryRepository, [@ns_catalog.repository.category]]
+    ns_catalog.settings.formtype.collection:
+        class: %ns_catalog.settings.formtype.collection.class%
         tags:
-            - { name: form.type, alias: category_select }
+            - { name: ns_properties.type }
 
     ns_catalog.twig.extension.inline_edit:
         class: %ns_catalog.twig.extension.inline_edit.class%
