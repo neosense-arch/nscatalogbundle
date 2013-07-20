@@ -2,9 +2,8 @@
 
 namespace NS\CatalogBundle\Controller;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query;
 use Knp\Component\Pager\Pagination\PaginationInterface;
-use Knp\Component\Pager\Paginator;
 use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuFactory;
 use NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel;
@@ -15,10 +14,8 @@ use NS\CatalogBundle\Block\Settings\ItemsBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsModel;
 use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
-use NS\CatalogBundle\Entity\Item;
 use NS\CatalogBundle\Menu\CategoryNode;
 use NS\CatalogBundle\Menu\Matcher\Voter\CategoryVoter;
-use NS\CatalogBundle\QueryBuilder\ItemQueryBuilder;
 use NS\CatalogBundle\Service\ItemService;
 use NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsModel;
 use NS\CmsBundle\Entity\Page;
@@ -47,10 +44,11 @@ class BlocksController extends Controller
 	public function mainItemsBlockAction(Block $block)
 	{
 		/** @var $settings MainItemsBlockSettingsModel */
-		$settings = $this->getBlockManager()->getBlockSettings($block);
+		$settings = $this
+			->getBlockManager()
+			->getBlockSettings($block);
 
-		/** @var $itemRepository ItemRepository */
-		$itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
+		$itemRepository = $this->getItemRepository();
 
 		return $this->render('NSCatalogBundle:Blocks:itemsBlock.html.twig', array(
 			'block'    => $block,
@@ -68,17 +66,12 @@ class BlocksController extends Controller
 	public function newItemsBlockAction(Block $block)
 	{
 		/** @var $settings NewItemsBlockSettingsModel */
-		$settings = $this->getBlockManager()->getBlockSettings($block);
+		$settings = $this
+			->getBlockManager()
+			->getBlockSettings($block);
 
-		/** @var $itemRepository ItemRepository */
-		$itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
-
-		// items with pagination
-		$query = $itemRepository->getFindVisibleBySettingsQuery('new', true);
-
-		$pagination = $this->get('knp_paginator')->paginate(
-			$query,
-			(!empty($_GET['page']) ? $_GET['page'] : 1),
+		$pagination = $this->createPagination(
+			$this->getItemRepository()->getFindVisibleBySettingsQuery('new', true),
 			$settings->getCount()
 		);
 
@@ -219,52 +212,42 @@ class BlocksController extends Controller
 			->getBlockManager()
 			->getBlockSettings($block);
 
-		$categorySlug = $this->getRequest()->attributes->get('categorySlug');
-		$category = $this
-			->getCategoryRepository()
-			->findOneBySlug($categorySlug);
+		// creating query builder
+		$queryBuilder = $this
+			->getItemService()
+			->createItemQueryBuilder()
+			->andVisible();
 
-		$itemRepository = $this->getItemRepository();
-
+		// filtering by category
+		$category = $this->getRequestCategory();
 		if ($settings->getUseCategory()) {
-			$query = $this->getItemService()
-				->createItemQueryBuilder()
-				->andWhereCategory($category)
-				->andVisible()
-				->getQuery();
-		}
-		else {
-			$query = $itemRepository
-				->getFindVisibleBySettingsQuery(
-					$settings->getSettingName(),
-					$settings->getSettingValue()
-				);
+			$queryBuilder->andWhereCategory($category);
 		}
 
-		/** @var PaginationInterface $pagination */
-		$pagination = $this->get('knp_paginator')->paginate(
-			$query,
-			(!empty($_GET['page']) ? $_GET['page'] : 1),
+		// filtering by settings
+		else {
+			$queryBuilder->andWhereSetting($settings->getSettingName(), $settings->getSettingValue());
+		}
+
+		// ordering
+		if ($settings->getOrder()) {
+			$queryBuilder->orderBySetting(
+				$settings->getOrderField(),
+				$settings->getOrderDirection(),
+				$settings->getOrderType()
+			);
+		}
+
+		// creating pagination
+		$pagination = $this->createPagination(
+			$queryBuilder->getQuery(),
 			$settings->getCount()
 		);
-
-		$items = $pagination;
-		if ($settings->getOrder()) {
-			$items = array();
-			$sort = array();
-			/** @var Item $item */
-			foreach ($pagination as $item) {
-				$items[] = $item;
-				$sort[] = $item->getSettings()->getSetting('price');
-			}
-
-			array_multisort($sort, SORT_ASC, SORT_NUMERIC, $items);
-		}
 
 		return $this->render($settings->getTemplate(), array(
 			'block'      => $block,
 			'settings'   => $settings,
-			'items'      => $items,
+			'items'      => $pagination,
 			'pagination' => $pagination,
 			'category'   => $category,
 		));
@@ -309,15 +292,12 @@ class BlocksController extends Controller
 	public function fullListBlockAction(Block $block)
 	{
 		/** @var $settings CountBlockSettingsModel */
-		$settings = $this->getBlockManager()->getBlockSettings($block);
+		$settings = $this
+			->getBlockManager()
+			->getBlockSettings($block);
 
-		/** @var $itemRepository ItemRepository */
-		$itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
-		$query = $itemRepository->getFindFullCatalogQuery();
-
-		$pagination = $this->get('knp_paginator')->paginate(
-			$query,
-			(!empty($_GET['page']) ? $_GET['page'] : 1),
+		$pagination = $this->createPagination(
+			$this->getItemRepository()->getFindFullCatalogQuery(),
 			$settings->getCount()
 		);
 
@@ -338,14 +318,6 @@ class BlocksController extends Controller
 	}
 
 	/**
-	 * @return CategoryRepository
-	 */
-	private function getCategoryRepository()
-	{
-		return $this->get('ns_catalog.repository.category');
-	}
-
-	/**
 	 * @return ItemRepository
 	 */
 	private function getItemRepository()
@@ -354,10 +326,47 @@ class BlocksController extends Controller
 	}
 
 	/**
+	 * @return CategoryRepository
+	 */
+	private function getCategoryRepository()
+	{
+		return $this->get('ns_catalog.repository.category');
+	}
+
+	/**
 	 * @return ItemService
 	 */
 	private function getItemService()
 	{
 		return $this->get('ns_catalog.service.item');
+	}
+
+	/**
+	 * @return Category|null
+	 */
+	private function getRequestCategory()
+	{
+		$categorySlug = $this
+			->getRequest()
+			->attributes
+			->get('categorySlug');
+
+		return $this
+			->getCategoryRepository()
+			->findOneBySlug($categorySlug);
+	}
+
+	/**
+	 * @param Query $query
+	 * @param int   $itemsPerPage
+	 * @return PaginationInterface
+	 */
+	private function createPagination(Query $query, $itemsPerPage)
+	{
+		return $this->get('knp_paginator')->paginate(
+			$query,
+			$this->getRequest()->query->get('page', 1),
+			$itemsPerPage
+		);
 	}
 }

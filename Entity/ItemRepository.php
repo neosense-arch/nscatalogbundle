@@ -106,21 +106,6 @@ class ItemRepository extends EntityRepository
 	 * @param mixed  $value
 	 * @param int    $limit
 	 * @param int    $skip
-	 * @return Item[]
-	 * @throws \Exception
-	 */
-	public function findBySettings($key, $value, $limit = null, $skip = 0)
-	{
-		return $this
-			->getFindBySettingsQuery($key, $value, $limit, $skip)
-			->getResult();
-	}
-
-	/**
-	 * @param string $key
-	 * @param mixed  $value
-	 * @param int    $limit
-	 * @param int    $skip
 	 * @param int    $skip
 	 * @return Item[]
 	 */
@@ -209,17 +194,10 @@ class ItemRepository extends EntityRepository
 	private function getFindBySettingsQueryBuilder($key, $value, $limit = null, $skip = 0)
 	{
 		$queryBuilder = new ItemQueryBuilder($this->_em);
-		$queryBuilder
-			->leftJoin('i.rawSettings', 's')
-			->andWhere('s.name = :name')
-			->setParameter('name', $key)
-			->andWhere('s.value = :value')
-			->setParameter('value', $value);
+		$queryBuilder->andWhereSetting($key, $value);
 
 		if ($limit) {
-			$queryBuilder
-				->setMaxResults($limit)
-				->setFirstResult($skip);
+			$queryBuilder->limit($limit, $skip);
 		}
 
 		return $queryBuilder;

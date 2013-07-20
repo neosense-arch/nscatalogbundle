@@ -35,8 +35,6 @@ class AdminCatalogController extends Controller
 
 		$search = !empty($_GET['search']) ? $_GET['search'] : null;
 
-
-
 		// items with pagination
 		$query = $this
 			->getItemRepository()

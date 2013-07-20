@@ -2,6 +2,7 @@
 
 namespace NS\CatalogBundle\QueryBuilder;
 
+use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use NS\CatalogBundle\Entity\Category;
@@ -26,7 +27,6 @@ class ItemQueryBuilder extends QueryBuilder
 			->select('i')
 			->from('NSCatalogBundle:Item', 'i')
 			->orderBy('i.title', 'ASC');
-		;
 	}
 
 	/**
@@ -35,12 +35,25 @@ class ItemQueryBuilder extends QueryBuilder
 	 */
 	public function andWhereCategory(Category $category)
 	{
-		$this
+		return $this
 			->join('i.category', 'category')
 			->andWhere('i.category = :categoryId')
 			->setParameter('categoryId', $category->getId());
+	}
 
-		return $this;
+	/**
+	 * @param string $name
+	 * @param string $value
+	 * @return $this
+	 */
+	public function andWhereSetting($name, $value)
+	{
+		return $this
+			->leftJoin('i.rawSettings', 's')
+			->andWhere('s.name = :name')
+			->setParameter('name', $name)
+			->andWhere('s.value = :value')
+			->setParameter('value', $value);
 	}
 
 	/**
@@ -48,8 +61,7 @@ class ItemQueryBuilder extends QueryBuilder
 	 */
 	public function andVisible()
 	{
-		$this->andWhere('i.visible = true');
-		return $this;
+		return $this->andWhere('i.visible = true');
 	}
 
 	/**
@@ -58,7 +70,7 @@ class ItemQueryBuilder extends QueryBuilder
 	 */
 	public function search($query)
 	{
-		$this
+		return $this
 			->leftJoin('i.rawSettings', 's')
 
 			->andWhere('i.title LIKE :query1')
@@ -67,7 +79,27 @@ class ItemQueryBuilder extends QueryBuilder
 			->orWhere('s.value LIKE :query2')
 			->setParameter('query2', "%{$query}%")
 		;
+	}
 
-		return $this;
+	public function limit($limit, $skip)
+	{
+		return $this
+			->setMaxResults($limit)
+			->setFirstResult($skip);
+	}
+
+	/**
+	 * @param string $name
+	 * @param string $direction
+	 * @param string $type
+	 * @return QueryBuilder
+	 */
+	public function orderBySetting($name, $direction = 'asc', $type = 'string')
+	{
+		return $this
+			->leftJoin('i.rawSettings', 's')
+			->andWhere('s.name = :name')
+			->setParameter('name', $name)
+			->orderBy('s.value', $direction);
 	}
 }

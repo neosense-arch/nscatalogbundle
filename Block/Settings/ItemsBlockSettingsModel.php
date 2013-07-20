@@ -143,11 +143,7 @@ class ItemsBlockSettingsModel
 	 */
 	public function getOrderField()
 	{
-		$order = $this->mapOrder();
-		if (count($order)) {
-			return $order[0];
-		}
-		return null;
+		return $this->getOrderValue(0);
 	}
 
 	/**
@@ -155,17 +151,7 @@ class ItemsBlockSettingsModel
 	 */
 	public function getOrderDirection()
 	{
-		$order = $this->mapOrder();
-		if (count($order) > 1) {
-			$map = array(
-				'asc'  => SORT_ASC,
-				'desc' => SORT_DESC,
-			);
-			if (!empty($map[$order[1]])) {
-				return $map[$order[1]];
-			}
-		}
-		return SORT_ASC;
+		return $this->getOrderValue(1, 'asc');
 	}
 
 	/**
@@ -173,25 +159,19 @@ class ItemsBlockSettingsModel
 	 */
 	public function getOrderType()
 	{
-		$order = $this->mapOrder();
-		if (count($order) > 2) {
-			$map = array(
-				'numeric' => SORT_NUMERIC,
-				'string'  => SORT_STRING,
-			);
-			if (!empty($map[$order[2]])) {
-				return $map[$order[2]];
-			}
-		}
-		return SORT_STRING;
+		return $this->getOrderValue(2, 'string');
 	}
 
 	/**
-	 * @return string[]
+	 * @param int    $index
+	 * @param string $default
+	 * @return string|null
 	 */
-	private function mapOrder()
+	private function getOrderValue($index, $default = null)
 	{
 		$order = str_replace(array('  ', ',', ';', ':', '/'), ' ', $this->getOrder());
-		return explode(' ', $order);
+		$parts = explode(' ', $order);
+
+		return array_key_exists($index, $parts) ? $parts[$index] : $default;
 	}
 }
