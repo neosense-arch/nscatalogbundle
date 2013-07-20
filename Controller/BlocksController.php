@@ -19,6 +19,7 @@ use NS\CatalogBundle\Entity\Item;
 use NS\CatalogBundle\Menu\CategoryNode;
 use NS\CatalogBundle\Menu\Matcher\Voter\CategoryVoter;
 use NS\CatalogBundle\QueryBuilder\ItemQueryBuilder;
+use NS\CatalogBundle\Service\ItemService;
 use NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsModel;
 use NS\CmsBundle\Entity\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -226,7 +227,8 @@ class BlocksController extends Controller
 		$itemRepository = $this->getItemRepository();
 
 		if ($settings->getUseCategory()) {
-			$query = $this->createItemQueryBuilder()
+			$query = $this->getItemService()
+				->createItemQueryBuilder()
 				->andWhereCategory($category)
 				->andVisible()
 				->getQuery();
@@ -340,10 +342,7 @@ class BlocksController extends Controller
 	 */
 	private function getCategoryRepository()
 	{
-		return $this
-			->getDoctrine()
-			->getManager()
-			->getRepository('NSCatalogBundle:Category');
+		return $this->get('ns_catalog.repository.category');
 	}
 
 	/**
@@ -355,12 +354,10 @@ class BlocksController extends Controller
 	}
 
 	/**
-	 * @return ItemQueryBuilder
+	 * @return ItemService
 	 */
-	private function createItemQueryBuilder()
+	private function getItemService()
 	{
-		/** @var EntityManager $em */
-		$em = $this->get('doctrine.orm.entity_manager');
-		return new ItemQueryBuilder($em);
+		return $this->get('ns_catalog.service.item');
 	}
 }

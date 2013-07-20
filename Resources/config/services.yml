@@ -7,6 +7,7 @@ parameters:
     ns_catalog.repository.category.factory_argument:   'NSCatalogBundle:Category'
     ns_catalog.repository.item.class:                  'NS\CatalogBundle\Entity\ItemRepository'
     ns_catalog.repository.item.factory_argument:       'NSCatalogBundle:Item'
+    ns_catalog.service.item.class:                     'NS\CatalogBundle\Service\ItemService'
     ns_catalog.settings.formtype.collection.class:     'NS\CatalogBundle\Model\SettingsFormTypeCollection'
     ns_catalog.twig.extension.dimensions.class:        'NS\CatalogBundle\Twig\Extension\DimensionsExtension'
     ns_catalog.twig.extension.inline_edit.class:       'NS\CatalogBundle\Twig\Extension\InlineEditExtension'
@@ -48,6 +49,11 @@ services:
         factory_method: 'getRepository'
         arguments:
             - %ns_catalog.repository.item.factory_argument%
+
+    ns_catalog.service.item:
+        class: %ns_catalog.service.item.class%
+        arguments:
+            - @doctrine.orm.entity_manager
 
     ns_catalog.settings.formtype.collection:
         class: %ns_catalog.settings.formtype.collection.class%
