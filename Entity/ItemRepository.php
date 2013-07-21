@@ -82,13 +82,15 @@ class ItemRepository extends EntityRepository
 	}
 
 	/**
-	 * @param  Category $category
-	 * @param  string   $search
+	 * @param Category $category
+	 * @param string   $search
+	 * @param Catalog  $catalog
 	 * @return Query
 	 */
 	public function getFindByCategoryQuery(Category $category = null, $search = null, Catalog $catalog = null)
 	{
 		$queryBuilder = new ItemQueryBuilder($this->_em);
+		$queryBuilder->join('i.category', 'c');
 
 		if ($category) {
 			$queryBuilder->andWhereCategory($category);
@@ -101,8 +103,8 @@ class ItemRepository extends EntityRepository
 		if ($catalog) {
 			$queryBuilder
 				->join('c.catalog', 'ca')
-				->andWhere('ca.name = :catalog')
-				->setParameter('catalog', $catalog->getName());
+				->andWhere('ca.name = :catalogName')
+				->setParameter('catalogName', $catalog->getName());
 		}
 
 		return $queryBuilder->getQuery();

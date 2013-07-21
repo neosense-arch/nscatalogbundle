@@ -11,8 +11,8 @@ parameters:
     ns_catalog.settings.formtype.collection.class:     'NS\CatalogBundle\Model\SettingsFormTypeCollection'
     ns_catalog.twig.extension.dimensions.class:        'NS\CatalogBundle\Twig\Extension\DimensionsExtension'
     ns_catalog.twig.extension.inline_edit.class:       'NS\CatalogBundle\Twig\Extension\InlineEditExtension'
-	
-	# menu resolvers
+
+    # menu resolvers
     ns_catalog.menu.resolver.catalog.class:          'NS\CatalogBundle\Menu\Resolver\CatalogMenuResolver'
     
     # search agent classes
