@@ -3,6 +3,7 @@
 namespace NS\CatalogBundle\Form\Type;
 
 use Doctrine\ORM\EntityRepository;
+use NS\CatalogBundle\Entity\Catalog;
 use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\Category;
 use Symfony\Component\Form\AbstractType;
@@ -16,6 +17,11 @@ class CategorySelectType extends AbstractType
 	 * @var CategoryRepository
 	 */
 	private $categoryRepository;
+
+	/**
+	 * @var Catalog
+	 */
+	private $catalog;
 
 	/**
 	 * @param OptionsResolverInterface $resolver
@@ -33,7 +39,7 @@ class CategorySelectType extends AbstractType
 			'query_builder' => $queryBuilder,
 			'property'      => 'optionLabel',
 			'empty_value'   => '[ Не выбрано ]',
-			'catalog_name'  => null,
+			'catalog_name'  => $this->catalog ? $this->catalog->getName() : null,
 		));
     }
 
@@ -56,5 +62,12 @@ class CategorySelectType extends AbstractType
 	public function setCategoryRepository(CategoryRepository $categoryRepository)
 	{
 		$this->categoryRepository = $categoryRepository;
+	}
+	/**
+	 * @param Catalog $catalog
+	 */
+	public function setCatalog(Catalog $catalog)
+	{
+		$this->catalog = $catalog;
 	}
 }
