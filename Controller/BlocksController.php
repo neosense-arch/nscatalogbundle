@@ -12,10 +12,12 @@ use NS\CatalogBundle\Block\Settings\CategoryBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\ItemBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\ItemsBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsModel;
+use NS\CatalogBundle\Block\Settings\SearchBlockSettingsModel;
 use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Menu\CategoryNode;
 use NS\CatalogBundle\Menu\Matcher\Voter\CategoryVoter;
+use NS\CatalogBundle\QueryBuilder\ItemQueryBuilder;
 use NS\CatalogBundle\Service\ItemService;
 use NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsModel;
 use NS\CmsBundle\Entity\Page;
@@ -306,6 +308,32 @@ class BlocksController extends Controller
 			'settings'   => $settings,
 			'items'      => $pagination,
 			'pagination' => $pagination,
+		));
+	}
+
+	/**
+	 * @param  Block $block
+	 * @return Response
+	 */
+	public function searchBlockAction(Block $block)
+	{
+		/** @var $settings SearchBlockSettingsModel */
+		$settings = $this
+			->getBlockManager()
+			->getBlockSettings($block);
+
+		$qb = new ItemQueryBuilder($this->getDoctrine()->getManager());
+		$items = $qb
+			->search($this->getRequest()->query->get('query'))
+			->limit(30)
+			->getQuery()
+			->execute();
+
+		return $this->render('NSCatalogBundle:Blocks:searchBlock.html.twig', array(
+			'block'      => $block,
+			'settings'   => $settings,
+			'items'      => $items,
+			'query'      => $this->getRequest()->query->get('query'),
 		));
 	}
 

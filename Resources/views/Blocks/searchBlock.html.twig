@@ -1,0 +1,11 @@
+<h2>Результаты поиска</h2>
+
+<ul>
+{% for item in items %}
+	<li>{{ item.title }}</li>
+{% endfor %}
+</ul>
+
+{% if pagination is defined %}
+	{{ knp_pagination_render(pagination) }}
+{% endif %}

@@ -101,7 +101,7 @@ class ItemQueryBuilder extends QueryBuilder
 		;
 	}
 
-	public function limit($limit, $skip)
+	public function limit($limit, $skip = 0)
 	{
 		return $this
 			->setMaxResults($limit)

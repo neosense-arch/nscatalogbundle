@@ -54,3 +54,9 @@ blocks:
         template: NSCatalogBundle:Blocks:fullListBlock.phtml.twig
         settingsFormClass: NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsForm
         settingsModelClass: NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsModel
+    -
+        name: NSCatalogBundle:Blocks:searchBlock
+        title: Поиск по товарам каталога
+        template: NSCatalogBundle:Blocks:searchBlock.phtml.twig
+        settingsFormClass: NS\CatalogBundle\Block\Settings\SearchBlockSettingsForm
+        settingsModelClass: NS\CatalogBundle\Block\Settings\SearchBlockSettingsModel
