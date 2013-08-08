@@ -65,6 +65,7 @@
 							</a>
 							<ul class="dropdown-menu">
 								<li><a href="#" class="change-category"><i class="icon-share-alt"></i> Перенести в другую категорию</a></li>
+								<li><a href="#" class="clone-items"><i class="icon-plus"></i> Скопировать товары</a></li>
 								{#<li><a href="#"><i class="icon-trash"></i> Удалить</a></li>#}
 							</ul>
 						</div>
@@ -209,16 +210,23 @@
 				form.find('th input[type=checkbox]').attr('checked', form.find('td input[type=checkbox]:checked').length == form.find('td input[type=checkbox]').length);
 			});
 
+			// retrieves items
+			var fnGetItems = function(){
+				var items = [];
+				panel.parents('form').find('td input[type=checkbox]:checked').each(function(){
+					items.push($(this).val());
+				});
+				return items;
+			};
+
+			// changing category
 			panel.find('.change-category').click(function(){
 				$('#dlgMultiActionForm').modal('show');
 				return false;
 			});
 			$('#dlgMultiActionForm').find('.btn-save').click(function(){
 				var categoryId = $('#dlgMultiActionForm').find('#category_select').val();
-				var items = [];
-				panel.parents('form').find('td input[type=checkbox]:checked').each(function(){
-					items.push($(this).val());
-				});
+				var items = fnGetItems();
 				if (categoryId && items.length) {
 					$.ajax({
 						url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'updateCategory' }) }}',
@@ -232,6 +240,25 @@
 						location.reload();
 					}, this));
 				}
+			});
+
+			// cloning items
+			panel.find('.clone-items').click(function(){
+				var items = fnGetItems();
+				if (items.length) {
+					$.ajax({
+						url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'cloneItems' }) }}',
+						type: 'POST',
+						data: {
+							id: items.join(',')
+						}
+					})
+					.done($.proxy(function(res){
+						location.reload();
+					}, this));
+				}
+
+				return false;
 			});
 		})(jQuery);
 	</script>

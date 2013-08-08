@@ -39,6 +39,11 @@ class Setting
 	 */
 	private $value;
 
+	public function __clone()
+	{
+		$this->id = null;
+	}
+
 	/**
 	 * @return int
 	 */

@@ -61,6 +61,11 @@ class Item implements ModelInterface
 	 */
 	private $settings;
 
+	public function __clone()
+	{
+		$this->id = null;
+	}
+
 	/**
 	 * @return int
 	 */

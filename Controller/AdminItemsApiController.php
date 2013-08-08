@@ -169,6 +169,46 @@ class AdminItemsApiController extends Controller
 
 	/**
 	 * @throws \Exception
+	 * @return Response
+	 */
+	public function cloneItemsAction()
+	{
+		try {
+			if (empty($_REQUEST['id'])) {
+				return new JsonResponse(array('error' => "Required param 'id' wasn't found"));
+			}
+
+			$em = $this->getDoctrine()->getManager();
+
+			$ids = explode(',', $_REQUEST['id']);
+			$items = $this->getItemRepository()->findByIds($ids);
+
+			foreach ($items as $item) {
+				// cloning item
+				$clonedItem = clone $item;
+				$clonedItem->setTitle($item->getTitle() . ' (копия)');
+				$em->detach($clonedItem);
+				$em->persist($clonedItem);
+
+				// cloning settings
+				foreach ($item->getRawSettings() as $setting) {
+					$clonedSetting = clone $setting;
+					$clonedSetting->setItem($clonedItem);
+					$em->detach($clonedSetting);
+					$em->persist($clonedSetting);
+				}
+			}
+
+			$em->flush();
+			return new JsonResponse(array('result' => 'ok'));
+		}
+		catch (\Exception $e) {
+			return new JsonResponse(array('error' => $e->getMessage()));
+		}
+	}
+
+	/**
+	 * @throws \Exception
 	 * @return Item
 	 */
 	private function getItem()
