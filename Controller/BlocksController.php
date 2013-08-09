@@ -322,12 +322,12 @@ class BlocksController extends Controller
 			->getBlockManager()
 			->getBlockSettings($block);
 
-		$qb = new ItemQueryBuilder($this->getDoctrine()->getManager());
-		$items = $qb
-			->search($this->getRequest()->query->get('query'))
-			->limit(30)
-			->getQuery()
-			->execute();
+		$itemService = $this->getItemService();
+		$items = $itemService->search(
+			$this->getRequest()->query->get('query'),
+			$settings->getSettingsArray(),
+			30
+		);
 
 		return $this->render('NSCatalogBundle:Blocks:searchBlock.html.twig', array(
 			'block'      => $block,
