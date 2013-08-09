@@ -64,6 +64,17 @@ class ItemQueryBuilder extends QueryBuilder
 	}
 
 	/**
+	 * @param string $title
+	 * @return QueryBuilder
+	 */
+	public function andWhereTitleLike($title)
+	{
+		return $this
+			->andWhere('i.title LIKE :title')
+			->setParameter('title', "%{$title}%");
+	}
+
+	/**
 	 * @param string $name
 	 * @param string $value
 	 * @return $this
