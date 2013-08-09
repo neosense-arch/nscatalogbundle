@@ -103,13 +103,17 @@ class ItemQueryBuilder extends QueryBuilder
 	 */
 	public function search($query)
 	{
+
+		if (is_numeric($query)) {
+			return $this
+				->joinRawSettings()
+				->orWhere('s.value LIKE :query2')
+				->setParameter('query2', "%{$query}%");
+		}
+
 		return $this
-			->joinRawSettings()
 			->andWhere('i.title LIKE :query1')
-			->setParameter('query1', "%{$query}%")
-			->orWhere('s.value LIKE :query2')
-			->setParameter('query2', "%{$query}%")
-		;
+			->setParameter('query1', "%{$query}%");
 	}
 
 	public function limit($limit, $skip = 0)
@@ -174,7 +178,7 @@ class ItemQueryBuilder extends QueryBuilder
 		if (empty($this->joined['s'])) {
 			$this->joined['s'] = true;
 			$this
-				->leftJoin('i.rawSettings', 's');
+				->join('i.rawSettings', 's');
 		}
 		return $this;
 	}
