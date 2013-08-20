@@ -44,6 +44,7 @@ class AdminItemsApiController extends Controller
 			return $this->render('NSCatalogBundle:AdminItemsApi:form.html.twig', array(
 				'itemForm' => $itemForm->createView(),
 				'itemSettingsForm' => $itemSettingsForm->createView(),
+				'item' => $item,
 			));
 		}
 		catch (\Exception $e) {

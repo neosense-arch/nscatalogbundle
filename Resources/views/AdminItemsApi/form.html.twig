@@ -2,3 +2,17 @@
 	{{ form_widget(itemForm) }}
 	{{ form_widget(itemSettingsForm) }}
 </form>
+
+{% if item.id %}
+	<div class="well" style="text-align: center">
+		<span style="padding:0 10px">
+			<i class="icon-share-alt"></i>
+			<a href="{{ url('ns_catalog_item', { categorySlug: item.category.slug, itemSlug: item.slug }) }}#id={{ item.id }}" target="_blank">Страница товара</a>
+		</span>
+
+		<span style="padding:0 10px">
+			<i class="icon-info-sign"></i>
+			{{ item.id }}
+		</span>
+	</div>
+{% endif %}
