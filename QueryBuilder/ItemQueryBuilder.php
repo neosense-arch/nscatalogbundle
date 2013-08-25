@@ -52,7 +52,7 @@ class ItemQueryBuilder extends QueryBuilder
 
 	/**
 	 * @param Catalog $catalog
-	 * @return QueryBuilder
+	 * @return $this
 	 */
 	public function andWhereCatalog(Catalog $catalog)
 	{
@@ -65,7 +65,7 @@ class ItemQueryBuilder extends QueryBuilder
 
 	/**
 	 * @param string $title
-	 * @return QueryBuilder
+	 * @return $this
 	 */
 	public function andWhereTitleLike($title)
 	{
@@ -116,6 +116,11 @@ class ItemQueryBuilder extends QueryBuilder
 			->setParameter('query1', "%{$query}%");
 	}
 
+	/**
+	 * @param int $limit
+	 * @param int $skip
+	 * @return $this
+	 */
 	public function limit($limit, $skip = 0)
 	{
 		return $this
@@ -127,7 +132,7 @@ class ItemQueryBuilder extends QueryBuilder
 	 * @param string $name
 	 * @param string $direction
 	 * @param string $type
-	 * @return QueryBuilder
+	 * @return $this
 	 */
 	public function orderBySetting($name, $direction = 'asc', $type = self::ORDER_TYPE_STRING)
 	{

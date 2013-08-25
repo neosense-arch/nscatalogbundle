@@ -44,6 +44,7 @@ class ItemService
 	{
 		$items = $this->createItemQueryBuilder()
 			->andWhereTitleLike($query)
+			->andVisible()
 			->getQuery()
 			->setMaxResults($limit)
 			->execute();
@@ -53,6 +54,7 @@ class ItemService
 
 		foreach ($fields as $field) {
 			$items = $this->createItemQueryBuilder()
+				->andVisible()
 				->join('i.rawSettings', 's')
 				->andwhere('s.name = :settingName')
 				->andWhere('s.value LIKE :settingValue')
