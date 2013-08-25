@@ -11,6 +11,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class AdminCategoriesApiController
+ *
+ * @package NS\CatalogBundle\Controller
+ */
 class AdminCategoriesApiController extends Controller
 {
 	const CATALOG_NAME = 'goods';
@@ -21,9 +26,6 @@ class AdminCategoriesApiController extends Controller
 	public function formAction()
 	{
 		try {
-			// catalog object
-			$catalog = $this->getCatalog();
-
 			/** @var $categoryType CategoryType */
 			$categoryType = $this->get('ns_catalog.form.type.category');
 			$categoryType->setCatalogName(self::CATALOG_NAME);
