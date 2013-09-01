@@ -81,6 +81,12 @@ class Category
 	private $slug;
 
 	/**
+	 * @var string
+	 * @ORM\Column(type="string", nullable=true)
+	 */
+	private $photo;
+
+	/**
 	 * @var Catalog
 	 * @ORM\ManyToOne(targetEntity="Catalog", inversedBy="categories")
 	 * @ORM\JoinColumn(name="catalog_id", referencedColumnName="id", onDelete="CASCADE")
@@ -244,5 +250,19 @@ class Category
 	public function getItems()
 	{
 		return $this->items;
+	}
+	/**
+	 * @param string $photo
+	 */
+	public function setPhoto($photo)
+	{
+		$this->photo = $photo;
+	}
+	/**
+	 * @return string
+	 */
+	public function getPhoto()
+	{
+		return $this->photo;
 	}
 }

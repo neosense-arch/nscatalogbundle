@@ -30,13 +30,18 @@ class CategoryType extends AbstractType
 				'required' => true,
 			))
 			->add('parent', 'category_select', array(
-				'label' => 'Родительская категория',
-				'required' => false,
+				'label'        => 'Родительская категория',
+				'required'     => false,
 				'catalog_name' => $this->catalogName,
 			))
 			->add('description', 'tinymce', array(
-				'label' => 'Описание',
+				'label'    => 'Описание',
 				'required' => false,
+			))
+			->add('photo', 'ns_multi_image', array(
+				'label'    => 'Фото',
+				'required' => false,
+				'multiple' => false,
 			))
         ;
     }
