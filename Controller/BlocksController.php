@@ -102,16 +102,29 @@ class BlocksController extends Controller
 		/** @var $router RouterInterface */
 		$router = $this->get('router');
 
+		// current category
+		$slug = $this->getRequest()->attributes->get('categorySlug');
+		$currentCategory = $categoryRepository->findOneBySlug($slug);
+
+		// retrieving root category
+		if ($settings->getIsSubmenu()) {
+			$rootCategory = $currentCategory;
+			while ($rootCategory->getParent() && $rootCategory->getParent()->getParent()){
+				$rootCategory = $rootCategory->getParent();
+			}
+		}
+		else {
+			$rootCategory = $categoryRepository->findRootOrCreate();
+		}
+
 		// creating from root node
 		$factory = new MenuFactory();
-		$rootNode = new CategoryNode($categoryRepository->findRootOrCreate(), $router);
+		$rootNode = new CategoryNode($rootCategory, $router);
 		$menu = $factory->createFromNode($rootNode);
 
-		$slug = $this->getRequest()->attributes->get('categorySlug');
-		$category = $categoryRepository->findOneBySlug($slug);
 		$matcher = new Matcher();
-		if ($category) {
-			$matcher->addVoter(new CategoryVoter($category));
+		if ($currentCategory) {
+			$matcher->addVoter(new CategoryVoter($currentCategory));
 		}
 
 		// items
@@ -122,7 +135,7 @@ class BlocksController extends Controller
 		$sortItems = explode(',', $settings->getSortOrder());
 		foreach ($sortItems as $slug) {
 			foreach ($items as $item) {
-				/** @var Category $category */
+				/** @var Category $currentCategory */
 				$category = $item->getExtra('category');
 				if ($category->getSlug() === $slug) {
 					$sorted[] = $item;
@@ -132,7 +145,7 @@ class BlocksController extends Controller
 		}
 
 		foreach ($items as $item) {
-			/** @var Category $category */
+			/** @var Category $currentCategory */
 			$category = $item->getExtra('category');
 			if (!in_array($category->getSlug(), $sortItems)) {
 				$sorted[] = $item;
@@ -142,10 +155,11 @@ class BlocksController extends Controller
 		$menu->setChildren($sorted);
 
 		return $this->render($settings->getTemplate(), array(
-			'block'    => $block,
-			'settings' => $settings,
-			'menu'     => $menu,
-			'matcher'  => $matcher,
+			'block'           => $block,
+			'settings'        => $settings,
+			'menu'            => $menu,
+			'matcher'         => $matcher,
+			'currentCategory' => $currentCategory,
 		));
 	}
 
