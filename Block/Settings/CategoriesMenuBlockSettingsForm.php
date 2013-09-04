@@ -22,6 +22,10 @@ class CategoriesMenuBlockSettingsForm extends AbstractType
 				'label'    => 'Сортировка',
 				'required' => false,
 			))
+			->add('template', 'text', array(
+				'label'    => 'Шаблон',
+				'required' => false,
+			))
 		;
     }
 

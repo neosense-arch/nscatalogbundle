@@ -141,7 +141,7 @@ class BlocksController extends Controller
 
 		$menu->setChildren($sorted);
 
-		return $this->render('NSCatalogBundle:Blocks:categoriesMenuBlock.html.twig', array(
+		return $this->render($settings->getTemplate(), array(
 			'block'    => $block,
 			'settings' => $settings,
 			'menu'     => $menu,
