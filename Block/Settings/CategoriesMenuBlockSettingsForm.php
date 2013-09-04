@@ -26,6 +26,10 @@ class CategoriesMenuBlockSettingsForm extends AbstractType
 				'label'    => 'Шаблон',
 				'required' => false,
 			))
+			->add('isSubmenu', 'checkbox', array(
+				'label'    => 'Субменю',
+				'required' => false,
+			))
 		;
     }
 

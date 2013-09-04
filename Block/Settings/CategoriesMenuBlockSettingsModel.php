@@ -20,6 +20,11 @@ class CategoriesMenuBlockSettingsModel
 	private $template = 'NSCatalogBundle:Blocks:categoriesMenuBlock.html.twig';
 
 	/**
+	 * @var bool
+	 */
+	private $isSubmenu = false;
+
+	/**
 	 * @param string $sortOrder
 	 */
 	public function setSortOrder($sortOrder)
@@ -47,5 +52,19 @@ class CategoriesMenuBlockSettingsModel
 	public function getTemplate()
 	{
 		return $this->template;
+	}
+	/**
+	 * @param boolean $isSubmenu
+	 */
+	public function setIsSubmenu($isSubmenu)
+	{
+		$this->isSubmenu = $isSubmenu;
+	}
+	/**
+	 * @return boolean
+	 */
+	public function getIsSubmenu()
+	{
+		return $this->isSubmenu;
 	}
 }
