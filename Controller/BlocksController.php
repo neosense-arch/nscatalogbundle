@@ -4,6 +4,7 @@ namespace NS\CatalogBundle\Controller;
 
 use Doctrine\ORM\Query;
 use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Menu\ItemInterface;
 use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuFactory;
 use NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel;
@@ -131,6 +132,7 @@ class BlocksController extends Controller
 		$items = $menu->getChildren();
 
 		// sorting items
+		/** @var ItemInterface[] $sorted */
 		$sorted = array();
 		$sortItems = explode(',', $settings->getSortOrder());
 		foreach ($sortItems as $slug) {
@@ -151,8 +153,30 @@ class BlocksController extends Controller
 				$sorted[] = $item;
 			}
 		}
-
 		$menu->setChildren($sorted);
+
+		// checking active items
+		$hasActiveItems = false;
+		if ($currentCategory) {
+			foreach ($sorted as $item) {
+				if ($matcher->isCurrent($item) || $matcher->isAncestor($item)) {
+					$hasActiveItems = true;
+					break;
+				}
+			}
+		}
+
+		// checking automatic redirect option
+		if (!$hasActiveItems && $settings->getRedirectToFirstItem() && count($sorted)) {
+			return $this->redirect(
+				$this->generateUrl(
+					$settings->getRouteName(),
+					array(
+						'categorySlug' => $sorted[0]->getExtra('category')->getSlug(),
+					)
+				)
+			);
+		}
 
 		return $this->render($settings->getTemplate(), array(
 			'block'           => $block,

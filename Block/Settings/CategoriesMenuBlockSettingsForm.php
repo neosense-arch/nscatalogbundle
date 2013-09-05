@@ -34,6 +34,10 @@ class CategoriesMenuBlockSettingsForm extends AbstractType
 				'label'    => 'Имя машршута страницы категории',
 				'required' => false,
 			))
+			->add('redirectToFirstItem', 'checkbox', array(
+				'label'    => 'Переходить на первую категорию автоматически',
+				'required' => false,
+			))
 		;
     }
 

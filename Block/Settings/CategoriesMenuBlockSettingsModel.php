@@ -30,6 +30,11 @@ class CategoriesMenuBlockSettingsModel
 	private $routeName = 'ns_catalog_category';
 
 	/**
+	 * @var bool
+	 */
+	private $redirectToFirstItem = false;
+
+	/**
 	 * @param string $sortOrder
 	 */
 	public function setSortOrder($sortOrder)
@@ -85,6 +90,20 @@ class CategoriesMenuBlockSettingsModel
 	public function getRouteName()
 	{
 		return $this->routeName;
+	}
+	/**
+	 * @param boolean $redirectToFirstItem
+	 */
+	public function setRedirectToFirstItem($redirectToFirstItem)
+	{
+		$this->redirectToFirstItem = $redirectToFirstItem;
+	}
+	/**
+	 * @return boolean
+	 */
+	public function getRedirectToFirstItem()
+	{
+		return $this->redirectToFirstItem;
 	}
 
 }
