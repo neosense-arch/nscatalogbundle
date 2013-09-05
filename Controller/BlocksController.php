@@ -107,7 +107,7 @@ class BlocksController extends Controller
 		$currentCategory = $categoryRepository->findOneBySlug($slug);
 
 		// retrieving root category
-		if ($settings->getIsSubmenu()) {
+		if ($settings->getIsSubmenu() && $currentCategory) {
 			$rootCategory = $currentCategory;
 			while ($rootCategory->getParent() && $rootCategory->getParent()->getParent()){
 				$rootCategory = $rootCategory->getParent();
@@ -236,7 +236,7 @@ class BlocksController extends Controller
 
 		// filtering by category
 		$category = $this->getRequestCategory();
-		if ($settings->getUseCategory()) {
+		if ($settings->getUseCategory() && $category) {
 			$queryBuilder->andWhereCategory($category);
 		}
 
