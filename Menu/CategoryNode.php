@@ -25,13 +25,22 @@ class CategoryNode implements NodeInterface
 	private $router;
 
 	/**
+	 * @var string
+	 */
+	private $routeName = self::CATEGORY_PAGE_ROUTE;
+
+	/**
 	 * @param Category        $category
 	 * @param RouterInterface $router
+	 * @param string          $routeName
 	 */
-	public function __construct(Category $category, RouterInterface $router)
+	public function __construct(Category $category, RouterInterface $router, $routeName = null)
 	{
 		$this->category = $category;
 		$this->router = $router;
+		if ($routeName) {
+			$this->setRouteName($routeName);
+		}
 	}
 
 	/**
@@ -72,9 +81,16 @@ class CategoryNode implements NodeInterface
 	{
 		$children = array();
 		foreach ($this->category->getChildren() as $category) {
-			$children[] = new self($category, $this->router);
+			$children[] = new self($category, $this->router, $this->routeName);
 		}
 		return $children;
+	}
+	/**
+	 * @param string $routeName
+	 */
+	public function setRouteName($routeName)
+	{
+		$this->routeName = $routeName;
 	}
 
 	/**
@@ -84,7 +100,7 @@ class CategoryNode implements NodeInterface
 	 */
 	private function getUrl()
 	{
-		return $this->router->generate(self::CATEGORY_PAGE_ROUTE, array(
+		return $this->router->generate($this->routeName, array(
 			'categorySlug' => $this->category->getSlug(),
 		));
 	}

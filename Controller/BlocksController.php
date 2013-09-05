@@ -119,7 +119,7 @@ class BlocksController extends Controller
 
 		// creating from root node
 		$factory = new MenuFactory();
-		$rootNode = new CategoryNode($rootCategory, $router);
+		$rootNode = new CategoryNode($rootCategory, $router, $settings->getRouteName());
 		$menu = $factory->createFromNode($rootNode);
 
 		$matcher = new Matcher();

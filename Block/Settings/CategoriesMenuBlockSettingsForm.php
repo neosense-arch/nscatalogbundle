@@ -30,6 +30,10 @@ class CategoriesMenuBlockSettingsForm extends AbstractType
 				'label'    => 'Субменю',
 				'required' => false,
 			))
+			->add('routeName', 'text', array(
+				'label'    => 'Имя машршута страницы категории',
+				'required' => false,
+			))
 		;
     }
 

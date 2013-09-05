@@ -25,6 +25,11 @@ class CategoriesMenuBlockSettingsModel
 	private $isSubmenu = false;
 
 	/**
+	 * @var string
+	 */
+	private $routeName = 'ns_catalog_category';
+
+	/**
 	 * @param string $sortOrder
 	 */
 	public function setSortOrder($sortOrder)
@@ -67,4 +72,19 @@ class CategoriesMenuBlockSettingsModel
 	{
 		return $this->isSubmenu;
 	}
+	/**
+	 * @param string $routeName
+	 */
+	public function setRouteName($routeName)
+	{
+		$this->routeName = $routeName;
+	}
+	/**
+	 * @return string
+	 */
+	public function getRouteName()
+	{
+		return $this->routeName;
+	}
+
 }
