@@ -241,7 +241,7 @@ class BlocksController extends Controller
 		}
 
 		// filtering by settings
-		else {
+		elseif ($settings->getSettingName()) {
 			$queryBuilder->andWhereSetting($settings->getSettingName(), $settings->getSettingValue());
 		}
 
