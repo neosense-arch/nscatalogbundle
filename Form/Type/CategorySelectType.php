@@ -30,7 +30,10 @@ class CategorySelectType extends AbstractType
     {
 		$queryBuilder = function(Options $options){
 			return function(CategoryRepository $er) use($options) {
-				return $er->getFindByCatalogNameQuery($options['catalog_name']);
+				return $er->getFindByCatalogNameQuery($options['catalog_name'])
+					->join('c.parent', 'p')
+					->orderBy('c.root', 'ASC')
+					->addOrderBy('c.left', 'ASC');
 			};
 		};
 
