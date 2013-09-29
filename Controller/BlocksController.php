@@ -232,6 +232,10 @@ class BlocksController extends Controller
 		$categorySlug = $this->getRequest()->attributes->get('categorySlug');
 		$category = $categoryRepository->findOneBySlug($categorySlug);
 
+		if (!$category) {
+			return Response::create('', 404);
+		}
+
 		return $this->render('NSCatalogBundle:Blocks:categoryBlock.html.twig', array(
 			'block'    => $block,
 			'settings' => $settings,
@@ -313,6 +317,10 @@ class BlocksController extends Controller
 		/** @var $itemRepository ItemRepository */
 		$itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
 		$item = $itemRepository->findOneBySlug($this->getRequest()->attributes->get('itemSlug'));
+
+		if (!$item) {
+			return Response::create('', 404);
+		}
 
 		if ($item->getCategory() !== $category) {
 			$item = null;
