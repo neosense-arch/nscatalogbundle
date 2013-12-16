@@ -236,10 +236,11 @@ class BlocksController extends Controller
 			return Response::create('', 404);
 		}
 
-		return $this->render('NSCatalogBundle:Blocks:categoryBlock.html.twig', array(
-			'block'    => $block,
-			'settings' => $settings,
-			'category' => $category,
+		return $this->render($block->getTemplate('NSCatalogBundle:Blocks:categoryBlock.html.twig'), array(
+			'block'          => $block,
+			'settings'       => $settings,
+			'category'       => $category,
+			'rootCategories' => $categoryRepository->findRootOrCreate()->getChildren(),
 		));
 	}
 
