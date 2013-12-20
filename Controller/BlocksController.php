@@ -289,7 +289,9 @@ class BlocksController extends Controller
 			$settings->getCount()
 		);
 
-		return $this->render($settings->getTemplate(), array(
+
+
+		return $this->render($block->getTemplate('NSCatalogBundle:Blocks:itemsBlock.html.twig'), array(
 			'block'      => $block,
 			'settings'   => $settings,
 			'items'      => $pagination,
