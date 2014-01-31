@@ -41,7 +41,6 @@ class CategorySelectType extends AbstractType
 			'class'         => 'NSCatalogBundle:Category',
 			'query_builder' => $queryBuilder,
 			'property'      => 'optionLabel',
-			'empty_value'   => '[ Не выбрано ]',
 			'catalog_name'  => $this->catalog ? $this->catalog->getName() : null,
 		));
     }
