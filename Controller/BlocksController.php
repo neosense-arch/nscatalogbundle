@@ -245,17 +245,13 @@ class BlocksController extends Controller
     /**
      * Category items block
      *
-     * @param Request $request
-     * @param Block   $block
+     * @param Request                 $request
+     * @param Block                   $block
+     * @param ItemsBlockSettingsModel $settings
      * @return Response
      */
-	public function itemsBlockAction(Request $request, Block $block)
+	public function itemsBlockAction(Request $request, Block $block, ItemsBlockSettingsModel $settings)
 	{
-        /** @var $settings ItemsBlockSettingsModel */
-        $settings = $this
-            ->getBlockManager()
-            ->getBlockSettings($block);
-
         /** @var CatalogService $catalogService */
         $catalogService = $this->get('ns_catalog_service');
 
@@ -376,7 +372,7 @@ class BlocksController extends Controller
 	 */
 	private function getBlockManager()
 	{
-		return $this->container->get('ns_cms.manager.block');
+		return $this->get('ns_cms.manager.block');
 	}
 
 	/**
