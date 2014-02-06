@@ -81,12 +81,13 @@ class ItemQueryBuilder extends QueryBuilder
 	 */
 	public function andWhereSetting($name, $value)
 	{
+        $uid = uniqid();
 		return $this
 			->joinRawSettings()
-			->andWhere('s.name = :name')
-			->setParameter('name', $name)
-			->andWhere('s.value = :value')
-			->setParameter('value', $value);
+			->andWhere("s.name = :name_{$uid}")
+			->setParameter("name_{$uid}", $name)
+			->andWhere("s.value = :value_{$uid}")
+			->setParameter("value_{$uid}", $value);
 	}
 
 	/**
@@ -141,10 +142,12 @@ class ItemQueryBuilder extends QueryBuilder
 			$order .= '+0';
 		}
 
+        $uid = uniqid();
+
 		return $this
 			->joinRawSettings()
-			->andWhere('s.name = :name')
-			->setParameter('name', $name)
+			->andWhere("s.name = :name_{$uid}")
+			->setParameter("name_{$uid}", $name)
 			->orderBy($order, $direction);
 	}
 

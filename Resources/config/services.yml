@@ -22,6 +22,15 @@ parameters:
     ns_catalog.search.item.repository.class:           'NS\CatalogBundle\Search\ItemRepository'
 
 services:
+    ns_catalog_service:
+        class: 'NS\CatalogBundle\Service\CatalogService'
+        arguments:
+            - @ns_catalog.repository.item
+            - @ns_catalog.repository.category
+
+    ns_catalog.item_service:
+        alias: ns_catalog.service.item
+
     ns_catalog.form.type.category:
         class: %ns_catalog.form.type.category.class%
 
@@ -52,11 +61,15 @@ services:
         factory_method: 'getRepository'
         arguments:
             - %ns_catalog.repository.item.factory_argument%
+        calls:
+            - [setPaginator, [@knp_paginator]]
 
     ns_catalog.service.item:
         class: %ns_catalog.service.item.class%
         arguments:
             - @doctrine.orm.entity_manager
+            - @knp_paginator
+            - @ns_catalog.repository.item
 
     ns_catalog.settings.formtype.collection:
         class: %ns_catalog.settings.formtype.collection.class%

@@ -3,7 +3,11 @@
 namespace NS\CatalogBundle\Service;
 
 use Doctrine\ORM\EntityManager;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\Item;
+use NS\CatalogBundle\Entity\ItemRepository;
 use NS\CatalogBundle\QueryBuilder\ItemQueryBuilder;
 
 /**
@@ -18,12 +22,27 @@ class ItemService
 	 */
 	private $entityManager;
 
-	/**
-	 * @param EntityManager $entityManager
-	 */
-	public function __construct(EntityManager $entityManager)
+    /**
+     * @var PaginatorInterface
+     */
+    private $paginator;
+
+    /**
+     * @var ItemRepository
+     */
+    private $itemRepository;
+
+    /**
+     * @param EntityManager      $entityManager
+     * @param PaginatorInterface $paginator
+     * @param ItemRepository     $itemRepository
+     */
+	public function __construct(EntityManager $entityManager, PaginatorInterface $paginator,
+        ItemRepository $itemRepository)
 	{
-		$this->entityManager = $entityManager;
+        $this->entityManager      = $entityManager;
+        $this->paginator          = $paginator;
+        $this->itemRepository     = $itemRepository;
 	}
 
 	/**

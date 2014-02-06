@@ -19,10 +19,12 @@ use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Menu\CategoryNode;
 use NS\CatalogBundle\Menu\Matcher\Voter\CategoryVoter;
 use NS\CatalogBundle\QueryBuilder\ItemQueryBuilder;
+use NS\CatalogBundle\Service\CatalogService;
 use NS\CatalogBundle\Service\ItemService;
 use NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsModel;
 use NS\CmsBundle\Entity\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use NS\CmsBundle\Entity\Block;
@@ -244,60 +246,48 @@ class BlocksController extends Controller
 		));
 	}
 
-	/**
-	 * Category items block
-	 *
-	 * @param  Block $block
-	 * @return Response
-	 */
-	public function itemsBlockAction(Block $block)
+    /**
+     * Category items block
+     *
+     * @param Request $request
+     * @param Block   $block
+     * @return Response
+     */
+	public function itemsBlockAction(Request $request, Block $block)
 	{
-		/** @var $settings ItemsBlockSettingsModel */
-		$settings = $this
-			->getBlockManager()
-			->getBlockSettings($block);
+        /** @var $settings ItemsBlockSettingsModel */
+        $settings = $this
+            ->getBlockManager()
+            ->getBlockSettings($block);
 
-		// creating query builder
-		$queryBuilder = $this
-			->getItemService()
-			->createItemQueryBuilder()
-			->andVisible();
+        // filtering by category
+        $filterCategory = null;
+        if ($settings->getUseCategory()) {
+            /** @var CategoryRepository $categoryRepository */
+            $categoryRepository = $this->get('ns_catalog.repository.category');
+            $slug = $request->attributes->get('categorySlug');
+            $filterCategory = $categoryRepository->findOneBySlug($slug);
+        }
 
-		// filtering by category
-		$category = $this->getRequestCategory();
-		if ($settings->getUseCategory() && $category) {
-			$queryBuilder->andWhereCategory($category);
-		}
+        // retrieving items
+        /** @var CatalogService $catalogService */
+        $catalogService = $this->get('ns_catalog_service');
+        $items = $catalogService->getItemsPaged(
+            $request->query->get('page', 1),
+            $settings->getCount(),
+            true,
+            $filterCategory,
+            $settings->getSettingsConditions(),
+            $settings->getOrderArray()
+        );
 
-		// filtering by settings
-		elseif ($settings->getSettingName()) {
-			$queryBuilder->andWhereSetting($settings->getSettingName(), $settings->getSettingValue());
-		}
-
-		// ordering
-		if ($settings->getOrder()) {
-			$queryBuilder->orderBySetting(
-				$settings->getOrderField(),
-				$settings->getOrderDirection(),
-				$settings->getOrderType()
-			);
-		}
-
-		// creating pagination
-		$pagination = $this->createPagination(
-			$queryBuilder->getQuery(),
-			$settings->getCount()
-		);
-
-
-
-		return $this->render($block->getTemplate('NSCatalogBundle:Blocks:itemsBlock.html.twig'), array(
-			'block'      => $block,
-			'settings'   => $settings,
-			'items'      => $pagination,
-			'pagination' => $pagination,
-			'category'   => $category,
-		));
+        return $this->render($block->getTemplate('NSCatalogBundle:Blocks:itemsBlock.html.twig'), array(
+            'block'      => $block,
+            'settings'   => $settings,
+            'items'      => $items,
+            'pagination' => $items,
+            'category'   => $filterCategory,
+        ));
 	}
 
 	/**
@@ -403,34 +393,11 @@ class BlocksController extends Controller
 	}
 
 	/**
-	 * @return CategoryRepository
-	 */
-	private function getCategoryRepository()
-	{
-		return $this->get('ns_catalog.repository.category');
-	}
-
-	/**
 	 * @return ItemService
 	 */
 	private function getItemService()
 	{
 		return $this->get('ns_catalog.service.item');
-	}
-
-	/**
-	 * @return Category|null
-	 */
-	private function getRequestCategory()
-	{
-		$categorySlug = $this
-			->getRequest()
-			->attributes
-			->get('categorySlug');
-
-		return $this
-			->getCategoryRepository()
-			->findOneBySlug($categorySlug);
 	}
 
 	/**

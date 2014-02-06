@@ -54,14 +54,25 @@ class Item implements ModelInterface
 	 * @var string
 	 * @ORM\OneToMany(targetEntity="Setting", mappedBy="item", cascade={"persist", "remove"})
 	 */
-	private $rawSettings = array();
+	private $rawSettings;
 
 	/**
 	 * @var AbstractSettings
 	 */
 	private $settings;
 
-	public function __clone()
+    /**
+     * Constructor
+     */
+    function __construct()
+    {
+        $this->rawSettings = new ArrayCollection();
+    }
+
+    /**
+     * Clone
+     */
+    public function __clone()
 	{
 		$this->id = null;
 	}
@@ -186,15 +197,23 @@ class Item implements ModelInterface
 	 */
 	public function getSettings()
 	{
+        if (!$this->settings) {
+            $this->settings = $this->mapSettings();
+        }
+
 		return $this->settings;
 	}
 
 	/**
-	 * @ORM\PostLoad
-	 */
-	public function mapSettingsOnPostLoad()
+     * Maps settings object
+     *
+     * @return AbstractSettings
+     * @throws \Exception
+     */
+    private function mapSettings()
 	{
 		$category = $this->getCategory();
+
 		if (!$category) {
 			throw new \Exception("Item #{$this->getId()} has no category");
 		}
@@ -212,7 +231,7 @@ class Item implements ModelInterface
 			$settings->setSetting($setting->getName(), $setting->getValue());
 		}
 
-		$this->settings = $settings;
+		return $settings;
 	}
 
 	/**

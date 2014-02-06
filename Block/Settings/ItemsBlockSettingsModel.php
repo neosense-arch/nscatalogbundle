@@ -93,6 +93,20 @@ class ItemsBlockSettingsModel
 		return $this->settingValue;
 	}
 
+    /**
+     * Retrieves settings conditions in key-value assoc array format
+     * e.g. ['hit' => 1]
+     *
+     * @return array
+     */
+    public function getSettingsConditions()
+    {
+        if (!$this->getSettingName()) {
+            return array();
+        }
+        return array($this->getSettingName() => $this->getSettingValue());
+    }
+
 	/**
 	 * @param string $order
 	 */
@@ -132,6 +146,16 @@ class ItemsBlockSettingsModel
 	{
 		return $this->getOrderValue(2, 'string');
 	}
+
+    /**
+     * @return array
+     */
+    public function getOrderArray()
+    {
+        return array(
+            array($this->getOrderField(), $this->getOrderDirection(), $this->getOrderType()),
+        );
+    }
 
 	/**
 	 * @param int    $index
