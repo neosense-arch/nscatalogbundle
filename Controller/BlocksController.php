@@ -18,18 +18,14 @@ use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Menu\CategoryNode;
 use NS\CatalogBundle\Menu\Matcher\Voter\CategoryVoter;
-use NS\CatalogBundle\QueryBuilder\ItemQueryBuilder;
 use NS\CatalogBundle\Service\CatalogService;
 use NS\CatalogBundle\Service\ItemService;
 use NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsModel;
-use NS\CmsBundle\Entity\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use NS\CmsBundle\Entity\Block;
 use NS\CmsBundle\Manager\BlockManager;
-
 use NS\CatalogBundle\Block\Settings\MainItemsBlockSettingsModel;
 use NS\CatalogBundle\Entity\ItemRepository;
 use Symfony\Component\Routing\RouterInterface;
