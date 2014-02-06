@@ -260,18 +260,17 @@ class BlocksController extends Controller
             ->getBlockManager()
             ->getBlockSettings($block);
 
+        /** @var CatalogService $catalogService */
+        $catalogService = $this->get('ns_catalog_service');
+
         // filtering by category
         $filterCategory = null;
         if ($settings->getUseCategory()) {
-            /** @var CategoryRepository $categoryRepository */
-            $categoryRepository = $this->get('ns_catalog.repository.category');
             $slug = $request->attributes->get('categorySlug');
-            $filterCategory = $categoryRepository->findOneBySlug($slug);
+            $filterCategory = $catalogService->getCategoryBySlug($slug);
         }
 
         // retrieving items
-        /** @var CatalogService $catalogService */
-        $catalogService = $this->get('ns_catalog_service');
         $items = $catalogService->getItemsPaged(
             $request->query->get('page', 1),
             $settings->getCount(),

@@ -51,4 +51,15 @@ class CatalogService
     {
         return $this->itemRepository->findItemsPaged($page, $limit, $visible, $category, $settings, $orderBy);
     }
+
+    /**
+     * Retrieves category by slug
+     *
+     * @param string $slug
+     * @return Category|null
+     */
+    public function getCategoryBySlug($slug)
+    {
+        return $this->categoryRepository->findOneBySlug($slug);
+    }
 } 
