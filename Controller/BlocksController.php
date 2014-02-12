@@ -12,7 +12,6 @@ use NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\CategoryBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\ItemBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\ItemsBlockSettingsModel;
-use NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsModel;
 use NS\CatalogBundle\Block\Settings\SearchBlockSettingsModel;
 use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
@@ -26,12 +25,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use NS\CmsBundle\Entity\Block;
 use NS\CmsBundle\Manager\BlockManager;
-use NS\CatalogBundle\Block\Settings\MainItemsBlockSettingsModel;
 use NS\CatalogBundle\Entity\ItemRepository;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class BlocksController
+ *
  * @package NS\CatalogBundle\Controller
  */
 class BlocksController extends Controller
@@ -45,153 +44,153 @@ class BlocksController extends Controller
      * @param string|null                      $categorySlug
      * @return Response
      */
-	public function categoriesMenuBlockAction(Request $request, Block $block,
-        CategoriesMenuBlockSettingsModel $settings, $categorySlug = null)
-	{
-		/** @var $categoryRepository CategoryRepository */
-		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
+    public function categoriesMenuBlockAction(Request $request, Block $block,
+                                              CategoriesMenuBlockSettingsModel $settings, $categorySlug = null)
+    {
+        /** @var $categoryRepository CategoryRepository */
+        $categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
 
-		// current category
-		$currentCategory = $categoryRepository->findOneBySlug($categorySlug);
+        // current category
+        $currentCategory = $categoryRepository->findOneBySlug($categorySlug);
 
-		// retrieving root category
-		if ($settings->getIsSubmenu() && $currentCategory) {
-			$rootCategory = $currentCategory;
-			while ($rootCategory->getParent() && $rootCategory->getParent()->getParent()){
-				$rootCategory = $rootCategory->getParent();
-			}
-		}
-		else {
-			$rootCategory = $categoryRepository->findRootOrCreate();
-		}
+        // retrieving root category
+        if ($settings->getIsSubmenu() && $currentCategory) {
+            $rootCategory = $currentCategory;
+            while ($rootCategory->getParent() && $rootCategory->getParent()->getParent()) {
+                $rootCategory = $rootCategory->getParent();
+            }
+        } else {
+            $rootCategory = $categoryRepository->findRootOrCreate();
+        }
 
-		// creating from root node
-		$factory = new MenuFactory();
+        // creating from root node
+        $factory = new MenuFactory();
         /** @var $router RouterInterface */
-        $router = $this->get('router');
-		$rootNode = new CategoryNode($rootCategory, $router, $settings->getRouteName());
-		$menu = $factory->createFromNode($rootNode);
+        $router   = $this->get('router');
+        $rootNode = new CategoryNode($rootCategory, $router, $settings->getRouteName());
+        $menu     = $factory->createFromNode($rootNode);
 
-		$matcher = new Matcher();
-		if ($currentCategory) {
-			$matcher->addVoter(new CategoryVoter($currentCategory));
-		}
+        $matcher = new Matcher();
+        if ($currentCategory) {
+            $matcher->addVoter(new CategoryVoter($currentCategory));
+        }
 
-		// items
-		$items = $menu->getChildren();
+        // items
+        $items = $menu->getChildren();
 
-		// sorting items
-		/** @var ItemInterface[] $sorted */
-		$sorted = array();
-		$sortItems = explode(',', $settings->getSortOrder());
-		foreach ($sortItems as $slug) {
-			foreach ($items as $item) {
-				/** @var Category $currentCategory */
-				$category = $item->getExtra('category');
-				if ($category->getSlug() === $slug) {
-					$sorted[] = $item;
-					break;
-				}
-			}
-		}
+        // sorting items
+        /** @var ItemInterface[] $sorted */
+        $sorted    = array();
+        $sortItems = explode(',', $settings->getSortOrder());
+        foreach ($sortItems as $slug) {
+            foreach ($items as $item) {
+                /** @var Category $currentCategory */
+                $category = $item->getExtra('category');
+                if ($category->getSlug() === $slug) {
+                    $sorted[] = $item;
+                    break;
+                }
+            }
+        }
 
-		foreach ($items as $item) {
-			/** @var Category $currentCategory */
-			$category = $item->getExtra('category');
-			if (!in_array($category->getSlug(), $sortItems)) {
-				$sorted[] = $item;
-			}
-		}
-		$menu->setChildren($sorted);
+        foreach ($items as $item) {
+            /** @var Category $currentCategory */
+            $category = $item->getExtra('category');
+            if (!in_array($category->getSlug(), $sortItems)) {
+                $sorted[] = $item;
+            }
+        }
+        $menu->setChildren($sorted);
 
-		// checking active items
-		$hasActiveItems = false;
-		if ($currentCategory) {
-			foreach ($sorted as $item) {
-				if ($matcher->isCurrent($item) || $matcher->isAncestor($item)) {
-					$hasActiveItems = true;
-					break;
-				}
-			}
-		}
+        // checking active items
+        $hasActiveItems = false;
+        if ($currentCategory) {
+            foreach ($sorted as $item) {
+                if ($matcher->isCurrent($item) || $matcher->isAncestor($item)) {
+                    $hasActiveItems = true;
+                    break;
+                }
+            }
+        }
 
-		// checking automatic redirect option
-		if (!$hasActiveItems && $settings->getRedirectToFirstItem() && count($sorted)) {
-			return $this->redirect(
-				$this->generateUrl(
-					$settings->getRouteName(),
-					array(
-						'categorySlug' => $sorted[0]->getExtra('category')->getSlug(),
-					)
-				)
-			);
-		}
+        // checking automatic redirect option
+        if (!$hasActiveItems && $settings->getRedirectToFirstItem() && count($sorted)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    $settings->getRouteName(),
+                    array(
+                        'categorySlug' => $sorted[0]->getExtra('category')->getSlug(),
+                    )
+                )
+            );
+        }
 
-		return $this->render($settings->getTemplate(), array(
-			'block'           => $block,
-			'settings'        => $settings,
-			'menu'            => $menu,
-			'matcher'         => $matcher,
-			'currentCategory' => $currentCategory,
-		));
-	}
+        return $this->render($settings->getTemplate(), array(
+            'block'           => $block,
+            'settings'        => $settings,
+            'menu'            => $menu,
+            'matcher'         => $matcher,
+            'currentCategory' => $currentCategory,
+        ));
+    }
 
-	/**
-	 * Categories block
-	 *
-	 * @param  Block $block
-	 * @return Response
-	 */
-	public function categoriesBlockAction(Block $block)
-	{
-		/** @var $settings CategoriesBlockSettingsModel */
-		$settings = $this->getBlockManager()->getBlockSettings($block);
+    /**
+     * Categories block
+     *
+     * @param  Block                       $block
+     * @param CategoriesBlockSettingsModel $settings
+     * @return Response
+     */
+    public function categoriesBlockAction(Block $block, CategoriesBlockSettingsModel $settings)
+    {
+        /** @var $settings CategoriesBlockSettingsModel */
+        $settings = $this->getBlockManager()->getBlockSettings($block);
 
-		/** @var $categoryRepository CategoryRepository */
-		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
+        /** @var $categoryRepository CategoryRepository */
+        $categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
 
-		$categorySlug = $this->getRequest()->attributes->get('categorySlug');
-		$category = $categoryRepository->findOneBySlug($categorySlug);
+        $categorySlug = $this->getRequest()->attributes->get('categorySlug');
+        $category     = $categoryRepository->findOneBySlug($categorySlug);
 
-		$categories = $categoryRepository->findByCategory($category);
+        $categories = $categoryRepository->findByCategory($category);
 
-		return $this->render('NSCatalogBundle:Blocks:categoriesBlock.html.twig', array(
-			'block'      => $block,
-			'settings'   => $settings,
-			'categories' => $categories,
-		));
-	}
+        return $this->render('NSCatalogBundle:Blocks:categoriesBlock.html.twig', array(
+            'block'      => $block,
+            'settings'   => $settings,
+            'categories' => $categories,
+        ));
+    }
 
-	/**
-	 * Category block
-	 *
-	 * @param  Block $block
-	 * @return Response
-	 */
-	public function categoryBlockAction(Block $block)
-	{
-		/** @var $settings CategoryBlockSettingsModel */
-		$settings = $this
-			->getBlockManager()
-			->getBlockSettings($block);
+    /**
+     * Category block
+     *
+     * @param  Block $block
+     * @return Response
+     */
+    public function categoryBlockAction(Block $block)
+    {
+        /** @var $settings CategoryBlockSettingsModel */
+        $settings = $this
+            ->getBlockManager()
+            ->getBlockSettings($block);
 
-		/** @var $categoryRepository CategoryRepository */
-		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
+        /** @var $categoryRepository CategoryRepository */
+        $categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
 
-		$categorySlug = $this->getRequest()->attributes->get('categorySlug');
-		$category = $categoryRepository->findOneBySlug($categorySlug);
+        $categorySlug = $this->getRequest()->attributes->get('categorySlug');
+        $category     = $categoryRepository->findOneBySlug($categorySlug);
 
-		if (!$category) {
-			return Response::create('', 404);
-		}
+        if (!$category) {
+            return Response::create('', 404);
+        }
 
-		return $this->render($block->getTemplate('NSCatalogBundle:Blocks:categoryBlock.html.twig'), array(
-			'block'          => $block,
-			'settings'       => $settings,
-			'category'       => $category,
-			'rootCategories' => $categoryRepository->findRootOrCreate()->getChildren(),
-		));
-	}
+        return $this->render($block->getTemplate('NSCatalogBundle:Blocks:categoryBlock.html.twig'), array(
+            'block'          => $block,
+            'settings'       => $settings,
+            'category'       => $category,
+            'rootCategories' => $categoryRepository->findRootOrCreate()->getChildren(),
+        ));
+    }
 
     /**
      * Category items block
@@ -201,15 +200,15 @@ class BlocksController extends Controller
      * @param ItemsBlockSettingsModel $settings
      * @return Response
      */
-	public function itemsBlockAction(Request $request, Block $block, ItemsBlockSettingsModel $settings)
-	{
+    public function itemsBlockAction(Request $request, Block $block, ItemsBlockSettingsModel $settings)
+    {
         /** @var CatalogService $catalogService */
         $catalogService = $this->get('ns_catalog_service');
 
         // filtering by category
         $filterCategory = null;
         if ($settings->getUseCategory()) {
-            $slug = $request->attributes->get('categorySlug');
+            $slug           = $request->attributes->get('categorySlug');
             $filterCategory = $catalogService->getCategoryBySlug($slug);
         }
 
@@ -230,129 +229,129 @@ class BlocksController extends Controller
             'pagination' => $items,
             'category'   => $filterCategory,
         ));
-	}
+    }
 
-	/**
-	 * Item detail info block
-	 *
-	 * @param  Block $block
-	 * @return Response
-	 */
-	public function itemBlockAction(Block $block)
-	{
-		/** @var $settings ItemBlockSettingsModel */
-		$settings = $this->getBlockManager()->getBlockSettings($block);
+    /**
+     * Item detail info block
+     *
+     * @param  Block $block
+     * @return Response
+     */
+    public function itemBlockAction(Block $block)
+    {
+        /** @var $settings ItemBlockSettingsModel */
+        $settings = $this->getBlockManager()->getBlockSettings($block);
 
-		/** @var $categoryRepository CategoryRepository */
-		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
+        /** @var $categoryRepository CategoryRepository */
+        $categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
 
-		$categorySlug = $this->getRequest()->attributes->get('categorySlug');
-		$category = $categoryRepository->findOneBySlug($categorySlug);
+        $categorySlug = $this->getRequest()->attributes->get('categorySlug');
+        $category     = $categoryRepository->findOneBySlug($categorySlug);
 
-		/** @var $itemRepository ItemRepository */
-		$itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
-		$item = $itemRepository->findOneBySlug($this->getRequest()->attributes->get('itemSlug'));
+        /** @var $itemRepository ItemRepository */
+        $itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
+        $item           = $itemRepository->findOneBySlug($this->getRequest()->attributes->get('itemSlug'));
 
-		if (!$item) {
-			return Response::create('', 404);
-		}
+        if (!$item) {
+            return Response::create('', 404);
+        }
 
-		if ($item->getCategory() !== $category) {
-			$item = null;
-		}
+        if ($item->getCategory() !== $category) {
+            $item = null;
+        }
 
-		return $this->render('NSCatalogBundle:Blocks:itemBlock.html.twig', array(
-			'block'      => $block,
-			'settings'   => $settings,
-			'item'       => $item,
-		));
-	}
+        return $this->render('NSCatalogBundle:Blocks:itemBlock.html.twig', array(
+            'block'    => $block,
+            'settings' => $settings,
+            'item'     => $item,
+        ));
+    }
 
-	/**
-	 * @param  Block $block
-	 * @return Response
-	 */
-	public function fullListBlockAction(Block $block)
-	{
-		/** @var $settings CountBlockSettingsModel */
-		$settings = $this
-			->getBlockManager()
-			->getBlockSettings($block);
+    /**
+     * @param  Block $block
+     * @return Response
+     */
+    public function fullListBlockAction(Block $block)
+    {
+        /** @var $settings CountBlockSettingsModel */
+        $settings = $this
+            ->getBlockManager()
+            ->getBlockSettings($block);
 
-		$pagination = $this->createPagination(
-			$this->getItemRepository()->getFindFullCatalogQuery(),
-			$settings->getCount()
-		);
+        $pagination = $this->createPagination(
+            $this->getItemRepository()->getFindFullCatalogQuery(),
+            $settings->getCount()
+        );
 
-		return $this->render('NSCatalogBundle:Blocks:fullListBlock.html.twig', array(
-			'block'      => $block,
-			'settings'   => $settings,
-			'items'      => $pagination,
-			'pagination' => $pagination,
-		));
-	}
+        return $this->render('NSCatalogBundle:Blocks:fullListBlock.html.twig', array(
+            'block'      => $block,
+            'settings'   => $settings,
+            'items'      => $pagination,
+            'pagination' => $pagination,
+        ));
+    }
 
-	/**
-	 * @param  Block $block
-	 * @return Response
-	 */
-	public function searchBlockAction(Block $block)
-	{
-		/** @var $settings SearchBlockSettingsModel */
-		$settings = $this
-			->getBlockManager()
-			->getBlockSettings($block);
+    /**
+     * @param  Block $block
+     * @return Response
+     */
+    public function searchBlockAction(Block $block)
+    {
+        /** @var $settings SearchBlockSettingsModel */
+        $settings = $this
+            ->getBlockManager()
+            ->getBlockSettings($block);
 
-		$itemService = $this->getItemService();
-		$items = $itemService->search(
-			$this->getRequest()->query->get('query'),
-			$settings->getSettingsArray(),
-			30
-		);
+        $itemService = $this->getItemService();
+        $items       = $itemService->search(
+            $this->getRequest()->query->get('query'),
+            $settings->getSettingsArray(),
+            30
+        );
 
-		return $this->render('NSCatalogBundle:Blocks:searchBlock.html.twig', array(
-			'block'      => $block,
-			'settings'   => $settings,
-			'items'      => $items,
-			'query'      => $this->getRequest()->query->get('query'),
-		));
-	}
+        return $this->render('NSCatalogBundle:Blocks:searchBlock.html.twig', array(
+            'block'    => $block,
+            'settings' => $settings,
+            'items'    => $items,
+            'query'    => $this->getRequest()->query->get('query'),
+        ));
+    }
 
-	/**
-	 * @return BlockManager
-	 */
-	private function getBlockManager()
-	{
-		return $this->get('ns_cms.manager.block');
-	}
+    /**
+     * @return BlockManager
+     */
+    private function getBlockManager()
+    {
+        return $this->get('ns_cms.manager.block');
+    }
 
-	/**
-	 * @return ItemRepository
-	 */
-	private function getItemRepository()
-	{
-		return $this->get('ns_catalog.repository.item');
-	}
+    /**
+     * @return ItemRepository
+     */
+    private function getItemRepository()
+    {
+        return $this->get('ns_catalog.repository.item');
+    }
 
-	/**
-	 * @return ItemService
-	 */
-	private function getItemService()
-	{
-		return $this->get('ns_catalog.service.item');
-	}
+    /**
+     * @return ItemService
+     */
+    private function getItemService()
+    {
+        return $this->get('ns_catalog.service.item');
+    }
 
-	/**
-	 * @param Query $query
-	 * @param int   $itemsPerPage
-	 * @return PaginationInterface
-	 */
-	private function createPagination(Query $query, $itemsPerPage)
-	{
-		return $this->get('knp_paginator')->paginate(
-			$query,
-			$this->getRequest()->query->get('page', 1),
-			$itemsPerPage
-		);
-	}
+    /**
+     * @param Query $query
+     * @param int   $itemsPerPage
+     * @return PaginationInterface
+     */
+    private function createPagination(Query $query, $itemsPerPage)
+    {
+        return $this->get('knp_paginator')->paginate(
+            $query,
+            $this->getRequest()->query->get('page', 1),
+            $itemsPerPage
+        );
+    }
 }
