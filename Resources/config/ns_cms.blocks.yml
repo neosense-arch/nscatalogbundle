@@ -1,19 +1,5 @@
 blocks:
     -
-        name: NSCatalogBundle:Blocks:mainItemsBlock
-        title: Товары на главной странице
-        form: "ns_catalogbundle_blockmainitemstype"
-        template: NSCatalogBundle:Blocks:mainItemsBlock.phtml.twig
-        settingsFormClass: NS\CatalogBundle\Block\Settings\MainItemsBlockSettingsForm
-        settingsModelClass: NS\CatalogBundle\Block\Settings\MainItemsBlockSettingsModel
-    -
-        name: NSCatalogBundle:Blocks:newItemsBlock
-        title: Новинки
-        form: "ns_catalogbundle_blocknewitemstype"
-        template: NSCatalogBundle:Blocks:newItemsBlock.phtml.twig
-        settingsFormClass: NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsForm
-        settingsModelClass: NS\CatalogBundle\Block\Settings\NewItemsBlockSettingsModel
-    -
         name: NSCatalogBundle:Blocks:categoriesMenuBlock
         title: Меню категорий
         form: "ns_catalogbundle_blockcategoriesmenutype"

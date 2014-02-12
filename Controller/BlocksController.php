@@ -37,54 +37,6 @@ use Symfony\Component\Routing\RouterInterface;
 class BlocksController extends Controller
 {
 	/**
-	 * Main items block
-	 *
-	 * @param  Block $block
-	 * @return Response
-	 */
-	public function mainItemsBlockAction(Block $block)
-	{
-		/** @var $settings MainItemsBlockSettingsModel */
-		$settings = $this
-			->getBlockManager()
-			->getBlockSettings($block);
-
-		$itemRepository = $this->getItemRepository();
-
-		return $this->render('NSCatalogBundle:Blocks:itemsBlock.html.twig', array(
-			'block'    => $block,
-			'settings' => $settings,
-			'items'    => $itemRepository->findVisibleBySettings('main', true, $settings->getCount())
-		));
-	}
-
-	/**
-	 * New items block
-	 *
-	 * @param  Block $block
-	 * @return Response
-	 */
-	public function newItemsBlockAction(Block $block)
-	{
-		/** @var $settings NewItemsBlockSettingsModel */
-		$settings = $this
-			->getBlockManager()
-			->getBlockSettings($block);
-
-		$pagination = $this->createPagination(
-			$this->getItemRepository()->getFindVisibleBySettingsQuery('new', true),
-			$settings->getCount()
-		);
-
-		return $this->render('NSCatalogBundle:Blocks:itemsBlock.html.twig', array(
-			'block'      => $block,
-			'settings'   => $settings,
-			'items'      => $pagination,
-			'pagination' => $pagination,
-		));
-	}
-
-	/**
 	 * Categories menu block
 	 *
 	 * @param  Block $block
