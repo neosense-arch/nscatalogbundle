@@ -36,26 +36,23 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class BlocksController extends Controller
 {
-	/**
-	 * Categories menu block
-	 *
-	 * @param  Block $block
-	 * @return Response
-	 */
-	public function categoriesMenuBlockAction(Block $block)
+    /**
+     * Categories menu block
+     *
+     * @param Request                          $request
+     * @param  Block                           $block
+     * @param CategoriesMenuBlockSettingsModel $settings
+     * @param string|null                      $categorySlug
+     * @return Response
+     */
+	public function categoriesMenuBlockAction(Request $request, Block $block,
+        CategoriesMenuBlockSettingsModel $settings, $categorySlug = null)
 	{
-		/** @var $settings CategoriesMenuBlockSettingsModel */
-		$settings = $this->getBlockManager()->getBlockSettings($block);
-
 		/** @var $categoryRepository CategoryRepository */
 		$categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
 
-		/** @var $router RouterInterface */
-		$router = $this->get('router');
-
 		// current category
-		$slug = $this->getRequest()->attributes->get('categorySlug');
-		$currentCategory = $categoryRepository->findOneBySlug($slug);
+		$currentCategory = $categoryRepository->findOneBySlug($categorySlug);
 
 		// retrieving root category
 		if ($settings->getIsSubmenu() && $currentCategory) {
@@ -70,6 +67,8 @@ class BlocksController extends Controller
 
 		// creating from root node
 		$factory = new MenuFactory();
+        /** @var $router RouterInterface */
+        $router = $this->get('router');
 		$rootNode = new CategoryNode($rootCategory, $router, $settings->getRouteName());
 		$menu = $factory->createFromNode($rootNode);
 
