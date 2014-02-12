@@ -139,19 +139,15 @@ class BlocksController extends Controller
      *
      * @param  Block                       $block
      * @param CategoriesBlockSettingsModel $settings
+     * @param string|null                  $categorySlug
      * @return Response
      */
-    public function categoriesBlockAction(Block $block, CategoriesBlockSettingsModel $settings)
+    public function categoriesBlockAction(Block $block, CategoriesBlockSettingsModel $settings, $categorySlug = null)
     {
-        /** @var $settings CategoriesBlockSettingsModel */
-        $settings = $this->getBlockManager()->getBlockSettings($block);
-
         /** @var $categoryRepository CategoryRepository */
         $categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
 
-        $categorySlug = $this->getRequest()->attributes->get('categorySlug');
-        $category     = $categoryRepository->findOneBySlug($categorySlug);
-
+        $category   = $categoryRepository->findOneBySlug($categorySlug);
         $categories = $categoryRepository->findByCategory($category);
 
         return $this->render('NSCatalogBundle:Blocks:categoriesBlock.html.twig', array(
