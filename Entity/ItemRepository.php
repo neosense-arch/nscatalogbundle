@@ -202,7 +202,7 @@ class ItemRepository extends EntityRepository
      * @param int      $limit    items per page
      * @param null     $visible  visible flag (item.visible)
      * @param Category $category item category (item.category)
-     * @param array    $settings settings conditions (e.g. ['hit' => '1', 'price' => 10.2])
+     * @param array    $settings settings conditions (e.g. ['hit' => '1', 'price' => 10.2] or ['color' => ['red', 'yellow'], 'price' => 10.2])
      * @param array    $orderBy  order conditions (e.g. [['price', 'ASC', 'number'], ['createdAt', 'DESC']]
      * @return PaginationInterface|Item[]
      */
@@ -235,11 +235,15 @@ class ItemRepository extends EntityRepository
 
         // settings conditions
         foreach ($settings as $key => $value) {
-            $queryBuilder
-                ->join('i.rawSettings', "s{$key}", 'WITH', "s{$key}.name = :name_{$key} AND s{$key}.value = :value_{$key}")
-                ->setParameter("name_{$key}", $key)
-                ->setParameter("value_{$key}", $value)
-            ;
+            if (!is_array($value)) {
+                $value = array($value);
+            }
+            if ($value) {
+                $queryBuilder
+                    ->join('i.rawSettings', "s{$key}", 'WITH', "s{$key}.name = :name_{$key} AND s{$key}.value IN (:value_{$key})")
+                    ->setParameter("name_{$key}", $key)
+                    ->setParameter("value_{$key}", $value);
+            }
         }
 
         // ordering
@@ -260,9 +264,9 @@ class ItemRepository extends EntityRepository
             $orderType = $order[2];
 
             // order key (e.g. "o_price")
-            $key = 'o_' . $orderKey;
+            $name = 'o_' . $orderKey;
             // order expression (e.g. "o_price.value")
-            $expr = $key . '.value';
+            $expr = $name . '.value';
 
             // processing order type
             if ($orderType === 'numeric') {
@@ -273,8 +277,8 @@ class ItemRepository extends EntityRepository
 
             // adding order expression
             $queryBuilder
-                ->join('i.rawSettings', $key, 'WITH', "{$key}.name = :name_{$key}")
-                ->setParameter("name_{$key}", $orderKey)
+                ->join('i.rawSettings', $name, 'WITH', "{$name}.name = :name_{$name}")
+                ->setParameter("name_{$name}", $orderKey)
                 ->addOrderBy($expr, $orderDirection);
         }
 
