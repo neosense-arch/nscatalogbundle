@@ -11,40 +11,47 @@ use NS\CatalogBundle\Form\Type\CategoryType;
 use NS\CatalogBundle\Form\Type\ItemType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class AdminItemsApiController
+ *
+ * @package NS\CatalogBundle\Controller
+ */
 class AdminItemsApiController extends Controller
 {
-	const CATALOG_NAME = 'goods';
+    /**
+     * @var string Default catalog name
+     */
+    const CATALOG_NAME = 'goods';
 
-	/**
-	 * @throws \Exception
-	 * @return Response
-	 */
-	public function formAction()
+    /**
+     * @param Request $request
+     * @return Response
+     */
+	public function formAction(Request $request)
 	{
 		try {
 			$item = $this->getItem();
-			$itemForm = $this->createItemForm($item);
 
+			$itemForm = $this->createItemForm($item);
 			$itemSettingsForm = $this->createItemSettingsForm($item);
 
-			if ($this->getRequest()->getMethod() === 'POST') {
-				$itemForm->submit($this->getRequest());
-				$itemSettingsForm->submit($this->getRequest());
+            $itemForm->handleRequest($request);
+            $itemSettingsForm->handleRequest($request);
 
-				if ($itemForm->isValid() && $itemSettingsForm->isValid()) {
-					$item->setSettings($itemSettingsForm->getData());
-					$this->getDoctrine()->getManager()->persist($item);
-					$this->getDoctrine()->getManager()->flush();
-					return new JsonResponse(array('itemId' => $item->getId()));
-				}
-			}
+            if ($itemForm->isValid() && $itemSettingsForm->isValid()) {
+                $item->setSettings($itemSettingsForm->getData());
+                $this->getDoctrine()->getManager()->persist($item);
+                $this->getDoctrine()->getManager()->flush();
+                return new JsonResponse(array('itemId' => $item->getId()));
+            }
 
 			return $this->render('NSCatalogBundle:AdminItemsApi:form.html.twig', array(
-				'itemForm' => $itemForm->createView(),
-				'itemSettingsForm' => $itemSettingsForm->createView(),
-				'item' => $item,
+                'itemForm'         => $itemForm->createView(),
+                'itemSettingsForm' => $itemSettingsForm->createView(),
+                'item'             => $item,
 			));
 		}
 		catch (\Exception $e) {
