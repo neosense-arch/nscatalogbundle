@@ -213,9 +213,8 @@ class Item implements ModelInterface
     private function mapSettings()
 	{
 		$category = $this->getCategory();
-
 		if (!$category) {
-			throw new \Exception("Item #{$this->getId()} has no category");
+            return null;
 		}
 
 		$catalog = $category->getCatalog();
