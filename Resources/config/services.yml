@@ -25,8 +25,10 @@ services:
     ns_catalog_service:
         class: 'NS\CatalogBundle\Service\CatalogService'
         arguments:
+            - @doctrine.orm.entity_manager
             - @ns_catalog.repository.item
             - @ns_catalog.repository.category
+            - @ns_catalog.repository.catalog
 
     ns_catalog.item_service:
         alias: ns_catalog.service.item

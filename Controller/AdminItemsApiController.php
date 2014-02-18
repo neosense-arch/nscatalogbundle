@@ -2,14 +2,11 @@
 
 namespace NS\CatalogBundle\Controller;
 
-use NS\CatalogBundle\Entity\CatalogRepository;
-use NS\CatalogBundle\Entity\Category;
-use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\Item;
-use NS\CatalogBundle\Entity\ItemRepository;
-use NS\CatalogBundle\Form\Type\CategoryType;
 use NS\CatalogBundle\Form\Type\ItemType;
+use NS\CatalogBundle\Service\CatalogService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,25 +24,35 @@ class AdminItemsApiController extends Controller
     const CATALOG_NAME = 'goods';
 
     /**
+     * Creates or updates item object
+     *
      * @param Request $request
      * @return Response
      */
 	public function formAction(Request $request)
 	{
 		try {
-			$item = $this->getItem();
+            // retrieving item
+			$item = $this->getRequestItem($request);
 
+            // initializing item forms
 			$itemForm = $this->createItemForm($item);
 			$itemSettingsForm = $this->createItemSettingsForm($item);
 
+            // handling forms
             $itemForm->handleRequest($request);
             $itemSettingsForm->handleRequest($request);
-
             if ($itemForm->isValid() && $itemSettingsForm->isValid()) {
+                // updating settings
                 $item->setSettings($itemSettingsForm->getData());
-                $this->getDoctrine()->getManager()->persist($item);
-                $this->getDoctrine()->getManager()->flush();
-                return new JsonResponse(array('itemId' => $item->getId()));
+
+                /** @var CatalogService $catalogService */
+                $catalogService = $this->get('ns_catalog_service');
+                $catalogService->updateItem($item);
+
+                return new JsonResponse(array(
+                    'itemId' => $item->getId(),
+                ));
             }
 
 			return $this->render('NSCatalogBundle:AdminItemsApi:form.html.twig', array(
@@ -59,11 +66,11 @@ class AdminItemsApiController extends Controller
 		}
 	}
 
-	/**
-	 * @throws \Exception
-	 * @return Response
-	 */
-	public function updateCustomSettingAction()
+    /**
+     * @param Request $request
+     * @return Response
+     */
+	public function updateCustomSettingAction(Request $request)
 	{
 		try {
 			if (empty($_REQUEST['id'])) {
@@ -76,7 +83,7 @@ class AdminItemsApiController extends Controller
 				return new JsonResponse(array('error' => "Required param 'field' wasn't found"));
 			}
 
-			$item = $this->getItem();
+			$item = $this->getRequestItem($request);
 
 			$method = 'set' . ucfirst($_REQUEST['field']);
 			$settings = $item->getSettings();
@@ -92,11 +99,11 @@ class AdminItemsApiController extends Controller
 		}
 	}
 
-	/**
-	 * @throws \Exception
-	 * @return Response
-	 */
-	public function updateBasePropertyAction()
+    /**
+     * @param Request $request
+     * @return Response
+     */
+	public function updateBasePropertyAction(Request $request)
 	{
 		try {
 			if (empty($_REQUEST['id'])) {
@@ -109,7 +116,7 @@ class AdminItemsApiController extends Controller
 				return new JsonResponse(array('error' => "Required param 'field' wasn't found"));
 			}
 
-			$item = $this->getItem();
+			$item = $this->getRequestItem($request);
 
 			$method = 'set' . ucfirst($_REQUEST['field']);
 			$item->$method(trim($_REQUEST['value']));
@@ -123,17 +130,21 @@ class AdminItemsApiController extends Controller
 		}
 	}
 
-	/**
-	 * Removes page
-	 *
-	 * @return Response
-	 */
-	public function deleteAction()
+    /**
+     * Removes item
+     *
+     * @param Request $request
+     * @return Response
+     */
+	public function deleteAction(Request $request)
 	{
 		try {
-			$item = $this->getItem();
-			$this->getDoctrine()->getManager()->remove($item);
-			$this->getDoctrine()->getManager()->flush();
+			$item = $this->getRequestItem($request);
+
+            /** @var CatalogService $catalogService */
+            $catalogService = $this->get('ns_catalog_service');
+			$catalogService->removeItem($item);
+
 			return new JsonResponse(array('result' => 'ok'));
 		}
 		catch (\Exception $e) {
@@ -141,33 +152,33 @@ class AdminItemsApiController extends Controller
 		}
 	}
 
-	/**
-	 * @throws \Exception
-	 * @return Response
-	 */
-	public function updateCategoryAction()
+    /**
+     * Moves selected items to selected category
+     *
+     * @param Request $request
+     * @return Response
+     */
+	public function updateCategoryAction(Request $request)
 	{
 		try {
-			if (empty($_REQUEST['id'])) {
-				return new JsonResponse(array('error' => "Required param 'id' wasn't found"));
-			}
-			if (!isset($_REQUEST['categoryId'])) {
+            // retrieving category id
+            $categoryId = $request->query->get('categoryId');
+			if (!$categoryId) {
 				return new JsonResponse(array('error' => "Required param 'categoryId' wasn't found"));
 			}
 
-			$category = $this->getCategoryRepository()->findOneById($_REQUEST['categoryId']);
+            /** @var CatalogService $catalogService */
+            $catalogService = $this->get('ns_catalog_service');
+
+            // retrieving category
+			$category = $catalogService->getCategory($categoryId);
 			if (!$category) {
-				return new JsonResponse(array('error' => "Category #{$_REQUEST['categoryId']} wasn't found"));
+				return new JsonResponse(array('error' => "Category #{$categoryId} wasn't found"));
 			}
 
-			$ids = explode(',', $_REQUEST['id']);
-			$items = $this->getItemRepository()->findByIds($ids);
+            $items = $catalogService->getItemsByIds($this->getRequestIds($request));
+            $catalogService->setItemsCategory($items, $category);
 
-			foreach ($items as $item) {
-				$item->setCategory($category);
-			}
-
-			$this->getDoctrine()->getManager()->flush();
 			return new JsonResponse(array('result' => 'ok'));
 		}
 		catch (\Exception $e) {
@@ -175,39 +186,19 @@ class AdminItemsApiController extends Controller
 		}
 	}
 
-	/**
-	 * @throws \Exception
-	 * @return Response
-	 */
-	public function cloneItemsAction()
+    /**
+     * @param Request $request
+     * @return Response
+     */
+	public function cloneItemsAction(Request $request)
 	{
 		try {
-			if (empty($_REQUEST['id'])) {
-				return new JsonResponse(array('error' => "Required param 'id' wasn't found"));
-			}
+            /** @var CatalogService $catalogService */
+            $catalogService = $this->get('ns_catalog_service');
 
-			$em = $this->getDoctrine()->getManager();
+            $items = $catalogService->getItemsByIds($this->getRequestIds($request));
+            $catalogService->cloneItems($items);
 
-			$ids = explode(',', $_REQUEST['id']);
-			$items = $this->getItemRepository()->findByIds($ids);
-
-			foreach ($items as $item) {
-				// cloning item
-				$clonedItem = clone $item;
-				$clonedItem->setTitle($item->getTitle() . ' (копия)');
-				$em->detach($clonedItem);
-				$em->persist($clonedItem);
-
-				// cloning settings
-				foreach ($item->getRawSettings() as $setting) {
-					$clonedSetting = clone $setting;
-					$clonedSetting->setItem($clonedItem);
-					$em->detach($clonedSetting);
-					$em->persist($clonedSetting);
-				}
-			}
-
-			$em->flush();
 			return new JsonResponse(array('result' => 'ok'));
 		}
 		catch (\Exception $e) {
@@ -215,27 +206,49 @@ class AdminItemsApiController extends Controller
 		}
 	}
 
-	/**
-	 * @throws \Exception
-	 * @return Item
-	 */
-	private function getItem()
+    /**
+     * @param Request $request
+     * @throws \Exception
+     * @return array|JsonResponse
+     */
+    private function getRequestIds(Request $request)
+    {
+        $id = $request->query->get('id');
+        if (!$id) {
+            throw new \Exception("Required param 'id' wasn't found");
+        }
+        return explode(',', $id);
+    }
+
+    /**
+     * @param Request $request
+     * @throws \Exception
+     * @return Item
+     */
+	private function getRequestItem(Request $request)
 	{
 		$item = new Item();
 
-		if (!empty($_REQUEST['id'])) {
-			$item = $this
-				->getItemRepository()
-				->findOneById($_REQUEST['id']);
+        $itemId = $request->query->get('id');
+        if (!$itemId) {
+            throw new \Exception("Required param 'id' wasn't found");
+        }
+
+        /** @var CatalogService $catalogService */
+        $catalogService = $this->get('ns_catalog_service');
+
+		if ($itemId) {
+            $item = $catalogService->getItem($itemId);
 			if (!$item) {
-				throw new \Exception("Item #{$_REQUEST['id']} wasn't found");
+				throw new \Exception("Item #{$itemId} wasn't found");
 			}
 		}
 
-		if (!empty($_REQUEST['categoryId'])) {
-			$category = $this->getCategoryRepository()->findOneById($_REQUEST['categoryId']);
+        $categoryId = $request->query->get('categoryId');
+		if ($categoryId) {
+			$category = $catalogService->getCategory($categoryId);
 			if (!$category) {
-				throw new \Exception("Category #{$_REQUEST['categoryId']} wasn't found");
+				throw new \Exception("Category #{$categoryId} wasn't found");
 			}
 			$item->setCategory($category);
 		}
@@ -244,8 +257,8 @@ class AdminItemsApiController extends Controller
 	}
 
 	/**
-	 * @param \NS\CatalogBundle\Entity\Item $item
-	 * @return \Symfony\Component\Form\Form
+	 * @param Item $item
+	 * @return Form
 	 */
 	private function createItemForm(Item $item)
 	{
@@ -256,42 +269,20 @@ class AdminItemsApiController extends Controller
 	}
 
 	/**
-	 * @param \NS\CatalogBundle\Entity\Item $item
+	 * @param Item $item
 	 * @throws \Exception
-	 * @return \Symfony\Component\Form\Form
+	 * @return Form
 	 */
 	private function createItemSettingsForm(Item $item)
 	{
-		$catalog = $this->getCatalogRepository()->findOneByName(self::CATALOG_NAME);
+        /** @var CatalogService $catalogService */
+        $catalogService = $this->get('ns_catalog_service');
+        $catalog = $catalogService->getCatalogByName(self::CATALOG_NAME);
 		if (!$catalog) {
 			throw new \Exception(sprintf("Catalog '%s' wasn't found", self::CATALOG_NAME));
 		}
 
 		$itemSettingsType = $this->get($catalog->getSettingsFormTypeName());
 		return $this->createForm($itemSettingsType, $item->getSettings() ?: null);
-	}
-
-	/**
-	 * @return ItemRepository
-	 */
-	private function getItemRepository()
-	{
-		return $this->getDoctrine()->getRepository('NSCatalogBundle:Item');
-	}
-
-	/**
-	 * @return CategoryRepository
-	 */
-	private function getCategoryRepository()
-	{
-		return $this->getDoctrine()->getRepository('NSCatalogBundle:Category');
-	}
-
-	/**
-	 * @return CatalogRepository
-	 */
-	private function getCatalogRepository()
-	{
-		return $this->getDoctrine()->getRepository('NSCatalogBundle:Catalog');
 	}
 }

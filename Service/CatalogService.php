@@ -2,7 +2,10 @@
 
 namespace NS\CatalogBundle\Service;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Knp\Component\Pager\Pagination\PaginationInterface;
+use NS\CatalogBundle\Entity\Catalog;
+use NS\CatalogBundle\Entity\CatalogRepository;
 use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\Item;
@@ -16,6 +19,11 @@ use NS\CatalogBundle\Entity\ItemRepository;
 class CatalogService
 {
     /**
+     * @var ObjectManager
+     */
+    private $entityManager;
+
+    /**
      * @var ItemRepository
      */
     private $itemRepository;
@@ -26,13 +34,34 @@ class CatalogService
     private $categoryRepository;
 
     /**
+     * @var CatalogRepository
+     */
+    private $catalogRepository;
+
+    /**
+     * @param ObjectManager      $entityManager
      * @param ItemRepository     $itemRepository
      * @param CategoryRepository $categoryRepository
+     * @param CatalogRepository  $catalogRepository
      */
-    public function __construct(ItemRepository $itemRepository, CategoryRepository $categoryRepository)
+    public function __construct(ObjectManager $entityManager, ItemRepository $itemRepository,
+                                CategoryRepository $categoryRepository, CatalogRepository $catalogRepository)
     {
+        $this->entityManager      = $entityManager;
         $this->itemRepository     = $itemRepository;
         $this->categoryRepository = $categoryRepository;
+        $this->catalogRepository  = $catalogRepository;
+    }
+
+    /**
+     * Retrieves item by id
+     *
+     * @param int $itemId
+     * @return Item|null
+     */
+    public function getItem($itemId)
+    {
+        return $this->itemRepository->find($itemId);
     }
 
     /**
@@ -53,6 +82,94 @@ class CatalogService
     }
 
     /**
+     * Retrieves items by ids
+     *
+     * @param int[] $ids
+     * @return Item[]
+     */
+    public function getItemsByIds(array $ids)
+    {
+        return $this->itemRepository->findByIds($ids);
+    }
+
+    /**
+     * Updates item object
+     *
+     * @param Item $item
+     */
+    public function updateItem(Item $item)
+    {
+        $this->entityManager->persist($item);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Removes item object
+     *
+     * @param Item $item
+     */
+    public function removeItem(Item $item)
+    {
+        $this->entityManager->remove($item);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Sets items category
+     *
+     * @param Item[]   $items
+     * @param Category $category
+     */
+    public function setItemsCategory(array $items, Category $category)
+    {
+        foreach ($items as $item) {
+            $item->setCategory($category);
+        }
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Clones items with its settings
+     *
+     * @param Item[] $items
+     */
+    public function cloneItems(array $items)
+    {
+        foreach ($items as $item) {
+            // cloning item
+            $clonedItem = clone $item;
+            $clonedItem->setTitle($item->getTitle() . ' (копия)');
+
+            // persisting cloned item
+            $this->entityManager->detach($clonedItem);
+            $this->entityManager->persist($clonedItem);
+
+            // cloning settings
+            foreach ($item->getRawSettings() as $setting) {
+                // cloning setting
+                $clonedSetting = clone $setting;
+                $clonedSetting->setItem($clonedItem);
+                // persisting cloned setting
+                $this->entityManager->detach($clonedSetting);
+                $this->entityManager->persist($clonedSetting);
+            }
+        }
+
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Retrieves category by id
+     *
+     * @param int $categoryId
+     * @return Category|null
+     */
+    public function getCategory($categoryId)
+    {
+        return $this->categoryRepository->find($categoryId);
+    }
+
+    /**
      * Retrieves category by slug
      *
      * @param string $slug
@@ -61,5 +178,16 @@ class CatalogService
     public function getCategoryBySlug($slug)
     {
         return $this->categoryRepository->findOneBySlug($slug);
+    }
+
+    /**
+     * Retrieves catalog by name
+     *
+     * @param string $name
+     * @return Catalog|null
+     */
+    public function getCatalogByName($name)
+    {
+        return $this->catalogRepository->findOneByName($name);
     }
 } 
