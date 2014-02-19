@@ -33,7 +33,7 @@ class AdminItemsApiController extends Controller
 	{
 		try {
             // retrieving item
-			$item = $this->getRequestItem($request);
+			$item = $this->getRequestItem($request, false);
 
             // initializing item forms
 			$itemForm = $this->createItemForm($item);
@@ -222,15 +222,16 @@ class AdminItemsApiController extends Controller
 
     /**
      * @param Request $request
+     * @param bool    $strict
      * @throws \Exception
      * @return Item
      */
-	private function getRequestItem(Request $request)
+	private function getRequestItem(Request $request, $strict = true)
 	{
 		$item = new Item();
 
         $itemId = $request->query->get('id');
-        if (!$itemId) {
+        if (!$itemId && $strict) {
             throw new \Exception("Required param 'id' wasn't found");
         }
 
