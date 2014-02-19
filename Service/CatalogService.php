@@ -65,6 +65,17 @@ class CatalogService
     }
 
     /**
+     * Retrieves item by slug
+     *
+     * @param string $itemSlug
+     * @return Item|null
+     */
+    public function getItemBySlug($itemSlug)
+    {
+        return $this->itemRepository->findOneBySlug($itemSlug);
+    }
+
+    /**
      * Retrieves items with pagination
      *
      * @param int      $page     page number
