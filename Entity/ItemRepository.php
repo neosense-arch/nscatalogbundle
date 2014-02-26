@@ -248,6 +248,11 @@ class ItemRepository extends EntityRepository
 
         // ordering
         foreach ($orderBy as $order) {
+            // skipping empty values
+            if (!trim($order[0])) {
+                continue;
+            }
+
             // settings default direction and order type
             if (empty($order[1])) {
                 $order[1] = 'asc';
