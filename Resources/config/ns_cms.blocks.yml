@@ -2,35 +2,32 @@ blocks:
     -
         name: NSCatalogBundle:Blocks:categoriesMenuBlock
         title: Меню категорий
-        form: "ns_catalogbundle_blockcategoriesmenutype"
         template: NSCatalogBundle:Blocks:categoriesMenuBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsModel
+        cache:
+            entities: [NS\CatalogBundle\Entity\Category]
     -
         name: NSCatalogBundle:Blocks:categoriesBlock
         title: Категории
-        form: "ns_catalogbundle_blockcategoriestype"
         template: NSCatalogBundle:Blocks:categoriesBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel
     -
         name: NSCatalogBundle:Blocks:itemsBlock
         title: Товары
-        form: "ns_catalogbundle_blockitemstype"
         template: NSCatalogBundle:Blocks:itemsBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\ItemsBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\ItemsBlockSettingsModel
     -
         name: NSCatalogBundle:Blocks:itemBlock
         title: Карточка товара
-        form: "ns_catalogbundle_blockitemtype"
         template: NSCatalogBundle:Blocks:itemBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\ItemBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\ItemBlockSettingsModel
     -
         name: NSCatalogBundle:Blocks:categoryBlock
         title: Карточка категории
-        form: "ns_catalogbundle_blockcategorytype"
         template: NSCatalogBundle:Blocks:categoryBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\CategoryBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoryBlockSettingsModel
