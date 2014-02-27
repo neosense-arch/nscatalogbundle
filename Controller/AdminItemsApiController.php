@@ -106,20 +106,20 @@ class AdminItemsApiController extends Controller
 	public function updateBasePropertyAction(Request $request)
 	{
 		try {
-			if (empty($_REQUEST['id'])) {
-				return new JsonResponse(array('error' => "Required param 'id' wasn't found"));
-			}
-			if (!isset($_REQUEST['value'])) {
+            $value = $request->request->get('value');
+			if (is_null($value)) {
 				return new JsonResponse(array('error' => "Required param 'value' wasn't found"));
 			}
-			if (empty($_REQUEST['field'])) {
+
+            $field = $request->request->get('field');
+			if (is_null($field)) {
 				return new JsonResponse(array('error' => "Required param 'field' wasn't found"));
 			}
 
 			$item = $this->getRequestItem($request);
 
-			$method = 'set' . ucfirst($_REQUEST['field']);
-			$item->$method(trim($_REQUEST['value']));
+			$method = 'set' . ucfirst($field);
+			$item->$method(trim($value));
 
 			$this->getDoctrine()->getManager()->persist($item);
 			$this->getDoctrine()->getManager()->flush();
@@ -213,7 +213,7 @@ class AdminItemsApiController extends Controller
      */
     private function getRequestIds(Request $request)
     {
-        $id = $request->query->get('id');
+        $id = $request->request->get('id');
         if (!$id) {
             throw new \Exception("Required param 'id' wasn't found");
         }
@@ -230,7 +230,7 @@ class AdminItemsApiController extends Controller
 	{
 		$item = new Item();
 
-        $itemId = $request->query->get('id');
+        $itemId = $request->request->get('id', $request->query->get('id'));
         if (!$itemId && $strict) {
             throw new \Exception("Required param 'id' wasn't found");
         }
@@ -245,7 +245,7 @@ class AdminItemsApiController extends Controller
 			}
 		}
 
-        $categoryId = $request->query->get('categoryId');
+        $categoryId = $request->request->get('categoryId', $request->query->get('categoryId'));
 		if ($categoryId) {
 			$category = $catalogService->getCategory($categoryId);
 			if (!$category) {
