@@ -268,23 +268,32 @@ class ItemRepository extends EntityRepository
             // order type ("string" or "numeric")
             $orderType = $order[2];
 
-            // order key (e.g. "o_price")
-            $name = 'o_' . $orderKey;
-            // order expression (e.g. "o_price.value")
-            $expr = $name . '.value';
-
-            // processing order type
-            if ($orderType === 'numeric') {
-                // adding number operation in case of numeric type
-                // e.g. "ORDER BY o_price.value + 0"
-                $expr .= ' + 0';
+            // native ordering
+            if (in_array($orderKey, array('title'))) {
+                $queryBuilder
+                    ->addOrderBy("i.{$orderKey}", $orderDirection);
             }
 
-            // adding order expression
-            $queryBuilder
-                ->join('i.rawSettings', $name, 'WITH', "{$name}.name = :name_{$name}")
-                ->setParameter("name_{$name}", $orderKey)
-                ->addOrderBy($expr, $orderDirection);
+            // setting ordering
+            else {
+                // order key (e.g. "o_price")
+                $name = 'o_' . $orderKey;
+                // order expression (e.g. "o_price.value")
+                $expr = $name . '.value';
+
+                // processing order type
+                if ($orderType === 'numeric') {
+                    // adding number operation in case of numeric type
+                    // e.g. "ORDER BY o_price.value + 0"
+                    $expr .= ' + 0';
+                }
+
+                // adding order expression
+                $queryBuilder
+                    ->join('i.rawSettings', $name, 'WITH', "{$name}.name = :name_{$name}")
+                    ->setParameter("name_{$name}", $orderKey)
+                    ->addOrderBy($expr, $orderDirection);
+            }
         }
 
         $query = $queryBuilder->getQuery();
