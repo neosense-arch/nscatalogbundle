@@ -67,9 +67,12 @@ class CatalogMenuResolver implements MenuResolverInterface
 			$uri .= '?catalog=' . $catalog->getName();
 
 			$menu->addChild($this->factory->createItem(uniqid(), array(
-				'label' => $catalog->getTitle(),
-				'uri' => $uri,
-				'displayChildren' => false
+                'label'           => $catalog->getTitle(),
+                'uri'             => $uri,
+                'displayChildren' => false,
+                'extras'          => array(
+                    'icon' => 'icon-th-list',
+                ),
 			)));
 		}
 	}
