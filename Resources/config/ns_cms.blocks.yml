@@ -2,7 +2,6 @@ blocks:
     -
         name: NSCatalogBundle:Blocks:categoriesMenuBlock
         title: Меню категорий
-        template: NSCatalogBundle:Blocks:categoriesMenuBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsModel
         cache:
@@ -10,36 +9,30 @@ blocks:
     -
         name: NSCatalogBundle:Blocks:categoriesBlock
         title: Категории
-        template: NSCatalogBundle:Blocks:categoriesBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel
     -
         name: NSCatalogBundle:Blocks:itemsBlock
         title: Товары
-        template: NSCatalogBundle:Blocks:itemsBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\ItemsBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\ItemsBlockSettingsModel
     -
         name: NSCatalogBundle:Blocks:itemBlock
         title: Карточка товара
-        template: NSCatalogBundle:Blocks:itemBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\ItemBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\ItemBlockSettingsModel
     -
         name: NSCatalogBundle:Blocks:categoryBlock
         title: Карточка категории
-        template: NSCatalogBundle:Blocks:categoryBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\CategoryBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoryBlockSettingsModel
     -
         name: NSCatalogBundle:Blocks:fullListBlock
         title: Полный список товаров
-        template: NSCatalogBundle:Blocks:fullListBlock.phtml.twig
         settingsFormClass: NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsForm
         settingsModelClass: NS\CmsBundle\Block\Settings\Generic\CountBlockSettingsModel
     -
         name: NSCatalogBundle:Blocks:searchBlock
         title: Поиск по товарам каталога
-        template: NSCatalogBundle:Blocks:searchBlock.phtml.twig
         settingsFormClass: NS\CatalogBundle\Block\Settings\SearchBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\SearchBlockSettingsModel
