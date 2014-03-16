@@ -26,6 +26,12 @@ class TypeElement
 	 */
 	private $title;
 
+	/**
+	 * @var string
+	 * @ORM\Column(type="string")
+	 */
+	private $name;
+
     /**
      * @var string
      * @ORM\Column(type="string")
@@ -102,5 +108,21 @@ class TypeElement
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 }

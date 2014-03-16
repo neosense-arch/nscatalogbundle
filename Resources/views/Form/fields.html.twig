@@ -14,13 +14,14 @@
             <thead>
             <tr>
                 <th style="width:200px">Название</th>
-                <th style="">Тип</th>
-                <th style="width:100px">&nbsp;</th>
+                <th style="width:200px">Имя (лат.)</th>
+                <th style="">Категория</th>
+                <th style="width:10px">&nbsp;</th>
             </tr>
             </thead>
             <tbody>
                 <tr class="last">
-                    <td colspan="3"><a href="#" class="btn add">Добавить элемент</a></td>
+                    <td colspan="99"><a href="#" class="btn add">Добавить элемент</a></td>
                 </tr>
             </tbody>
         </table>
@@ -33,6 +34,9 @@
                 <td>
                     <input class="ns-title" value=""/>
                     <input class="ns-id" value="" type="hidden"/>
+                </td>
+                <td>
+                    <input class="ns-name" value=""/>
                 </td>
                 <td>
                     <select class="ns-category">
@@ -51,11 +55,12 @@
             var tbl = container.find('.ns-table');
 
             {# Adds new element #}
-            var fnAddElement = function(id, title, category){
+            var fnAddElement = function(id, title, category, name){
                 var tplRow = container.find('.templates .ns-row');
                 var row = tplRow.clone();
                 row.find('.ns-id').val(id || null).change(fnSetValue);
                 row.find('.ns-title').val(title || 'Новый элемент').change(fnSetValue);
+                row.find('.ns-name').val(name || 'newName').change(fnSetValue);
                 row.find('.ns-category').val(category || 'text').change(fnSetValue);
                 row.find('.delete').click(function(){
                     $(this).parents('tr:eq(0)').remove();
@@ -73,7 +78,8 @@
                     arr.push({
                         'id': $(this).find('.ns-id').val(),
                         'category': $(this).find('.ns-category').val(),
-                        'title': $(this).find('.ns-title').val()
+                        'title': $(this).find('.ns-title').val(),
+                        'name': $(this).find('.ns-name').val()
                     });
                 });
                 container.find('.ns-input').val(JSON.stringify(arr));
@@ -101,7 +107,7 @@
             {# Loading values #}
             var elements = $.parseJSON(container.find('.ns-input').val());
             $.each(elements, function(){
-                fnAddElement(this.id, this.title, this.category);
+                fnAddElement(this.id, this.title, this.category, this.name);
             });
         })(jQuery);
     </script>
