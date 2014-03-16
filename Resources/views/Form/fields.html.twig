@@ -1,0 +1,110 @@
+{# Type elements widget #}
+{% block ns_catalog_type_elements_widget %}
+{% spaceless %}
+    {{ form_label(form) }}
+
+    {% set uid = 'ns-catalog-type-elements-' ~ name %}
+    <div class="{{ uid }}">
+
+        {# Hidden input element #}
+        <input class="ns-input" name="{{ form.vars.full_name }}" value="{{ value }}" type="hidden" />
+
+        {# Main elements table #}
+        <table class="ns-table table table-striped table-hover table-bordered">
+            <thead>
+            <tr>
+                <th style="width:200px">Название</th>
+                <th style="">Тип</th>
+                <th style="width:100px">&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr class="last">
+                    <td colspan="3"><a href="#" class="btn add">Добавить элемент</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+        {# Hidden JS templates #}
+        <div class="templates" style="display: none">
+            {# ROW #}
+            <table>
+            <tr class="ns-row">
+                <td>
+                    <input class="ns-title" value=""/>
+                    <input class="ns-id" value="" type="hidden"/>
+                </td>
+                <td>
+                    <select class="ns-category">
+                        <option value="text">Текстовое поле</option>
+                    </select>
+                </td>
+                <td><a class="btn btn-mini delete"><i class="icon-trash"></i></a></td>
+            </tr>
+            </table>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        (function($){
+            var container = $('.{{ uid }}');
+            var tbl = container.find('.ns-table');
+
+            {# Adds new element #}
+            var fnAddElement = function(id, title, category){
+                var tplRow = container.find('.templates .ns-row');
+                var row = tplRow.clone();
+                row.find('.ns-id').val(id || null).change(fnSetValue);
+                row.find('.ns-title').val(title || 'Новый элемент').change(fnSetValue);
+                row.find('.ns-category').val(category || 'text').change(fnSetValue);
+                row.find('.delete').click(function(){
+                    $(this).parents('tr:eq(0)').remove();
+                    fnSetValue();
+                    return false;
+                });
+                tbl.find('tbody tr:last-child').before(row);
+                fnSetValue();
+            };
+
+            {# Sets hidden input value #}
+            var fnSetValue = function(){
+                var arr = [];
+                tbl.find('.ns-row').each(function(){
+                    arr.push({
+                        'id': $(this).find('.ns-id').val(),
+                        'category': $(this).find('.ns-category').val(),
+                        'title': $(this).find('.ns-title').val()
+                    });
+                });
+                container.find('.ns-input').val(JSON.stringify(arr));
+            };
+
+            {# Sortables #}
+            tbl.find('tbody').sortable({
+                'items': '.ns-row',
+                'helper': function(e, ui) {
+                    ui.children().each(function() {
+                        $(this).width($(this).width());
+                    });
+                    return ui;
+                },
+                'axis': 'y',
+                'stop': fnSetValue
+            });
+
+            {# Element add button click handler #}
+            container.find('.add').click(function(){
+                fnAddElement();
+                return false;
+            });
+
+            {# Loading values #}
+            var elements = $.parseJSON(container.find('.ns-input').val());
+            $.each(elements, function(){
+                fnAddElement(this.id, this.title, this.category);
+            });
+        })(jQuery);
+    </script>
+
+{% endspaceless %}
+{% endblock %}

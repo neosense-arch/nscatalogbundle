@@ -2,6 +2,7 @@
 
 namespace NS\CatalogBundle;
 
+use NS\CatalogBundle\DependencyInjection\Compiler\FormPass;
 use NS\CatalogBundle\DependencyInjection\Compiler\SettingsFormTypePass;
 use NS\CoreBundle\Bundle\CoreBundle;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -22,6 +23,7 @@ class NSCatalogBundle extends Bundle implements CoreBundle
 		parent::build($container);
 
 		$container->addCompilerPass(new SettingsFormTypePass());
+		$container->addCompilerPass(new FormPass());
 	}
 
     /**

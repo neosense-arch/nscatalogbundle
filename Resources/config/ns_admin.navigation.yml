@@ -1,0 +1,8 @@
+-
+    label: 'Каталог'
+    name: 'ns_catalog_settings'
+    parent: 'settings'
+    pages:
+        -
+            label: 'Типы данных'
+            action: 'types:index'

@@ -21,10 +21,10 @@ class TypeType extends AbstractType
 				'label'    => 'Название',
 				'required' => true,
 			))
-			->add('tags', 'text', array(
-				'label'    => 'Теги',
-				'required' => false,
-			))
+            ->add('elements', 'ns_catalog_type_elements', array(
+                'label'    => 'Элементы',
+                'required' => true,
+            ))
         ;
     }
 
@@ -43,6 +43,6 @@ class TypeType extends AbstractType
 	 */
 	public function getName()
     {
-        return 'ns_catalogbundle_typetype';
+        return 'ns_catalog_type';
     }
 }
