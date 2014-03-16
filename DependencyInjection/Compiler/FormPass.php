@@ -13,12 +13,19 @@ class FormPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $template  = 'NSCatalogBundle:Form:fields.html.twig';
+        $templates  = array(
+            'NSCatalogBundle:Form:Fields/typeElements.html.twig',
+            'NSCatalogBundle:Form:Fields/typeElements.html.twig',
+        );
+
         $resources = $container->getParameter('twig.form.resources');
-        // Ensure it wasnt already aded via config
-        if (!in_array($template, $resources)) {
-            array_unshift($resources, $template);
-            $container->setParameter('twig.form.resources', $resources);
+
+        foreach ($templates as $template) {
+            if (!in_array($template, $resources)) {
+                array_unshift($resources, $template);
+            }
         }
+
+        $container->setParameter('twig.form.resources', $resources);
     }
 }

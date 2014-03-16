@@ -21,6 +21,10 @@ class TypeType extends AbstractType
 				'label'    => 'Название',
 				'required' => true,
 			))
+			->add('name', 'text', array(
+				'label'    => 'Имя (лат.)',
+				'required' => false,
+			))
             ->add('elements', 'ns_catalog_type_elements', array(
                 'label'    => 'Элементы',
                 'required' => true,

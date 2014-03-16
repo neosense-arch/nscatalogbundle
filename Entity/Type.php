@@ -26,6 +26,12 @@ class Type
 	 */
 	private $title;
 
+	/**
+	 * @var string
+	 * @ORM\Column(type="string")
+	 */
+	private $name;
+
     /**
      * @var ArrayCollection|TypeElement[]
      * @ORM\OneToMany(targetEntity="TypeElement", mappedBy="type", cascade={"persist", "remove"})
@@ -78,5 +84,21 @@ class Type
     public function getElements()
     {
         return $this->elements;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 }
