@@ -51,6 +51,11 @@ services:
         class: 'NS\CatalogBundle\Form\Type\TypeElementsType'
         tags: [{ name: form.type, alias: ns_catalog_type_elements }]
 
+    ns_catalog.form.type.table:
+        class: 'NS\CatalogBundle\Form\Type\TableType'
+        arguments: [@ns_catalog.repository.type]
+        tags: [{ name: form.type, alias: ns_catalog_table }]
+
     ns_catalog.repository.catalog:
         class: %ns_catalog.repository.catalog.class%
         factory_service: doctrine.orm.default_entity_manager

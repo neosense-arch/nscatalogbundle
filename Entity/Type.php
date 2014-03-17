@@ -88,6 +88,32 @@ class Type
 
     /**
      * @param string $name
+     * @return bool
+     */
+    public function hasElement($name)
+    {
+        return $this->elements->exists(function(TypeElement $element) use($name){
+            return $name === $element->getName();
+        });
+    }
+
+    /**
+     * @param string $name
+     * @return TypeElement
+     * @throws \Exception
+     */
+    public function getElement($name)
+    {
+        foreach ($this->elements as $element) {
+            if ($element->getName() === $name) {
+                return $element;
+            }
+        }
+        throw new \Exception("Element named '{$name}' wasn't found in type '{$this->getName()}' (#{$this->getId()})");
+    }
+
+    /**
+     * @param string $name
      */
     public function setName($name)
     {

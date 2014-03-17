@@ -4,7 +4,6 @@ namespace NS\CatalogBundle\Controller;
 
 use NS\CatalogBundle\Entity\Type;
 use NS\CatalogBundle\Entity\TypeRepository;
-use NS\CatalogBundle\Form\Type\TypeType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
