@@ -4,7 +4,7 @@
     {% set uid = 'ns-catalog-table-' ~ name %}
     <div class="{{ uid }}">
         {# Hidden input element #}
-        <input class="ns-input" name="{{ form.vars.full_name }}" value="{{ value }}" type="text" />
+        <input class="ns-input" name="{{ form.vars.full_name }}" value="{{ value }}" type="hidden" />
 
         {# Main elements table #}
         <table class="ns-table table table-striped table-hover table-bordered">
