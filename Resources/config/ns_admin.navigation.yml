@@ -6,3 +6,6 @@
         -
             label: 'Типы данных'
             action: 'types:index'
+        -
+            label: 'Каталоги'
+            action: 'catalogs:index'

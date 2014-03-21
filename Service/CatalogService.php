@@ -201,4 +201,75 @@ class CatalogService
     {
         return $this->catalogRepository->findOneByName($name);
     }
-} 
+
+    /**
+     * Retrieves catalogs
+     *
+     * @return Catalog[]
+     */
+    public function getCatalogs()
+    {
+        return $this->catalogRepository->findAll();
+    }
+
+    /**
+     * Retrieves catalog by id
+     *
+     * @param int $id
+     * @return Catalog|null
+     */
+    public function getCatalog($id)
+    {
+        if (!$id) {
+            return null;
+        }
+        return $this->catalogRepository->find($id);
+    }
+
+    /**
+     * Retrieves catalog by id or creates new one
+     *
+     * @param int $id
+     * @return Catalog|null
+     */
+    public function getCatalogOrCreate($id)
+    {
+        $catalog = $this->getCatalog($id);
+        if (!$catalog) {
+            $catalog = $this->createCatalog();
+        }
+        return $catalog;
+    }
+
+    /**
+     * Creates new catalog instance
+     *
+     * @return Catalog
+     */
+    public function createCatalog()
+    {
+        return new Catalog();
+    }
+
+    /**
+     * Updates catalog
+     *
+     * @param Catalog $catalog
+     */
+    public function updateCatalog(Catalog $catalog)
+    {
+        $this->entityManager->persist($catalog);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Removes catalog
+     *
+     * @param Catalog $catalog
+     */
+    public function removeCatalog(Catalog $catalog)
+    {
+        $this->entityManager->remove($catalog);
+        $this->entityManager->flush();
+    }
+}
