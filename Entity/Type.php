@@ -28,7 +28,7 @@ class Type
 
 	/**
 	 * @var string
-	 * @ORM\Column(type="string")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	private $name;
 
@@ -41,6 +41,14 @@ class Type
     public function __construct()
     {
         $this->elements = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getTitle();
     }
 
     /**

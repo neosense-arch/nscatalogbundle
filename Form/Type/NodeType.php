@@ -37,18 +37,11 @@ class NodeType extends AbstractType
      */
 	public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // retrieving type name
-        $typeName = $options['type'];
-        if (!$typeName) {
+        if (!$options['type']) {
             throw new \Exception("Required option 'type' wasn't found");
         }
 
-        // retrieving type
-        /** @var Type $type */
-        $type = $this->typeRepository->findOneBy(array('name' => $typeName));
-        if (!$type) {
-            throw new \Exception("Type named '$typeName' wasn't found");
-        }
+        $type = $this->getType($options['type']);
 
         // adding fields
         foreach ($type->getElements() as $element) {
@@ -78,10 +71,32 @@ class NodeType extends AbstractType
     }
 
     /**
-     * @return string
+     * @param int|string|Type $optionsType
+     * @return Type
+     * @throws \Exception
      */
-    public function getParent()
+    private function getType($optionsType)
     {
-        return 'hidden';
+        // type by instance
+        if ($optionsType instanceof Type) {
+            return $optionsType;
+        }
+
+        // type by id
+        $typeId = (int)$optionsType;
+        if ($typeId) {
+            $type = $this->typeRepository->find($typeId);
+            if (!$type) {
+                throw new \Exception("Type #{$typeId}' wasn't found");
+            }
+            return $type;
+        }
+
+        // type by name
+        $type = $this->typeRepository->findOneBy(array('name' => $optionsType));
+        if (!$type) {
+            throw new \Exception("Type named '{$optionsType}' wasn't found");
+        }
+        return $type;
     }
 }
