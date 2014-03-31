@@ -35,11 +35,11 @@ class CatalogType extends AbstractType
             ))
             ->add('settingsFormTypeName', 'text', array(
                 'label'    => 'Имя СЕРВИСА формы свойств товара',
-                'required' => true,
+                'required' => false,
             ))
             ->add('settingsModelClassName', 'text', array(
                 'label'    => 'Имя класса свойств товара',
-                'required' => true,
+                'required' => false,
             ))
         ;
     }
