@@ -34,7 +34,7 @@ class CategoryType extends AbstractType
 				'required'     => false,
 				'catalog_name' => $this->catalogName,
 			))
-			->add('description', 'tinymce', array(
+			->add('description', 'ckeditor', array(
 				'label'    => 'Описание',
 				'required' => false,
 			))
