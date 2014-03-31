@@ -28,9 +28,6 @@ class AdminCatalogController extends Controller
 		// catalog object
 		$catalog = $this->getCatalog();
 
-		// catalog form
-		$form = $this->get($catalog->getSettingsFormTypeName());
-
 		$category = $this->getCategory();
 
 		$search = !empty($_GET['search']) ? $_GET['search'] : null;
@@ -52,7 +49,6 @@ class AdminCatalogController extends Controller
 		return $this->render('NSCatalogBundle:AdminCatalog:index.html.twig', array(
 			'pagination'   => $pagination,
 			'catalog'      => $catalog,
-			'catalogForm'  => $form,
 			'category'     => $category,
 			'search'       => $search,
 			'categoryForm' => $categoryForm->createView(),
