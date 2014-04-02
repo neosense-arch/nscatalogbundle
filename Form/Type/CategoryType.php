@@ -34,6 +34,11 @@ class CategoryType extends AbstractType
 				'required'     => false,
 				'catalog_name' => $this->catalogName,
 			))
+            ->add('type', 'entity', array(
+                'label'    => 'Тип данных товаров данной категории',
+                'required' => false,
+                'class'    => 'NS\CatalogBundle\Entity\Type',
+            ))
 			->add('description', 'ckeditor', array(
 				'label'    => 'Описание',
 				'required' => false,

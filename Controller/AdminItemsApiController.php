@@ -245,7 +245,17 @@ class AdminItemsApiController extends Controller
 			}
 		}
 
-        $categoryId = $request->request->get('categoryId', $request->query->get('categoryId'));
+        $categoryId = null;
+        if (!$categoryId) {
+            $categoryId = $request->request->get('categoryId');
+        }
+        if (!$categoryId) {
+            $categoryId = $request->query->get('categoryId');
+        }
+        if (!$categoryId) {
+            $form = $request->request->get('ns_catalogbundle_itemtype');
+            $categoryId = $form['category'];
+        }
 		if ($categoryId) {
 			$category = $catalogService->getCategory($categoryId);
 			if (!$category) {
@@ -282,6 +292,13 @@ class AdminItemsApiController extends Controller
 		if (!$catalog) {
 			throw new \Exception(sprintf("Catalog '%s' wasn't found", self::CATALOG_NAME));
 		}
+
+        $category = $item->getCategory();
+        if ($category && $category->getType()) {
+            return $this->createForm('ns_catalog_node', $item->getSettings() ?: null, array(
+                'type' => $category->getType(),
+            ));
+        }
 
 		$itemSettingsType = $this->get($catalog->getSettingsFormTypeName());
 		return $this->createForm($itemSettingsType, $item->getSettings() ?: null);

@@ -1,0 +1,8 @@
+{% block ns_catalog_node_date_widget %}
+{% spaceless %}
+    {% set uid = 'ns-catalog-node-date-' ~ random() %}
+    <span class="{{ uid }}">
+        {{ form_widget(form) }}
+    </span>
+{% endspaceless %}
+{% endblock %}

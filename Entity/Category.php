@@ -105,6 +105,12 @@ class Category
 	 */
 	private $description;
 
+    /**
+     * @var Type|null
+     * @ORM\ManyToOne(targetEntity="Type")
+     */
+    private $type;
+
 	/**
 	 * @return int
 	 */
@@ -265,4 +271,20 @@ class Category
 	{
 		return $this->photo;
 	}
+
+    /**
+     * @param Type|null $type
+     */
+    public function setType(Type $type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return Type|null
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
 }

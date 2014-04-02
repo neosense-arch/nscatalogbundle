@@ -62,7 +62,7 @@ class AdminTypesController extends Controller
             return $this->back();
         }
 
-		return $this->render('NSAdminBundle:Generic:form.html.twig', array(
+		return $this->render('NSCatalogBundle:AdminTypes:form.html.twig', array(
 			'form' => $form->createView(),
 		));
 	}
@@ -76,7 +76,7 @@ class AdminTypesController extends Controller
 		if (!empty($_GET['id'])) {
 			$category = $this
 				->getTypeRepository()
-				->findOneById($_GET['id']);
+				->find($_GET['id']);
 
 			if (!$category) {
 				return $this->back();

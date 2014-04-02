@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use NS\CatalogBundle\Model\AbstractSettings;
+use NS\CatalogBundle\Model\GenericSettings;
 use NS\SearchBundle\Agent\ModelInterface;
 
 /**
@@ -217,15 +218,19 @@ class Item implements ModelInterface
             return null;
 		}
 
-		$catalog = $category->getCatalog();
-		if (!$catalog) {
-			throw new \Exception("Category #{$category->getId()} has no catalog");
-		}
-
-		$modelClassName = $catalog->getSettingsModelClassName();
+        if (!$category->getType()) {
+            $catalog = $category->getCatalog();
+            if (!$catalog) {
+                throw new \Exception("Category #{$category->getId()} has no catalog");
+            }
+            $modelClassName = $catalog->getSettingsModelClassName();
+            $settings = new $modelClassName();
+        }
+        else {
+            $settings = new GenericSettings();
+        }
 
 		/** @var $settings AbstractSettings */
-		$settings = new $modelClassName();
 		foreach ($this->getRawSettings() as $setting) {
 			$settings->setSetting($setting->getName(), $setting->getValue());
 		}

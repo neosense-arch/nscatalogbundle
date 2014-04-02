@@ -4,6 +4,8 @@ namespace NS\CatalogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToStringTransformer;
 
 /**
  * @ORM\Table(name="ns_catalog_settings")
@@ -89,7 +91,8 @@ class Setting
 	 */
 	public function setValue($value)
 	{
-		$this->value = $value;
+        $transformer = $this->getTransformer();
+		$this->value = $transformer ? $transformer->transform($value): $value;
 	}
 
 	/**
@@ -97,6 +100,35 @@ class Setting
 	 */
 	public function getValue()
 	{
-		return $this->value;
+        $transformer = $this->getTransformer();
+        return $transformer ? $transformer->reverseTransform($this->value): $this->value;
 	}
+
+    /**
+     * @return DataTransformerInterface|null
+     */
+    private function getTransformer()
+    {
+        $element = $this->getTypeElement();
+        if ($element) {
+            $transformers = array(
+                'ns_catalog_node_date' => new DateTimeToStringTransformer(),
+            );
+            if (isset($transformers[$element->getCategory()])) {
+                return $transformers[$element->getCategory()];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return TypeElement|null
+     */
+    private function getTypeElement()
+    {
+        if ($this->getItem() && $this->getItem()->getCategory() && $this->getItem()->getCategory()->getType()) {
+            return $this->getItem()->getCategory()->getType()->getElement($this->name);
+        }
+        return null;
+    }
 }

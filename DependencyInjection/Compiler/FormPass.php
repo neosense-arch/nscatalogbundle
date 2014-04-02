@@ -14,6 +14,7 @@ class FormPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $templates  = array(
+            'NSCatalogBundle:Form:Fields/nodeDate.html.twig',
             'NSCatalogBundle:Form:Fields/typeElements.html.twig',
             'NSCatalogBundle:Form:Fields/table.html.twig',
         );

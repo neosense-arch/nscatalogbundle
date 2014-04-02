@@ -56,6 +56,10 @@ services:
         arguments: [@ns_catalog.repository.type]
         tags: [{ name: form.type, alias: ns_catalog_node }]
 
+    ns_catalog.form.type.node_date:
+        class: 'NS\CatalogBundle\Form\Type\NodeDateType'
+        tags: [{ name: form.type, alias: ns_catalog_node_date }]
+
     ns_catalog.form.type.table:
         class: 'NS\CatalogBundle\Form\Type\TableType'
         arguments: [@ns_catalog.repository.type]

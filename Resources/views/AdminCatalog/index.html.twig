@@ -24,7 +24,9 @@
 						<input type="text" class="search-query" name="search" placeholder="Поиск" value="{{ search }}" />
 					</form>
 
-					<a href="#" class="btn pull-right" id="btnAddItem"><i class="icon-plus"></i> Добавить товар</a>
+                    {% if catalog.settingsFormTypeName or category and category.type %}
+					    <a href="#" class="btn pull-right" id="btnAddItem"><i class="icon-plus"></i> Добавить товар</a>
+                    {% endif %}
 				</div>
 			</div>
 
