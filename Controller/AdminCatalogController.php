@@ -8,6 +8,7 @@ use NS\CatalogBundle\Entity\Category;
 use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\ItemRepository;
 use NS\CatalogBundle\Form\Type\CategorySelectType;
+use NS\CatalogBundle\Form\Type\ViewportConfigType;
 use NS\CatalogBundle\QueryBuilder\ItemQueryBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,12 +47,19 @@ class AdminCatalogController extends Controller
 		// category choice
 		$categoryForm = $this->createForm(new CategorySelectType());
 
+        // viewport config
+        $viewportConfigForm = $this->createForm(new ViewportConfigType());
+        if ($category && $category->getType()) {
+            $viewportConfigForm->setData($category->getType()->getAdminViewportConfig());
+        }
+
 		return $this->render('NSCatalogBundle:AdminCatalog:index.html.twig', array(
-			'pagination'   => $pagination,
-			'catalog'      => $catalog,
-			'category'     => $category,
-			'search'       => $search,
-			'categoryForm' => $categoryForm->createView(),
+            'pagination'         => $pagination,
+            'catalog'            => $catalog,
+            'category'           => $category,
+            'search'             => $search,
+            'categoryForm'       => $categoryForm->createView(),
+            'viewportConfigForm' => $viewportConfigForm->createView(),
 		));
 	}
 

@@ -1,0 +1,88 @@
+<div id="dlgMultiActionForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="dlgMultiActionLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 id="dlgMultiActionLabel">Выберите категорию</h3>
+    </div>
+    <div class="modal-body">
+        {{ form_widget(categoryForm) }}
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Отменить</button>
+        <button class="btn btn-success btn-save">Перенести</button>
+    </div>
+</div>
+<script type="text/javascript">
+    (function($){
+        var panel = $('.multi-action');
+        var form = panel.parents('form');
+        var fnCheckState = function(){
+            if (form.find('td input[type=checkbox]:checked').length) {
+                panel.show().animate({ height: 40 });
+            }
+            else {
+                panel.animate({ height: 0 }, function(){
+                    $(this).hide();
+                });
+            }
+        };
+        form.find('th input[type=checkbox]').change(function(){
+            form.find('td input[type=checkbox]').attr('checked', !!$(this).attr('checked'));
+            fnCheckState();
+        });
+        form.find('td input[type=checkbox]').change(function(){
+            fnCheckState();
+            form.find('th input[type=checkbox]').attr('checked', form.find('td input[type=checkbox]:checked').length == form.find('td input[type=checkbox]').length);
+        });
+
+        // retrieves items
+        var fnGetItems = function(){
+            var items = [];
+            panel.parents('form').find('td input[type=checkbox]:checked').each(function(){
+                items.push($(this).val());
+            });
+            return items;
+        };
+
+        // changing category
+        panel.find('.change-category').click(function(){
+            $('#dlgMultiActionForm').modal('show');
+            return false;
+        });
+        $('#dlgMultiActionForm').find('.btn-save').click(function(){
+            var categoryId = $('#dlgMultiActionForm').find('#category_select').val();
+            var items = fnGetItems();
+            if (categoryId && items.length) {
+                $.ajax({
+                    url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'updateCategory' }) }}',
+                    type: 'POST',
+                    data: {
+                        categoryId: categoryId,
+                        id: items.join(',')
+                    }
+                })
+                .done($.proxy(function(res){
+                    location.reload();
+                }, this));
+            }
+        });
+
+        // cloning items
+        panel.find('.clone-items').click(function(){
+            var items = fnGetItems();
+            if (items.length) {
+                $.ajax({
+                    url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'cloneItems' }) }}',
+                    type: 'POST',
+                    data: {
+                        id: items.join(',')
+                    }
+                })
+                .done($.proxy(function(res){
+                    location.reload();
+                }, this));
+            }
+
+            return false;
+        });
+    })(jQuery);
+</script>

@@ -1,0 +1,17 @@
+<div class="multi-action">
+    <i class="icon-th"></i>
+    <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+            Выберите действие
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a href="#" class="change-category"><i class="icon-share-alt"></i> Перенести в другую категорию</a></li>
+            <li><a href="#" class="clone-items"><i class="icon-plus"></i> Скопировать товары</a></li>
+            {#<li><a href="#"><i class="icon-trash"></i> Удалить</a></li>#}
+        </ul>
+    </div>
+</div>
+
+{# Including multiaction dialog #}
+{% include 'NSCatalogBundle:AdminCatalog:dlg-multiaction.html.twig' %}

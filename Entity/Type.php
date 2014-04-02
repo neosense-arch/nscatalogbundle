@@ -38,6 +38,12 @@ class Type
      */
     private $elements;
 
+    /**
+     * @var array
+     * @ORM\Column(type="json_array")
+     */
+    private $adminViewportConfig;
+
     public function __construct()
     {
         $this->elements = new ArrayCollection();
@@ -134,5 +140,21 @@ class Type
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @param array $adminViewportConfig
+     */
+    public function setAdminViewportConfig($adminViewportConfig)
+    {
+        $this->adminViewportConfig = $adminViewportConfig;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAdminViewportConfig()
+    {
+        return $this->adminViewportConfig ?: array();
     }
 }
