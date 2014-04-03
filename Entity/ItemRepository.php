@@ -204,10 +204,11 @@ class ItemRepository extends EntityRepository
      * @param Category $category item category (item.category)
      * @param array    $settings settings conditions (e.g. ['hit' => '1', 'price' => 10.2] or ['color' => ['red', 'yellow'], 'price' => 10.2])
      * @param array    $orderBy  order conditions (e.g. [['price', 'ASC', 'number'], ['createdAt', 'DESC']]
+     * @param string   $search   any value to search
      * @return PaginationInterface|Item[]
      */
     public function findItemsPaged($page = 1, $limit = 20, $visible = null, Category $category = null,
-                                   array $settings = array(), array $orderBy = array())
+                                   array $settings = array(), array $orderBy = array(), $search = null)
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
@@ -294,6 +295,14 @@ class ItemRepository extends EntityRepository
                     ->setParameter("name_{$name}", $orderKey)
                     ->addOrderBy($expr, $orderDirection);
             }
+        }
+
+        // search
+        if ($search) {
+            $searchField = is_numeric($search) ? 's.value' : 'i.title';
+            $queryBuilder
+                ->andWhere("{$searchField} LIKE :searchQuery")
+                ->setParameter('searchQuery', "%{$search}%");
         }
 
         $query = $queryBuilder->getQuery();

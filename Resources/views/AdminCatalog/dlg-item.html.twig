@@ -27,6 +27,7 @@
         };
 
         var fnSave = function(){
+            CKEDITOR.instances.ns_catalog_node_contents.updateElement();
             $.ajax({
                 'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}' + (modalItemId ? '?id=' + modalItemId : ''),
                 'type': 'POST',

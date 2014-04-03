@@ -106,7 +106,7 @@ class Type
      */
     public function hasElement($name)
     {
-        return $this->elements->exists(function(TypeElement $element) use($name){
+        return $this->elements->exists(function($i, TypeElement $element) use($name){
             return $name === $element->getName();
         });
     }

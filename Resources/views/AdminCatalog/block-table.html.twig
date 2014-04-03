@@ -6,7 +6,20 @@
         <th style="width:20px">
             <input type="checkbox" />
         </th>
-        {% include 'NSCatalogBundle:AdminCatalog:index-header.html.twig' %}
+
+        <th style="width:200px">Название</th>
+
+        {% for col in cols %}
+            {% if category.type.hasElement(col) %}
+                <th>
+                    {{ category.type.element(col).title }}
+                    {% if orderCol == col %}
+                        <i class="icon-chevron-down"></i>
+                    {% endif %}
+                </th>
+            {% endif %}
+        {% endfor %}
+
         <th style="text-align:right">
             <a href="#" class="ns-viewport-config" data-type="{{ category.type.id }}"><i class="icon-cog"></i></a>
         </th>
@@ -16,7 +29,25 @@
     {% for item in pagination %}
         <tr>
             <td><input type="checkbox" name="id[]" value="{{ item.id }}" /></td>
-            {% include 'NSCatalogBundle:AdminCatalog:index-row.html.twig' %}
+            <td>{{ item.title }}</td>
+
+            {% for col in cols %}
+                {% if category.type.hasElement(col) %}
+                    <td>
+                        {% set typeName = category.type.element(col).category %}
+                        {% set value = item.settings.setting(col) %}
+
+                        {% if typeName == 'textarea' %}
+                            {{ value[:25] ~ (value|length > 25 ? '...' : '') }}
+                        {% elseif typeName == 'ns_catalog_node_date' %}
+                            {{ value ? value|date('d.m.Y') : '' }}
+                        {% else %}
+                            {{ value }}
+                        {% endif %}
+                    </td>
+                {% endif %}
+            {% endfor %}
+
             <td>
                 <div class="btn-group pull-right">
                     <a href="#" class="btn btn-mini btn-edit-item" data-id="{{ item.id }}"><i class="icon-pencil"></i></a>

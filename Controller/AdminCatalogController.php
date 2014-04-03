@@ -9,8 +9,9 @@ use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\ItemRepository;
 use NS\CatalogBundle\Form\Type\CategorySelectType;
 use NS\CatalogBundle\Form\Type\ViewportConfigType;
-use NS\CatalogBundle\QueryBuilder\ItemQueryBuilder;
+use NS\CatalogBundle\Service\CatalogService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -20,46 +21,61 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AdminCatalogController extends Controller
 {
-	/**
-	 * @throws \Exception
-	 * @return Response
-	 */
-	public function indexAction()
+    /**
+     * @param Request $request
+     * @return Response
+     */
+	public function indexAction(Request $request)
 	{
-		// catalog object
 		$catalog = $this->getCatalog();
-
 		$category = $this->getCategory();
 
-		$search = !empty($_GET['search']) ? $_GET['search'] : null;
+        // viewport config
+        $cols = array();
+        $orderCol = null;
+        $orderBy = array();
+        $viewportConfigForm = $this->createForm(new ViewportConfigType());
+        if ($category && $category->getType()) {
+            $config = $category->getType()->getAdminViewportConfig();
+            $viewportConfigForm->setData($config);
+            if (!empty($config['elements'])) {
+                foreach (explode(',', $config['elements']) as $element) {
+                    $cols[] = trim($element);
+                }
+            }
+            if (!empty($config['orderElement'])) {
+                $orderBy = explode(' ', $config['orderElement']);
+                $orderCol = $orderBy[0];
+            }
+        }
 
-		// items with pagination
-		$query = $this
-			->getItemRepository()
-			->getFindByCategoryQuery($category, $search, $catalog);
+        // search query
+		$search = $request->query->get('search');
 
-		$pagination = $this->get('knp_paginator')->paginate(
-			$query,
-			(!empty($_GET['page']) ? $_GET['page'] : 1),
-			50
-		);
+        /** @var CatalogService $catalogService */
+        $catalogService = $this->get('ns_catalog_service');
+        $items = $catalogService->getItemsPaged(
+            $request->get('page', 1),
+            50,
+            null,
+            $category,
+            array(),
+            $orderBy ? array($orderBy) : array(),
+            $search
+        );
 
 		// category choice
 		$categoryForm = $this->createForm(new CategorySelectType());
 
-        // viewport config
-        $viewportConfigForm = $this->createForm(new ViewportConfigType());
-        if ($category && $category->getType()) {
-            $viewportConfigForm->setData($category->getType()->getAdminViewportConfig());
-        }
-
 		return $this->render('NSCatalogBundle:AdminCatalog:index.html.twig', array(
-            'pagination'         => $pagination,
+            'pagination'         => $items,
             'catalog'            => $catalog,
             'category'           => $category,
             'search'             => $search,
             'categoryForm'       => $categoryForm->createView(),
             'viewportConfigForm' => $viewportConfigForm->createView(),
+            'cols'               => $cols,
+            'orderCol'           => $orderCol,
 		));
 	}
 

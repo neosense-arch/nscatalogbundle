@@ -84,12 +84,13 @@ class CatalogService
      * @param Category $category item category (item.category)
      * @param array    $settings settings conditions (e.g. ['hit' => '1', 'price' => 10.2])
      * @param array    $orderBy  order conditions (e.g. [['price', 'ASC', 'number'], ['createdAt', 'DESC']]
+     * @param string   $search   any value to search
      * @return PaginationInterface|Item[]
      */
     public function getItemsPaged($page = 1, $limit = 20, $visible = null, Category $category = null,
-                                  array $settings = array(), array $orderBy = array())
+                                  array $settings = array(), array $orderBy = array(), $search = null)
     {
-        return $this->itemRepository->findItemsPaged($page, $limit, $visible, $category, $settings, $orderBy);
+        return $this->itemRepository->findItemsPaged($page, $limit, $visible, $category, $settings, $orderBy, $search);
     }
 
     /**

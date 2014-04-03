@@ -126,8 +126,20 @@ class Setting
      */
     private function getTypeElement()
     {
-        if ($this->getItem() && $this->getItem()->getCategory() && $this->getItem()->getCategory()->getType()) {
-            return $this->getItem()->getCategory()->getType()->getElement($this->name);
+        $type = $this->getType();
+        if ($type && $type->hasElement($this->name)) {
+            return $type->getElement($this->name);
+        }
+        return null;
+    }
+
+    /**
+     * @return Type|null
+     */
+    private function getType()
+    {
+        if ($this->getItem() && $this->getItem()->getCategory()) {
+            return $this->getItem()->getCategory()->getType();
         }
         return null;
     }
