@@ -42,7 +42,7 @@ class Type
      * @var array
      * @ORM\Column(type="json_array")
      */
-    private $adminViewportConfig;
+    private $adminViewportConfig = array();
 
     public function __construct()
     {
