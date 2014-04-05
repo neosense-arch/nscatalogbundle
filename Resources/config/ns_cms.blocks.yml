@@ -21,6 +21,7 @@ blocks:
         title: Карточка товара
         settingsFormClass: NS\CatalogBundle\Block\Settings\ItemBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\ItemBlockSettingsModel
+        template: NSCatalogBundle:Blocks:itemBlock.html.twig
     -
         name: NSCatalogBundle:Blocks:categoryBlock
         title: Карточка категории

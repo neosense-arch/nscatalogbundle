@@ -232,33 +232,31 @@ class BlocksController extends Controller
     /**
      * Item detail info block
      *
-     * @param  Block $block
+     * @param Block                                                  $block
+     * @param ItemBlockSettingsModel $settings
+     * @param string                                                    $itemSlug
+     * @param string                                                    $categorySlug
      * @return Response
      */
-    public function itemBlockAction(Block $block)
+    public function itemBlockAction(Block $block, ItemBlockSettingsModel $settings, $itemSlug = null, $categorySlug = null)
     {
-        /** @var $settings ItemBlockSettingsModel */
-        $settings = $this->getBlockManager()->getBlockSettings($block);
+        /** @var CatalogService $catalogService */
+        $catalogService = $this->get('ns_catalog_service');
+        $item = $catalogService->getItemBySlug($itemSlug);
 
-        /** @var $categoryRepository CategoryRepository */
-        $categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
-
-        $categorySlug = $this->getRequest()->attributes->get('categorySlug');
-        $category     = $categoryRepository->findOneBySlug($categorySlug);
-
-        /** @var $itemRepository ItemRepository */
-        $itemRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Item');
-        $item           = $itemRepository->findOneBySlug($this->getRequest()->attributes->get('itemSlug'));
+        // parent category check
+        if ($categorySlug) {
+            $category = $catalogService->getCategoryBySlug($categorySlug);
+            if ($category || $item->getCategory() !== $category) {
+                $item = null;
+            }
+        }
 
         if (!$item) {
             return Response::create('', 404);
         }
 
-        if ($item->getCategory() !== $category) {
-            $item = null;
-        }
-
-        return $this->render('NSCatalogBundle:Blocks:itemBlock.html.twig', array(
+        return $this->render($block->getTemplate(), array(
             'block'    => $block,
             'settings' => $settings,
             'item'     => $item,
