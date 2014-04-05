@@ -24,6 +24,11 @@ class GenericSettings extends AbstractSettings
         $this->data[$name] = $value;
     }
 
+    public function __isset($name)
+    {
+        return true;
+    }
+
     public function toArray()
     {
         return $this->data;
