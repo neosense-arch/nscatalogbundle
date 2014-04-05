@@ -27,7 +27,9 @@
         };
 
         var fnSave = function(){
-            CKEDITOR.instances.ns_catalog_node_contents.updateElement();
+            if (typeof(CKEDITOR) !== 'undefined' && CKEDITOR.instances.ns_catalog_node_contents) {
+                CKEDITOR.instances.ns_catalog_node_contents.updateElement();
+            }
             $.ajax({
                 'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}' + (modalItemId ? '?id=' + modalItemId : ''),
                 'type': 'POST',
@@ -46,7 +48,8 @@
             $('#dlgItemFormLabel').text('Добавление товара');
             $.ajax({
                 url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}{% if category %}?categoryId={{ category.id }}{% endif %}',
-                type: 'GET'
+                type: 'GET',
+                cache: false
             })
             .done(function(res){
                 fnHandleResponse(res);
@@ -61,7 +64,8 @@
             $('#dlgItemFormLabel').text('Редактирование товара');
             $.ajax({
                 url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}?id=' + $(this).data('id') + '&categoryId={% if category %}{{ category.id }}{% endif %}',
-                type: 'GET'
+                type: 'GET',
+                cache: false
             })
             .done($.proxy(function(res){
                 fnHandleResponse(res);
