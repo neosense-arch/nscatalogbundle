@@ -14,6 +14,11 @@ class ItemsBlockSettingsModel
 	 */
 	private $useCategory = true;
 
+    /**
+     * @var int
+     */
+    private $categoryId;
+
 	/**
 	 * @var string
 	 */
@@ -60,6 +65,22 @@ class ItemsBlockSettingsModel
 	{
 		return $this->useCategory;
 	}
+
+    /**
+     * @param int $categoryId
+     */
+    public function setCategoryId($categoryId)
+    {
+        $this->categoryId = $categoryId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCategoryId()
+    {
+        return $this->categoryId;
+    }
 
 	/**
 	 * @param string $settingName

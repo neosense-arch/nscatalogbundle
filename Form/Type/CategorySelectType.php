@@ -7,6 +7,7 @@ use NS\CatalogBundle\Entity\Catalog;
 use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Entity\Category;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -42,10 +43,22 @@ class CategorySelectType extends AbstractType
 			'query_builder' => $queryBuilder,
 			'property'      => 'optionLabel',
 			'catalog_name'  => $this->catalog ? $this->catalog->getName() : null,
+            'id_only'       => false,
 		));
     }
 
-	/**
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        if ($options['id_only']) {
+            $repository = $this->categoryRepository;
+            $builder->addModelTransformer(new CallbackTransformer(
+                function($id) use($repository){return $id ? $repository->find($id):null;},
+                function($item){return $item ? $item->getId(): null;}
+            ));
+        }
+    }
+
+    /**
 	 * @return string
 	 */
 	public function getName()

@@ -4,6 +4,7 @@ namespace NS\CatalogBundle\Block\Settings;
 
 use NS\AdminBundle\Form\Type\TinyMceType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -18,26 +19,32 @@ class ItemsBlockSettingsForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
     {
 		$builder
-			->add('count', 'text', array(
-				'label'    => 'Количество товаров',
-				'required' => false,
-			))
-			->add('useCategory', 'checkbox', array(
-				'label'    => 'Реагировать на текущую категорию',
-				'required' => false,
-			))
-			->add('settingName', 'text', array(
-				'label'    => 'Имя свойства',
-				'required' => false,
-			))
-			->add('settingValue', 'text', array(
-				'label'    => 'Значение свойства',
-				'required' => false,
-			))
-			->add('order', 'text', array(
-				'label'    => 'Сортировка',
-				'required' => false,
-			))
+            ->add('count', 'text', array(
+                'label'    => 'Количество товаров',
+                'required' => false,
+            ))
+            ->add('useCategory', 'checkbox', array(
+                'label'    => 'Реагировать на текущую категорию',
+                'required' => false,
+            ))
+            ->add('categoryId', 'category_select', array(
+                'label'       => 'Категория',
+                'required'    => false,
+                'id_only'     => true,
+                'empty_value' => '[ Не выбрано ]',
+            ))
+            ->add('settingName', 'text', array(
+                'label'    => 'Имя свойства',
+                'required' => false,
+            ))
+            ->add('settingValue', 'text', array(
+                'label'    => 'Значение свойства',
+                'required' => false,
+            ))
+            ->add('order', 'text', array(
+                'label'    => 'Сортировка',
+                'required' => false,
+            ))
 		;
     }
 

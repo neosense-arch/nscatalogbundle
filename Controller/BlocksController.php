@@ -194,9 +194,10 @@ class BlocksController extends Controller
      * @param Request                 $request
      * @param Block                   $block
      * @param ItemsBlockSettingsModel $settings
+     * @param string                  $categorySlug
      * @return Response
      */
-    public function itemsBlockAction(Request $request, Block $block, ItemsBlockSettingsModel $settings)
+    public function itemsBlockAction(Request $request, Block $block, ItemsBlockSettingsModel $settings, $categorySlug = null)
     {
         /** @var CatalogService $catalogService */
         $catalogService = $this->get('ns_catalog_service');
@@ -204,8 +205,9 @@ class BlocksController extends Controller
         // filtering by category
         $filterCategory = null;
         if ($settings->getUseCategory()) {
-            $slug           = $request->attributes->get('categorySlug');
-            $filterCategory = $catalogService->getCategoryBySlug($slug);
+            $filterCategory = $catalogService->getCategoryBySlug($categorySlug);
+        } else if ($settings->getCategoryId()) {
+            $filterCategory = $catalogService->getCategory($settings->getCategoryId());
         }
 
         // retrieving items
