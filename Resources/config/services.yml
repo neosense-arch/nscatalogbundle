@@ -60,6 +60,10 @@ services:
         class: 'NS\CatalogBundle\Form\Type\NodeDateType'
         tags: [{ name: form.type, alias: ns_catalog_node_date }]
 
+    ns_catalog.form.type.node_image:
+        class: 'NS\CatalogBundle\Form\Type\NodeImageType'
+        tags: [{ name: form.type, alias: ns_catalog_node_image }]
+
     ns_catalog.form.type.table:
         class: 'NS\CatalogBundle\Form\Type\TableType'
         arguments: [@ns_catalog.repository.type]
