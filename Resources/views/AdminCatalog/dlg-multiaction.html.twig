@@ -14,7 +14,7 @@
 <script type="text/javascript">
     (function($){
         var panel = $('.multi-action');
-        var form = panel.parents('form');
+        var form = $('.ns-items-form');
         var fnCheckState = function(){
             if (form.find('td input[type=checkbox]:checked').length) {
                 panel.show().animate({ height: 40 });
@@ -26,18 +26,18 @@
             }
         };
         form.find('th input[type=checkbox]').change(function(){
-            form.find('td input[type=checkbox]').attr('checked', !!$(this).attr('checked'));
+            form.find('td input[type=checkbox]').prop('checked', !!$(this).prop('checked'));
             fnCheckState();
         });
         form.find('td input[type=checkbox]').change(function(){
             fnCheckState();
-            form.find('th input[type=checkbox]').attr('checked', form.find('td input[type=checkbox]:checked').length == form.find('td input[type=checkbox]').length);
+            form.find('th input[type=checkbox]').prop('checked', form.find('td input[type=checkbox]:checked').length == form.find('td input[type=checkbox]').length);
         });
 
         // retrieves items
         var fnGetItems = function(){
             var items = [];
-            panel.parents('form').find('td input[type=checkbox]:checked').each(function(){
+            form.find('td input[type=checkbox]:checked').each(function(){
                 items.push($(this).val());
             });
             return items;
