@@ -2,6 +2,7 @@
     label: 'Каталог'
     name: 'ns_catalog_settings'
     parent: 'settings'
+    env: 'dev'
     pages:
         -
             label: 'Типы данных'
