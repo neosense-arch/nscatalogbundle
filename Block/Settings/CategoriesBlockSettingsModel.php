@@ -10,6 +10,11 @@ class CategoriesBlockSettingsModel
     private $categoryId;
 
     /**
+     * @var string
+     */
+    private $sortOrder;
+
+    /**
      * @param int $categoryId
      */
     public function setCategoryId($categoryId)
@@ -23,5 +28,21 @@ class CategoriesBlockSettingsModel
     public function getCategoryId()
     {
         return $this->categoryId;
+    }
+
+    /**
+     * @param string $sortOrder
+     */
+    public function setSortOrder($sortOrder)
+    {
+        $this->sortOrder = $sortOrder;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
     }
 }

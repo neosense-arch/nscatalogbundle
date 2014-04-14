@@ -155,6 +155,24 @@ class BlocksController extends Controller
         }
         $categories = $categoryRepository->findByCategory($category);
 
+        // sorting items
+        $sorted    = array();
+        $sortItems = explode(',', $settings->getSortOrder());
+        foreach ($sortItems as $slug) {
+            foreach ($categories as $category) {
+                if ($category->getSlug() === $slug) {
+                    $sorted[] = $category;
+                    break;
+                }
+            }
+        }
+        foreach ($categories as $category) {
+            if (!in_array($category->getSlug(), $sortItems)) {
+                $sorted[] = $category;
+            }
+        }
+        $categories = $sorted;
+
         return $this->render($block->getTemplate(), array(
             'block'      => $block,
             'settings'   => $settings,

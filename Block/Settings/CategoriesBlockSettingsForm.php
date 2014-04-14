@@ -23,6 +23,10 @@ class CategoriesBlockSettingsForm extends AbstractType
                 'required'    => false,
                 'id_only'     => true,
                 'empty_value' => '[ Не выбрано ]',
+            ))
+            ->add('sortOrder', 'text', array(
+                'label'    => 'Сортировка',
+                'required' => false,
             ));
     }
 
