@@ -11,6 +11,7 @@ blocks:
         title: Категории
         settingsFormClass: NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoriesBlockSettingsModel
+        template: NSCatalogBundle:Blocks:categoriesBlock.html.twig
     -
         name: NSCatalogBundle:Blocks:itemsBlock
         title: Товары

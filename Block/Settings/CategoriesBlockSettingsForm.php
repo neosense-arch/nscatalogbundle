@@ -17,6 +17,13 @@ class CategoriesBlockSettingsForm extends AbstractType
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder
+            ->add('categoryId', 'category_select', array(
+                'label'       => 'Категория',
+                'required'    => false,
+                'id_only'     => true,
+                'empty_value' => '[ Не выбрано ]',
+            ));
     }
 
 	/**

@@ -147,10 +147,15 @@ class BlocksController extends Controller
         /** @var $categoryRepository CategoryRepository */
         $categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
 
-        $category   = $categoryRepository->findOneBySlug($categorySlug);
+        if ($settings->getCategoryId()) {
+            $category = $categoryRepository->find($settings->getCategoryId());
+        }
+        else {
+            $category   = $categoryRepository->findOneBySlug($categorySlug);
+        }
         $categories = $categoryRepository->findByCategory($category);
 
-        return $this->render('NSCatalogBundle:Blocks:categoriesBlock.html.twig', array(
+        return $this->render($block->getTemplate(), array(
             'block'      => $block,
             'settings'   => $settings,
             'categories' => $categories,
