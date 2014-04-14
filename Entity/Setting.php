@@ -4,6 +4,8 @@ namespace NS\CatalogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use NS\AdminBundle\Form\DataTransformer\ArrayToStringTransformer;
+use NS\AdminBundle\Form\DataTransformer\BooleanToStringTransformer;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToStringTransformer;
 
@@ -112,7 +114,9 @@ class Setting
         $element = $this->getTypeElement();
         if ($element) {
             $transformers = array(
-                'ns_catalog_node_date' => new DateTimeToStringTransformer(),
+                'ns_catalog_node_date'    => new DateTimeToStringTransformer(),
+                'ns_catalog_node_gallery' => new ArrayToStringTransformer(),
+                'checkbox'                => new BooleanToStringTransformer(),
             );
             if (isset($transformers[$element->getCategory()])) {
                 return $transformers[$element->getCategory()];
