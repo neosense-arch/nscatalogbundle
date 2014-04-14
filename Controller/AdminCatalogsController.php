@@ -48,8 +48,9 @@ class AdminCatalogsController extends Controller
             return $this->back();
         }
 
-		return $this->render('NSAdminBundle:Generic:form.html.twig', array(
-			'form' => $form->createView(),
+		return $this->render('NSAdminBundle:Layout:col1-form.html.twig', array(
+            'form'  => $form->createView(),
+            'title' => 'Каталоги',
 		));
 	}
 
