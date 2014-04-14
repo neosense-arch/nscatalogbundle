@@ -27,8 +27,10 @@
         };
 
         var fnSave = function(){
-            if (typeof(CKEDITOR) !== 'undefined' && CKEDITOR.instances.ns_catalog_node_contents) {
-                CKEDITOR.instances.ns_catalog_node_contents.updateElement();
+            if (typeof(CKEDITOR) !== 'undefined') {
+                $.each (CKEDITOR.instances, function(i, instance) {
+                    instance.updateElement();
+                });
             }
             $.ajax({
                 'url': '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}' + (modalItemId ? '?id=' + modalItemId : ''),
