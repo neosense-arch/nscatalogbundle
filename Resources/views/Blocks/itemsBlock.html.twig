@@ -1,11 +1,51 @@
-<h2>Товары</h2>
 
-<ul>
+{# Main items loop #}
 {% for item in items %}
-	<li>{{ item.title }}</li>
-{% endfor %}
-</ul>
 
+    {# Item block #}
+	<div class="item">
+
+        {# Item page link #}
+        <a href="{{ url('ns_catalog_item', {categorySlug: item.category.slug, itemSlug: item.slug}) }}">
+            {{ item.title }}
+        </a>
+
+        {# Item photo #}
+        <img src="{{ ('upload/j/' ~ item.settings.photo) | apply_filter('catalog_item_thumbnail') }}"
+             alt="{{ item.title }}" width="146" height="90">
+
+        {# Item price #}
+        <p>Price: {{ item.settings.price | number_format(2, ',', '') }}</p>
+
+        {# Add to cart #}
+        <p><a href="#" class="add-to-cart" data-url="{{ url('ns_shop_cart_add') }}" data-id="{{ item.id }}">Add to cart</a></p>
+        <script>
+            {# JS example to handle add to cart action #}
+            (function($){
+                $('.add-to-cart').click(function(){
+                    $.ajax($(this).attr('data-url'), {
+                        type: 'POST',
+                        data: {
+                            itemId: $(this).attr('data-id'),
+                            quantity: 12345
+                        },
+                        success: function(res){
+                            if (res.error) {
+                                throw res.error;
+                            }
+                            $('.cart-total-price').text(res.totalPrice.toFixed(2).toString().replace('.', ',') + ' р');
+                            $('.cart-total-count').text(res.totalCount);
+                        }
+                    });
+                    return false;
+                });
+            })(jQuery);
+        </script>
+    </div>
+
+{% endfor %}
+
+{# Pagination #}
 {% if pagination is defined %}
 	{{ knp_pagination_render(pagination) }}
 {% endif %}
