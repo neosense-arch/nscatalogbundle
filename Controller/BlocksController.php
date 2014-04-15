@@ -255,10 +255,10 @@ class BlocksController extends Controller
     /**
      * Item detail info block
      *
-     * @param Block                                                  $block
+     * @param Block                  $block
      * @param ItemBlockSettingsModel $settings
-     * @param string                                                    $itemSlug
-     * @param string                                                    $categorySlug
+     * @param string                 $itemSlug
+     * @param string                 $categorySlug
      * @return Response
      */
     public function itemBlockAction(Block $block, ItemBlockSettingsModel $settings, $itemSlug = null, $categorySlug = null)
@@ -270,7 +270,7 @@ class BlocksController extends Controller
         // parent category check
         if ($categorySlug) {
             $category = $catalogService->getCategoryBySlug($categorySlug);
-            if ($category || $item->getCategory() !== $category) {
+            if (!$category || $item->getCategory() !== $category) {
                 $item = null;
             }
         }
