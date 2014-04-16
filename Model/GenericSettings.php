@@ -2,12 +2,14 @@
 
 namespace NS\CatalogBundle\Model;
 
+use NS\ShopBundle\Item\Priceable;
+
 /**
  * Temporary legacy-support model to formally implement AbstractSettings interface
  *
  * @package NS\CatalogBundle\Model
  */
-class GenericSettings extends AbstractSettings
+class GenericSettings extends AbstractSettings implements Priceable
 {
     /**
      * @var array
@@ -42,5 +44,15 @@ class GenericSettings extends AbstractSettings
     public function getSetting($name)
     {
         return $this->__get($name);
+    }
+
+    /**
+     * Retrieves item price
+     *
+     * @return float
+     */
+    public function getPrice()
+    {
+        return $this->__get('price');
     }
 }
