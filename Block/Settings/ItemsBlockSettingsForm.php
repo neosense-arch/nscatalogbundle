@@ -33,6 +33,10 @@ class ItemsBlockSettingsForm extends AbstractType
                 'id_only'     => true,
                 'empty_value' => '[ Не выбрано ]',
             ))
+            ->add('recursive', 'checkbox', array(
+                'label'    => 'Загружать товары из всех подкатегорий',
+                'required' => false,
+            ))
             ->add('settingName', 'text', array(
                 'label'    => 'Имя свойства',
                 'required' => false,

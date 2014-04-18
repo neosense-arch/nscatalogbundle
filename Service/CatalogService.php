@@ -78,19 +78,21 @@ class CatalogService
     /**
      * Retrieves items with pagination
      *
-     * @param int      $page     page number
-     * @param int      $limit    items per page
-     * @param null     $visible  visible flag (item.visible)
-     * @param Category $category item category (item.category)
-     * @param array    $settings settings conditions (e.g. ['hit' => '1', 'price' => 10.2])
-     * @param array    $orderBy  order conditions (e.g. [['price', 'ASC', 'number'], ['createdAt', 'DESC']]
-     * @param string   $search   any value to search
+     * @param int      $page               page number
+     * @param int      $limit              items per page
+     * @param null     $visible            visible flag (item.visible)
+     * @param Category $category           item category (item.category)
+     * @param array    $settings           settings conditions (e.g. ['hit' => '1', 'price' => 10.2])
+     * @param array    $orderBy            order conditions (e.g. [['price', 'ASC', 'number'], ['createdAt', 'DESC']]
+     * @param string   $search             any value to search
+     * @param bool     $subcategoriesItems load subcategories items if category is set
      * @return PaginationInterface|Item[]
      */
     public function getItemsPaged($page = 1, $limit = 20, $visible = null, Category $category = null,
-                                  array $settings = array(), array $orderBy = array(), $search = null)
+                                  array $settings = array(), array $orderBy = array(), $search = null,
+                                  $subcategoriesItems = false)
     {
-        return $this->itemRepository->findItemsPaged($page, $limit, $visible, $category, $settings, $orderBy, $search);
+        return $this->itemRepository->findItemsPaged($page, $limit, $visible, $category, $settings, $orderBy, $search, $subcategoriesItems);
     }
 
     /**

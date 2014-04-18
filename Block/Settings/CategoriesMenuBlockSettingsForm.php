@@ -18,12 +18,14 @@ class CategoriesMenuBlockSettingsForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
     {
 		$builder
+            ->add('categoryId', 'category_select', array(
+                'label'       => 'Категория',
+                'required'    => false,
+                'id_only'     => true,
+                'empty_value' => '[ Не выбрано ]',
+            ))
 			->add('sortOrder', 'text', array(
 				'label'    => 'Сортировка',
-				'required' => false,
-			))
-			->add('template', 'text', array(
-				'label'    => 'Шаблон',
 				'required' => false,
 			))
 			->add('isSubmenu', 'checkbox', array(

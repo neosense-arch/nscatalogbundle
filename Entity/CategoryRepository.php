@@ -4,8 +4,9 @@ namespace NS\CatalogBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
-class CategoryRepository extends EntityRepository
+class CategoryRepository extends NestedTreeRepository
 {
 	/**
 	 * @param Catalog $catalog

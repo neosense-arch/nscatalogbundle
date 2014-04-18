@@ -4,6 +4,7 @@ blocks:
         title: Меню категорий
         settingsFormClass: NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoriesMenuBlockSettingsModel
+        template: NSCatalogBundle:Blocks:categoriesMenuBlock.html.twig
         cache:
             entities: [NS\CatalogBundle\Entity\Category]
     -

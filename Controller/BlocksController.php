@@ -38,20 +38,27 @@ class BlocksController extends Controller
     /**
      * Categories menu block
      *
-     * @param Request                          $request
      * @param  Block                           $block
      * @param CategoriesMenuBlockSettingsModel $settings
      * @param string|null                      $categorySlug
      * @return Response
      */
-    public function categoriesMenuBlockAction(Request $request, Block $block,
-                                              CategoriesMenuBlockSettingsModel $settings, $categorySlug = null)
+    public function categoriesMenuBlockAction(Block $block, CategoriesMenuBlockSettingsModel $settings, $categorySlug = null)
     {
         /** @var $categoryRepository CategoryRepository */
         $categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
 
         // current category
-        $currentCategory = $categoryRepository->findOneBySlug($categorySlug);
+        $currentCategory = null;
+        if ($categorySlug) {
+            $currentCategory = $categoryRepository->findOneBySlug($categorySlug);
+        }
+
+        // if category is set in settings
+        if ($settings->getCategoryId()) {
+            $currentCategory = $categoryRepository->find($settings->getCategoryId());
+            $settings->setIsSubmenu(true);
+        }
 
         // retrieving root category
         if ($settings->getIsSubmenu() && $currentCategory) {
@@ -125,7 +132,7 @@ class BlocksController extends Controller
             );
         }
 
-        return $this->render($settings->getTemplate(), array(
+        return $this->render($block->getTemplate(), array(
             'block'           => $block,
             'settings'        => $settings,
             'menu'            => $menu,
@@ -240,7 +247,9 @@ class BlocksController extends Controller
             true,
             $filterCategory,
             $settings->getSettingsConditions(),
-            $settings->getOrderArray()
+            $settings->getOrderArray(),
+            null,
+            $settings->getRecursive()
         );
 
         return $this->render($block->getTemplate('NSCatalogBundle:Blocks:itemsBlock.html.twig'), array(

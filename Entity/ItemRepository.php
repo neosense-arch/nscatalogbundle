@@ -198,17 +198,19 @@ class ItemRepository extends EntityRepository
     /**
      * Retrieves items with pagination
      *
-     * @param int      $page     page number
-     * @param int      $limit    items per page
-     * @param null     $visible  visible flag (item.visible)
-     * @param Category $category item category (item.category)
-     * @param array    $settings settings conditions (e.g. ['hit' => '1', 'price' => 10.2] or ['color' => ['red', 'yellow'], 'price' => 10.2])
-     * @param array    $orderBy  order conditions (e.g. [['price', 'ASC', 'number'], ['createdAt', 'DESC']]
-     * @param string   $search   any value to search
+     * @param int      $page               page number
+     * @param int      $limit              items per page
+     * @param null     $visible            visible flag (item.visible)
+     * @param Category $category           item category (item.category)
+     * @param array    $settings           settings conditions (e.g. ['hit' => '1', 'price' => 10.2] or ['color' => ['red', 'yellow'], 'price' => 10.2])
+     * @param array    $orderBy            order conditions (e.g. [['price', 'ASC', 'number'], ['createdAt', 'DESC']]
+     * @param string   $search             any value to search
+     * @param bool     $subcategoriesItems load subcategories items if category is set
      * @return PaginationInterface|Item[]
      */
     public function findItemsPaged($page = 1, $limit = 20, $visible = null, Category $category = null,
-                                   array $settings = array(), array $orderBy = array(), $search = null)
+                                   array $settings = array(), array $orderBy = array(), $search = null,
+                                   $subcategoriesItems = false)
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
@@ -229,9 +231,16 @@ class ItemRepository extends EntityRepository
 
         // category condition
         if ($category) {
+            $ids = array($category->getId());
+
+            // using subcategories
+            if ($subcategoriesItems) {
+                $ids = $this->getCategoryIds($category);
+            }
+
             $queryBuilder
-                ->andWhere('c = :category')
-                ->setParameter('category', $category);
+                ->andWhere('c.id IN (:ids)')
+                ->setParameter('ids', $ids);
         }
 
         // settings conditions
@@ -336,4 +345,17 @@ class ItemRepository extends EntityRepository
 
 		return $queryBuilder;
 	}
+
+    /**
+     * @param Category $category
+     * @return array
+     */
+    private function getCategoryIds(Category $category)
+    {
+        $ids = array($category->getId());
+        foreach ($category->getChildren() as $subCategory) {
+            $ids = array_merge($ids, $this->getCategoryIds($subCategory));
+        }
+        return $ids;
+    }
 }

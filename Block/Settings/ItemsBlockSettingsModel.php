@@ -19,6 +19,11 @@ class ItemsBlockSettingsModel
      */
     private $categoryId;
 
+    /**
+     * @var bool
+     */
+    private $recursive = false;
+
 	/**
 	 * @var string
 	 */
@@ -190,4 +195,20 @@ class ItemsBlockSettingsModel
 
 		return array_key_exists($index, $parts) ? $parts[$index] : $default;
 	}
+
+    /**
+     * @param boolean $recursive
+     */
+    public function setRecursive($recursive)
+    {
+        $this->recursive = $recursive;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getRecursive()
+    {
+        return $this->recursive;
+    }
 }

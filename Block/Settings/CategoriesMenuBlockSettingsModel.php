@@ -15,11 +15,6 @@ class CategoriesMenuBlockSettingsModel
 	private $sortOrder;
 
 	/**
-	 * @var string
-	 */
-	private $template = 'NSCatalogBundle:Blocks:categoriesMenuBlock.html.twig';
-
-	/**
 	 * @var bool
 	 */
 	private $isSubmenu = false;
@@ -33,6 +28,11 @@ class CategoriesMenuBlockSettingsModel
 	 * @var bool
 	 */
 	private $redirectToFirstItem = false;
+
+    /**
+     * @var int
+     */
+    private $categoryId;
 
 	/**
 	 * @param string $sortOrder
@@ -48,20 +48,6 @@ class CategoriesMenuBlockSettingsModel
 	public function getSortOrder()
 	{
 		return $this->sortOrder;
-	}
-	/**
-	 * @param string $template
-	 */
-	public function setTemplate($template)
-	{
-		$this->template = $template;
-	}
-	/**
-	 * @return string
-	 */
-	public function getTemplate()
-	{
-		return $this->template;
 	}
 	/**
 	 * @param boolean $isSubmenu
@@ -105,5 +91,21 @@ class CategoriesMenuBlockSettingsModel
 	{
 		return $this->redirectToFirstItem;
 	}
+
+    /**
+     * @param int $categoryId
+     */
+    public function setCategoryId($categoryId)
+    {
+        $this->categoryId = $categoryId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCategoryId()
+    {
+        return $this->categoryId;
+    }
 
 }
