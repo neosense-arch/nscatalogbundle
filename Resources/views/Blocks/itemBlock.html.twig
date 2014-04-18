@@ -30,8 +30,17 @@
                             if (res.error) {
                                 throw res.error;
                             }
+                            {# Replacing raw data with JS #}
                             $('.cart-total-price').text(res.totalPrice.toFixed(2).toString().replace('.', ',') + ' р');
                             $('.cart-total-count').text(res.totalCount);
+
+                            {# Replacing whole block content #}
+                            $.ajax($('.basketTop').attr('data-url'), {
+                                type: 'GET',
+                                success: function(res){
+                                    $('.basketTop').replaceWith(res);
+                                }
+                            });
                         }
                     });
                     return false;
