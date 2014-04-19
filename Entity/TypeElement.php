@@ -39,6 +39,13 @@ class TypeElement
     private $category;
 
     /**
+     * @var array
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $options = array();
+
+    /**
      * @var Type
      *
      * @ORM\ManyToOne(targetEntity="Type", inversedBy="elements")
@@ -124,5 +131,21 @@ class TypeElement
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 }

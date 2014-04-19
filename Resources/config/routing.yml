@@ -5,3 +5,7 @@ ns_catalog_category:
 ns_catalog_item:
     pattern:  '/catalog/{categorySlug}/{itemSlug}'
     defaults: { _controller: NSCmsBundle:Pages:pageName, name: item }
+
+ns_catalog_node_type_element_options_dialog:
+    pattern: '/admin/catalog/type-element-options-dialog/'
+    defaults: { _controller: NSCatalogBundle:AdminTypes:typeElementOptionsDialog }

@@ -4,6 +4,7 @@ namespace NS\CatalogBundle\Controller;
 
 use NS\CatalogBundle\Entity\Type;
 use NS\CatalogBundle\Entity\TypeRepository;
+use NS\CatalogBundle\Form\Type\TypeElementOptionsNodeSelectType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -88,6 +89,32 @@ class AdminTypesController extends Controller
 
 		return $this->back();
 	}
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function typeElementOptionsDialogAction(Request $request)
+    {
+        $typeElementCategory = $request->query->get('typeElementCategory');
+
+        $formType = null;
+        switch ($typeElementCategory) {
+            case 'ns_catalog_node_select':
+                $formType = new TypeElementOptionsNodeSelectType();
+                break;
+        }
+
+        $form = null;
+        if ($formType) {
+            $form = $this->createForm($formType);
+        }
+
+        return $this->render('NSCatalogBundle:AdminTypes:typeElementOptionsDialog.html.twig', array(
+            'typeElementCategory' => $typeElementCategory,
+            'form'                => $form ? $form->createView() : null,
+        ));
+    }
 
 	/**
 	 * @return RedirectResponse

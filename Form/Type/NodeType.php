@@ -45,10 +45,11 @@ class NodeType extends AbstractType
 
         // adding fields
         foreach ($type->getElements() as $element) {
-            $builder->add($element->getName(), $element->getCategory(), array(
+            $options = array_merge(array(
                 'label'    => $element->getTitle(),
                 'required' => false,
-            ));
+            ), $element->getOptions());
+            $builder->add($element->getName(), $element->getCategory(), $options);
         }
     }
 

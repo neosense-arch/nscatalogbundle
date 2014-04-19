@@ -21,7 +21,7 @@
             </thead>
             <tbody>
                 <tr class="last">
-                    <td colspan="99"><a href="#" class="btn add">Добавить элемент</a></td>
+                    <td colspan="99"><a href="#" class="btn add"><i class="icon-plus"></i> Добавить элемент</a></td>
                 </tr>
             </tbody>
         </table>
@@ -49,11 +49,32 @@
                         <option value="ns_catalog_node_image">Изображение</option>
                         <option value="ns_catalog_node_gallery">Фотогалерея</option>
                         <option value="checkbox">Флаг</option>
+                        <option value="ns_catalog_node_select">Элемент каталога</option>
                     </select>
                 </td>
-                <td><a class="btn btn-mini delete"><i class="icon-trash"></i></a></td>
+                <td>
+                    <div class="btn-group">
+                        <input class="ns-options" value="" type="hidden">
+                        <a class="ns-options-dialog-trigger btn btn-mini"><i class="icon-cog"></i></a>
+                        <a class="btn btn-mini delete"><i class="icon-trash"></i></a>
+                    </div>
+                </td>
             </tr>
             </table>
+        </div>
+
+        {# Element options dialog #}
+        <div class="ns-options-dialog modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3>Настройки поля</h3>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Отмена</button>
+                <button class="ns-save btn btn-primary">Сохранить</button>
+            </div>
         </div>
     </div>
 
@@ -63,13 +84,14 @@
             var tbl = container.find('.ns-table');
 
             {# Adds new element #}
-            var fnAddElement = function(id, title, category, name){
+            var fnAddElement = function(id, title, category, name, options){
                 var tplRow = container.find('.templates .ns-row');
                 var row = tplRow.clone();
                 row.find('.ns-id').val(id || null).change(fnSetValue);
                 row.find('.ns-title').val(title || 'Новый элемент').change(fnSetValue);
                 row.find('.ns-name').val(name || 'newName').change(fnSetValue);
                 row.find('.ns-category').val(category || 'text').change(fnSetValue);
+                row.find('.ns-options').val(JSON.stringify(options || {})).change(fnSetValue);
                 row.find('.delete').click(function(){
                     $(this).parents('tr:eq(0)').remove();
                     fnSetValue();
@@ -87,7 +109,8 @@
                         'id': $(this).find('.ns-id').val(),
                         'category': $(this).find('.ns-category').val(),
                         'title': $(this).find('.ns-title').val(),
-                        'name': $(this).find('.ns-name').val()
+                        'name': $(this).find('.ns-name').val(),
+                        'options': JSON.parse($(this).find('.ns-options').val())
                     });
                 });
                 container.find('.ns-input').val(JSON.stringify(arr));
@@ -115,10 +138,59 @@
             {# Loading values #}
             var elements = $.parseJSON(container.find('.ns-input').val());
             $.each(elements, function(){
-                fnAddElement(this.id, this.title, this.category, this.name);
+                fnAddElement(this.id, this.title, this.category, this.name, this.options);
+            });
+
+            {# Options dialog #}
+            container.find('.ns-options-dialog-trigger').click(function(){
+                $('#ns-loader').animate({opacity: 1});
+                var dlg = container.find('.ns-options-dialog');
+                var typeElementCategory = $(this).parents('.ns-row').find('.ns-category').val();
+
+                var input = $(this).parents('.ns-row').find('.ns-options');
+                dlg.data('input', input);
+
+                $.ajax('{{ url('ns_catalog_node_type_element_options_dialog') }}', {
+                    type: 'GET',
+                    data: {
+                        typeElementCategory: typeElementCategory,
+                        values: input.val()
+                    },
+                    success: function(res){
+                        if (res.error) {
+                            throw res.error;
+                        }
+                        $('#ns-loader').animate({opacity: 0});
+                        dlg.find('.modal-body').html(res);
+                        var options = JSON.parse(input.val());
+                        container.find('.modal-body :input').each(function(){
+                            var el = $(this);
+                            $.each(options, function(key, value){
+                                if (el.attr('name').indexOf('[' + key + ']') > 0) {
+                                    el.val(value);
+                                }
+                            });
+                        });
+                        dlg.modal('show');
+                    }
+                });
+                return false;
+            });
+            container.find('.ns-options-dialog .ns-save').click(function(){
+                var dlg = container.find('.ns-options-dialog');
+                var options = {};
+                $.each(container.find('.modal-body :input').serializeArray(), function(i, obj){
+                    var key = obj.name.match(/.+\[([^\]]+)\]/i)[1];
+                    if (key != '_token') {
+                        options[key] = obj.value;
+                    }
+                });
+                dlg.data('input').val(JSON.stringify(options));
+                dlg.modal('hide');
+                fnSetValue();
+                return false;
             });
         })(jQuery);
     </script>
-
 {% endspaceless %}
 {% endblock %}

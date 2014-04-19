@@ -52,6 +52,7 @@ class TypeElementsToStringTransformer implements DataTransformerInterface
                     'category' => $element->getCategory(),
                     'title'    => $element->getTitle(),
                     'name'     => $element->getName(),
+                    'options'  => $element->getOptions(),
                 );
             }
         }
@@ -93,6 +94,7 @@ class TypeElementsToStringTransformer implements DataTransformerInterface
                 $element->setCategory($row['category']);
                 $element->setTitle($row['title']);
                 $element->setName($row['name']);
+                $element->setOptions($row['options']);
                 $elements->add($element);
             }
         }

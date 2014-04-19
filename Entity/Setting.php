@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use NS\AdminBundle\Form\DataTransformer\ArrayToStringTransformer;
 use NS\AdminBundle\Form\DataTransformer\BooleanToStringTransformer;
+use NS\AdminBundle\Form\DataTransformer\EntityToIdTransformer;
+use NS\AdminBundle\Form\DataTransformer\IdToEntityTransformer;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToStringTransformer;
 
@@ -113,10 +115,18 @@ class Setting
     {
         $element = $this->getTypeElement();
         if ($element) {
+            // dirty hack
+            global $kernel;
+            if ('AppCache' == get_class($kernel)) {
+                $kernel = $kernel->getKernel();
+            }
+            $itemRepository = $kernel->getContainer()->get('ns_catalog.repository.item');
+
             $transformers = array(
                 'ns_catalog_node_date'    => new DateTimeToStringTransformer(),
                 'ns_catalog_node_gallery' => new ArrayToStringTransformer(),
                 'checkbox'                => new BooleanToStringTransformer(),
+                'ns_catalog_node_select'  => new EntityToIdTransformer($itemRepository),
             );
             if (isset($transformers[$element->getCategory()])) {
                 return $transformers[$element->getCategory()];
