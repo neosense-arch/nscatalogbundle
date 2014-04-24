@@ -10,6 +10,7 @@ use NS\AdminBundle\Form\DataTransformer\EntityToIdTransformer;
 use NS\AdminBundle\Form\DataTransformer\IdToEntityTransformer;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToStringTransformer;
+use Symfony\Component\Form\Extension\Core\DataTransformer\NumberToLocalizedStringTransformer;
 
 /**
  * @ORM\Table(name="ns_catalog_settings")
@@ -108,6 +109,11 @@ class Setting
         return $transformer ? $transformer->reverseTransform($this->value): $this->value;
 	}
 
+    public function getRawValue()
+    {
+        return $this->value;
+    }
+
     /**
      * @return DataTransformerInterface|null
      */
@@ -127,6 +133,7 @@ class Setting
                 'ns_catalog_node_gallery' => new ArrayToStringTransformer(),
                 'checkbox'                => new BooleanToStringTransformer(),
                 'ns_catalog_node_select'  => new EntityToIdTransformer($itemRepository),
+                'number'                  => new NumberToLocalizedStringTransformer()
             );
             if (isset($transformers[$element->getCategory()])) {
                 return $transformers[$element->getCategory()];
