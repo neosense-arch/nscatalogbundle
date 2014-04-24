@@ -190,27 +190,22 @@ class BlocksController extends Controller
     /**
      * Category block
      *
-     * @param  Block $block
+     * @param  Block                     $block
+     * @param CategoryBlockSettingsModel $settings
+     * @param string                     $categorySlug
      * @return Response
      */
-    public function categoryBlockAction(Block $block)
+    public function categoryBlockAction(Block $block, CategoryBlockSettingsModel $settings, $categorySlug = null)
     {
-        /** @var $settings CategoryBlockSettingsModel */
-        $settings = $this
-            ->getBlockManager()
-            ->getBlockSettings($block);
-
         /** @var $categoryRepository CategoryRepository */
         $categoryRepository = $this->getDoctrine()->getManager()->getRepository('NSCatalogBundle:Category');
 
-        $categorySlug = $this->getRequest()->attributes->get('categorySlug');
-        $category     = $categoryRepository->findOneBySlug($categorySlug);
-
+        $category = $categoryRepository->findOneBySlug($categorySlug);
         if (!$category) {
             return Response::create('', 404);
         }
 
-        return $this->render($block->getTemplate('NSCatalogBundle:Blocks:categoryBlock.html.twig'), array(
+        return $this->render($block->getTemplate(), array(
             'block'          => $block,
             'settings'       => $settings,
             'category'       => $category,
@@ -320,28 +315,38 @@ class BlocksController extends Controller
     }
 
     /**
-     * @param  Block $block
+     * @param Request                  $request
+     * @param  Block                   $block
+     * @param SearchBlockSettingsModel $settings
      * @return Response
      */
-    public function searchBlockAction(Block $block)
+    public function searchBlockAction(Request $request, Block $block, SearchBlockSettingsModel $settings)
     {
-        /** @var $settings SearchBlockSettingsModel */
-        $settings = $this
-            ->getBlockManager()
-            ->getBlockSettings($block);
+        // search query
+        $query = $request->query->get('query');
 
-        $itemService = $this->getItemService();
-        $items       = $itemService->search(
-            $this->getRequest()->query->get('query'),
-            $settings->getSettingsArray(),
-            30
+        /** @var CatalogService $catalogService */
+        $catalogService = $this->get('ns_catalog_service');
+
+        // category
+        $category = null;
+        $categoryId = $request->query->get('category', $settings->getCategoryId());
+        if ($categoryId) {
+            $category = $catalogService->getCategory($categoryId);
+        }
+
+        // searching items
+        $items = $catalogService->getItemsPaged(
+            1, 30, true, $category, array(),
+            array(array('price', 'ASC', 'number')),
+            $query
         );
 
-        return $this->render('NSCatalogBundle:Blocks:searchBlock.html.twig', array(
+        return $this->render($block->getTemplate(), array(
             'block'    => $block,
             'settings' => $settings,
             'items'    => $items,
-            'query'    => $this->getRequest()->query->get('query'),
+            'query'    => $query,
         ));
     }
 

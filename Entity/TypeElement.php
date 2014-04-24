@@ -146,6 +146,6 @@ class TypeElement
      */
     public function getOptions()
     {
-        return $this->options;
+        return $this->options ?: array();
     }
 }

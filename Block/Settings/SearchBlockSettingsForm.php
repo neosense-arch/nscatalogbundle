@@ -22,6 +22,12 @@ class SearchBlockSettingsForm extends AbstractType
 				'label' => 'Свойства',
 				'required' => true,
 			))
+            ->add('categoryId', 'category_select', array(
+                'label'       => 'Категория',
+                'required'    => false,
+                'id_only'     => true,
+                'empty_value' => '[ Не выбрано ]',
+            ))
 		;
     }
 

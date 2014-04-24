@@ -29,6 +29,7 @@ blocks:
         title: Карточка категории
         settingsFormClass: NS\CatalogBundle\Block\Settings\CategoryBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\CategoryBlockSettingsModel
+        template: NSCatalogBundle:Blocks:categoryBlock.html.twig
     -
         name: NSCatalogBundle:Blocks:fullListBlock
         title: Полный список товаров
@@ -39,3 +40,4 @@ blocks:
         title: Поиск по товарам каталога
         settingsFormClass: NS\CatalogBundle\Block\Settings\SearchBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\SearchBlockSettingsModel
+        template: NSCatalogBundle:Blocks:searchBlock.html.twig

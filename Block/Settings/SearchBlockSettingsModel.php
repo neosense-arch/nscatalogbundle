@@ -13,6 +13,12 @@ class SearchBlockSettingsModel
 	 * @var string
 	 */
 	private $settings = '';
+
+    /**
+     * @var int
+     */
+    private $categoryId;
+
 	/**
 	 * @param string $settings
 	 */
@@ -46,4 +52,20 @@ class SearchBlockSettingsModel
 
 		return $res;
 	}
+
+    /**
+     * @param int $categoryId
+     */
+    public function setCategoryId($categoryId)
+    {
+        $this->categoryId = $categoryId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCategoryId()
+    {
+        return $this->categoryId;
+    }
 }
