@@ -47,7 +47,7 @@
         itemForm.find('.btn-save').click(fnSave);
 
         $('#btnAddItem').click(function(){
-            $('#dlgItemFormLabel').text('Добавление товара');
+            $('#dlgItemFormLabel').text('Добавление элемента');
             $.ajax({
                 url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}{% if category %}?categoryId={{ category.id }}{% endif %}',
                 type: 'GET',
@@ -63,7 +63,7 @@
         });
 
         $('.btn-edit-item').click(function(){
-            $('#dlgItemFormLabel').text('Редактирование товара');
+            $('#dlgItemFormLabel').text('Редактирование элемента');
             $.ajax({
                 url:  '{{ url('ns_admin_bundle', { adminBundle: 'NSCatalogBundle', adminController: 'itemsApi', adminAction: 'form' }) }}?id=' + $(this).data('id') + '&categoryId={% if category %}{{ category.id }}{% endif %}',
                 type: 'GET',
