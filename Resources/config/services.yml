@@ -51,6 +51,11 @@ services:
         class: 'NS\CatalogBundle\Form\Type\TypeElementsType'
         tags: [{ name: form.type, alias: ns_catalog_type_elements }]
 
+    ns_catalog.form.type.type_choice:
+        class: 'NS\CatalogBundle\Form\Type\TypeChoiceType'
+        arguments: [@ns_catalog.repository.type, @router]
+        tags: [{ name: form.type, alias: ns_catalog_type_choice }]
+
     ns_catalog.form.type.type_select:
         class: 'NS\CatalogBundle\Form\Type\TypeSelectType'
         arguments: [@ns_catalog.repository.type]

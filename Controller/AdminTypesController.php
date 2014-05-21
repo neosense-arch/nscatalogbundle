@@ -6,6 +6,7 @@ use NS\CatalogBundle\Entity\Type;
 use NS\CatalogBundle\Entity\TypeRepository;
 use NS\CatalogBundle\Form\Type\TypeElementOptionsNodeSelectType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -68,25 +69,47 @@ class AdminTypesController extends Controller
 		));
 	}
 
+    /**
+     * @param Request $request
+     * @return JsonResponse|Response
+     */
+    public function formAjaxAction(Request $request)
+    {
+        $type = new Type();
+        $form = $this->createForm('ns_catalog_type', $type);
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $this->getDoctrine()->getManager()->persist($type);
+            $this->getDoctrine()->getManager()->flush();
+            return new JsonResponse(array(
+                'id'    => $type->getId(),
+                'label' => $type->getTitle(),
+            ));
+        }
+
+        return $this->render('NSAdminBundle:Generic:form-api.html.twig', array(
+            'form' => $form->createView(),
+            'title' => 'Добавление типа данных',
+        ));
+    }
+
 	/**
 	 * @return Response
 	 */
 	public function deleteAction()
 	{
-		// edit mode
 		if (!empty($_GET['id'])) {
-			$category = $this
+			$type = $this
 				->getTypeRepository()
 				->find($_GET['id']);
 
-			if (!$category) {
+			if (!$type) {
 				return $this->back();
 			}
 
-			$this->getDoctrine()->getManager()->remove($category);
+			$this->getDoctrine()->getManager()->remove($type);
 			$this->getDoctrine()->getManager()->flush();
 		}
-
 		return $this->back();
 	}
 
