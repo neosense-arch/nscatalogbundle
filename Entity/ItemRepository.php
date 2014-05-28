@@ -212,6 +212,25 @@ class ItemRepository extends EntityRepository
                                    array $settings = array(), array $orderBy = array(), $search = null,
                                    $subcategoriesItems = false)
     {
+        // search
+        $ids = null;
+        if ($search) {
+            if (is_numeric($search)) {
+                $ids = array();
+                $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+                $queryBuilder
+                    ->select('i')
+                    ->from('NSCatalogBundle:Item', 'i')
+                    ->join('i.rawSettings', 's')
+                    ->andWhere("s.value LIKE :searchQuery")
+                    ->setParameter('searchQuery', "%{$search}%");
+                /** @var Item $item */
+                foreach ($queryBuilder->getQuery()->getResult() as $item){
+                    $ids[] = $item->getId();
+                }
+            }
+        }
+
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
         // building query
@@ -308,10 +327,19 @@ class ItemRepository extends EntityRepository
 
         // search
         if ($search) {
-            $searchField = is_numeric($search) ? 's.value' : 'i.title';
-            $queryBuilder
-                ->andWhere("{$searchField} LIKE :searchQuery")
-                ->setParameter('searchQuery', "%{$search}%");
+            if (!is_numeric($search)) {
+                $queryBuilder
+                    ->andWhere("i.title LIKE :searchQuery")
+                    ->setParameter('searchQuery', "%{$search}%");
+            }
+            if (is_array($ids)) {
+                if (!$ids) {
+                    $ids[] = 0;
+                }
+                $queryBuilder
+                    ->andWhere("i.id IN (:ids)")
+                    ->setParameter('ids', $ids);
+            }
         }
 
         $query = $queryBuilder->getQuery();
