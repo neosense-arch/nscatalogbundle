@@ -32,26 +32,39 @@
             <table>
             <tr class="ns-row">
                 <td>
-                    <input class="ns-title" value=""/>
+                    <input class="ns-title" value="" type="text"/>
                     <input class="ns-id" value="" type="hidden"/>
                 </td>
                 <td>
-                    <input class="ns-name" value=""/>
+                    <input class="ns-name" value="" type="text"/>
                 </td>
                 <td>
                     <select class="ns-category">
-                        <option value="text">Текстовое поле</option>
-                        <option value="email">Адрес электронной почты</option>
-                        <option value="textarea">Многострочный текст</option>
-                        <option value="ckeditor">Текст HTML</option>
-                        <option value="ns_catalog_node_date">Дата</option>
-                        <option value="ns_file_select">Файл</option>
-                        <option value="ns_catalog_node_image">Изображение</option>
-                        <option value="ns_catalog_node_gallery">Фотогалерея</option>
-                        <option value="checkbox">Флаг</option>
-                        <option value="ns_catalog_node_select">Элемент каталога</option>
-                        <option value="number">Число</option>
+                        <optgroup label="Простые">
+                            <option value="text">Текстовое поле</option>
+                            <option value="textarea">Многострочный текст</option>
+                            <option value="ckeditor">Текст HTML</option>
+                            <option value="checkbox">Флаг</option>
+                        </optgroup>
+                        <optgroup label="Специальные">
+                            <option value="email">Адрес электронной почты</option>
+                            <option value="ns_catalog_node_date">Дата</option>
+                            <option value="number">Число</option>
+                        </optgroup>
+                        <optgroup label="Файлы">
+                            <option value="ns_file_select">Файл</option>
+                            <option value="ns_catalog_node_image">Изображение</option>
+                            <option value="ns_catalog_node_gallery">Фотогалерея</option>
+                        </optgroup>
+                        <optgroup label="Каталог">
+                            <option value="ns_catalog_node_select">Элемент каталога</option>
+                        </optgroup>
+                        <option value="">Другое...</option>
                     </select>
+                    <div class="input-append">
+                        <input class="ns-category-value" type="text">
+                        <a href="#" class="btn ns-category-switch">...</a>
+                    </div>
                 </td>
                 <td>
                     <div class="btn-group">
@@ -91,7 +104,14 @@
                 row.find('.ns-id').val(id || null).change(fnSetValue);
                 row.find('.ns-title').val(title || 'Новый элемент').change(fnSetValue);
                 row.find('.ns-name').val(name || 'newName').change(fnSetValue);
-                row.find('.ns-category').val(category || 'text').change(fnSetValue);
+                fnSetCategory(row, category);
+                row.find('.ns-category').change(fnCategoryHandler);
+                row.find('.ns-category-value').change(fnCategoryValueHandler);
+                row.find('.ns-category-switch').click(function(){
+                    $(this).parents('.ns-row').find('.ns-category').val('text');
+                    fnCategoryHandler.call(this);
+                    return false;
+                });
                 row.find('.ns-options').val(JSON.stringify(options || {})).change(fnSetValue);
                 row.find('.delete').click(function(){
                     $(this).parents('tr:eq(0)').remove();
@@ -102,17 +122,56 @@
                 fnSetValue();
             };
 
+            {# Sets category #}
+            var fnSetCategory = function(row, category) {
+                category = category || 'text';
+                var elCategory = row.find('.ns-category');
+                var elCategoryValue = row.find('.ns-category-value');
+                elCategory.val(elCategory.find('option[value=' + category + ']').length ? category : '');
+                elCategoryValue.val(category).attr('data-value', category);
+            };
+
+            {# Category select changes #}
+            var fnCategoryHandler = function(){
+                var row = $(this).parents('.ns-row');
+                var cv = row.find('.ns-category').val();
+                row.find('.ns-category-value').val(cv ? cv : row.find('.ns-category-value').attr('data-value'));
+                fnSetValue();
+            };
+
+            {# Category direct input changes #}
+            var fnCategoryValueHandler = function(){
+                var row = $(this).parents('.ns-row');
+                var category = row.find('.ns-category');
+                var categoryValue = row.find('.ns-category-value');
+                var value = categoryValue.val();
+                category.val(value);
+                category.val() || category.val('');
+                categoryValue.attr('data-value', value);
+                fnSetValue();
+            };
+
             {# Sets hidden input value #}
             var fnSetValue = function(){
                 var arr = [];
                 tbl.find('.ns-row').each(function(){
                     arr.push({
                         'id': $(this).find('.ns-id').val(),
-                        'category': $(this).find('.ns-category').val(),
+                        'category': $(this).find('.ns-category-value').val(),
                         'title': $(this).find('.ns-title').val(),
                         'name': $(this).find('.ns-name').val(),
                         'options': JSON.parse($(this).find('.ns-options').val())
                     });
+                    if ($(this).find('.ns-category').val()) {
+                        $(this).find('.ns-category').show();
+                        $(this).find('.ns-category-value').hide();
+                        $(this).find('.ns-category-switch').hide();
+                    }
+                    else {
+                        $(this).find('.ns-category').hide();
+                        $(this).find('.ns-category-value').show();
+                        $(this).find('.ns-category-switch').show();
+                    }
                 });
                 container.find('.ns-input').val(JSON.stringify(arr));
             };
