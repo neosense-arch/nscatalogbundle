@@ -9,6 +9,7 @@ use NS\CatalogBundle\Entity\CategoryRepository;
 use NS\CatalogBundle\Form\Type\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -20,10 +21,11 @@ class AdminCategoriesApiController extends Controller
 {
 	const CATALOG_NAME = 'goods';
 
-	/**
-	 * @return Response
-	 */
-	public function formAction()
+    /**
+     * @param Request $request
+     * @return Response
+     */
+	public function formAction(Request $request)
 	{
 		try {
 			/** @var $categoryType CategoryType */
@@ -33,17 +35,19 @@ class AdminCategoriesApiController extends Controller
 			$category = $this->getCategory();
 			$form = $this->createForm($this->get('ns_catalog.form.type.category'), $category);
 
-			if ($this->getRequest()->getMethod() === 'POST') {
-				$form->submit($this->getRequest());
-				if ($form->isValid()) {
-					if (!$category->getParent()) {
-						$category->setParent($this->getCategoryRepository()->findRootOrCreate());
-					}
-					$this->getDoctrine()->getManager()->persist($category);
-					$this->getDoctrine()->getManager()->flush();
-					return new JsonResponse(array('categoryId' => $category->getId()));
-				}
-			}
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                if (!$category->getParent()) {
+                    $category->setParent($this->getCategoryRepository()->findRootOrCreate());
+                }
+                if (!$category->getType() && $category->getParent()->getType()) {
+                    $category->setType($category->getParent()->getType());
+                }
+
+                $this->getDoctrine()->getManager()->persist($category);
+                $this->getDoctrine()->getManager()->flush();
+                return new JsonResponse(array('categoryId' => $category->getId()));
+            }
 
 			return $this->render('NSAdminBundle:Generic:form-api.html.twig', array(
 				'form' => $form->createView()
