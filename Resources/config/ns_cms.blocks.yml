@@ -18,6 +18,14 @@ blocks:
         title: Товары
         settingsFormClass: NS\CatalogBundle\Block\Settings\ItemsBlockSettingsForm
         settingsModelClass: NS\CatalogBundle\Block\Settings\ItemsBlockSettingsModel
+        cache:
+            entities:
+                - NS\CatalogBundle\Entity\Catalog
+                - NS\CatalogBundle\Entity\Category
+                - NS\CatalogBundle\Entity\Item
+                - NS\CatalogBundle\Entity\Setting
+                - NS\CatalogBundle\Entity\Type
+                - NS\CatalogBundle\Entity\TypeElement
     -
         name: NSCatalogBundle:Blocks:itemBlock
         title: Карточка товара
