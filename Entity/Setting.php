@@ -106,7 +106,7 @@ class Setting
 	public function getValue()
 	{
         $transformer = $this->getTransformer();
-        return $transformer ? $transformer->reverseTransform($this->value): $this->value;
+        return $transformer ? $transformer->reverseTransform((string)$this->value): $this->value;
 	}
 
     public function getRawValue()
