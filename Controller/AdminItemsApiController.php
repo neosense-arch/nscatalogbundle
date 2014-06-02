@@ -85,9 +85,8 @@ class AdminItemsApiController extends Controller
 
 			$item = $this->getRequestItem($request);
 
-			$method = 'set' . ucfirst($_REQUEST['field']);
 			$settings = $item->getSettings();
-			$settings->$method($_REQUEST['value']);
+			$settings->setSetting($_REQUEST['field'], $_REQUEST['value']);
 			$item->setSettings($settings);
 
 			$this->getDoctrine()->getManager()->persist($item);
