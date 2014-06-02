@@ -54,19 +54,21 @@ class BlocksController extends Controller
             $currentCategory = $categoryRepository->findOneBySlug($categorySlug);
         }
 
-        // if category is set in settings
-        if ($settings->getCategoryId()) {
-            $currentCategory = $categoryRepository->find($settings->getCategoryId());
-            $settings->setIsSubmenu(true);
-        }
-
         // retrieving root category
+        $rootCategory = null;
         if ($settings->getIsSubmenu() && $currentCategory) {
             $rootCategory = $currentCategory;
             while ($rootCategory->getParent() && $rootCategory->getParent()->getParent()) {
                 $rootCategory = $rootCategory->getParent();
             }
         } else {
+            // category is set in settings
+            if ($settings->getCategoryId()) {
+                $rootCategory = $categoryRepository->find($settings->getCategoryId());
+            }
+        }
+        // default root category
+        if (!$rootCategory) {
             $rootCategory = $categoryRepository->findRootOrCreate();
         }
 
