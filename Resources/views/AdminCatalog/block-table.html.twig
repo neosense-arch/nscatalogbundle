@@ -7,6 +7,7 @@
             <input type="checkbox" />
         </th>
 
+        <th style="width:30px;text-align: center"><i class="icon-eye-open"></i></th>
         <th style="width:200px">Название</th>
 
         {% for col in cols %}
@@ -29,6 +30,7 @@
     {% for item in pagination %}
         <tr>
             <td><input type="checkbox" name="id[]" value="{{ item.id }}" /></td>
+            <td>{{ ie_visible(item) }}</td>
             <td>{{ item.title }}</td>
 
             {% for col in cols %}
@@ -41,6 +43,8 @@
                             {{ value[:25] ~ (value|length > 25 ? '...' : '') }}
                         {% elseif typeName == 'ns_catalog_node_date' %}
                             {{ value ? value|date('d.m.Y') : '' }}
+                        {% elseif typeName == 'checkbox' %}
+                            {{ ie_boolean(item, col, attribute(item.settings, col)) }}
                         {% else %}
                             {{ value }}
                         {% endif %}
