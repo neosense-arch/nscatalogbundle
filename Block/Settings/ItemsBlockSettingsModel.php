@@ -39,6 +39,11 @@ class ItemsBlockSettingsModel
 	 */
 	private $order;
 
+    /**
+     * @var boolean
+     */
+    private $isSortable;
+
 	/**
 	 * @param string $count
 	 */
@@ -210,5 +215,21 @@ class ItemsBlockSettingsModel
     public function getRecursive()
     {
         return $this->recursive;
+    }
+
+    /**
+     * @param boolean $isSortable
+     */
+    public function setIsSortable($isSortable)
+    {
+        $this->isSortable = (bool)$isSortable;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getIsSortable()
+    {
+        return (bool)$this->isSortable;
     }
 }

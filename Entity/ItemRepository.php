@@ -206,11 +206,12 @@ class ItemRepository extends EntityRepository
      * @param array    $orderBy            order conditions (e.g. [['price', 'ASC', 'number'], ['createdAt', 'DESC']]
      * @param string   $search             any value to search
      * @param bool     $subcategoriesItems load subcategories items if category is set
+     * @param bool     $isSortable         order by item 'position' field
      * @return PaginationInterface|Item[]
      */
     public function findItemsPaged($page = 1, $limit = 20, $visible = null, Category $category = null,
                                    array $settings = array(), array $orderBy = array(), $search = null,
-                                   $subcategoriesItems = false)
+                                   $subcategoriesItems = false, $isSortable = false)
     {
         // search
         $ids = null;
@@ -273,6 +274,12 @@ class ItemRepository extends EntityRepository
                     ->setParameter("name_{$key}", $key)
                     ->setParameter("value_{$key}", $value);
             }
+        }
+
+        // sortable
+        if ($isSortable) {
+            $orderBy = array();
+            $queryBuilder->orderBy('i.position', 'ASC');
         }
 
         // ordering

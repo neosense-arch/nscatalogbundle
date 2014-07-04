@@ -246,7 +246,8 @@ class BlocksController extends Controller
             $settings->getSettingsConditions(),
             $settings->getOrderArray(),
             null,
-            $settings->getRecursive()
+            $settings->getRecursive(),
+            $settings->getIsSortable()
         );
 
         return $this->render($block->getTemplate('NSCatalogBundle:Blocks:itemsBlock.html.twig'), array(

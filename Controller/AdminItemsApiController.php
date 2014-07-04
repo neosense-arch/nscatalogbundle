@@ -206,6 +206,43 @@ class AdminItemsApiController extends Controller
 	}
 
     /**
+     * Reorders pages
+     *
+     * @return JsonResponse
+     */
+    public function ajaxReorderAction()
+    {
+        try {
+            // checking page id
+            if (empty($_GET['id'])) {
+                return new JsonResponse(array('error' => 'Param "id" is required'));
+            }
+
+            /** @var CatalogService $catalogService */
+            $catalogService = $this->get('ns_catalog_service');
+            $item = $catalogService->getItem($_GET['id']);
+            if (!$item) {
+                return new JsonResponse(array('error' => "Item #{$_GET['id']} wasn't found"));
+            }
+
+            // checking position
+            if (!isset($_GET['position'])) {
+                return new JsonResponse(array('error' => 'Param "position" is required'));
+            }
+
+            // reordering
+            $item->setPosition($_GET['position']);
+            $catalogService->updateItem($item);
+
+            // retrieving new position
+            return new JsonResponse(array('position' => $item->getPosition()));
+        }
+        catch (\Exception $e) {
+            return new JsonResponse(array('error' => "Exception occurred: {$e->getMessage()}"));
+        }
+    }
+
+    /**
      * @param Request $request
      * @throws \Exception
      * @return array|JsonResponse

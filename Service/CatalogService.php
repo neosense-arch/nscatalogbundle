@@ -86,13 +86,14 @@ class CatalogService
      * @param array    $orderBy            order conditions (e.g. [['price', 'ASC', 'number'], ['createdAt', 'DESC']]
      * @param string   $search             any value to search
      * @param bool     $subcategoriesItems load subcategories items if category is set
+     * @param bool     $isSortable         order by item 'position' field
      * @return PaginationInterface|Item[]
      */
     public function getItemsPaged($page = 1, $limit = 20, $visible = null, Category $category = null,
                                   array $settings = array(), array $orderBy = array(), $search = null,
-                                  $subcategoriesItems = false)
+                                  $subcategoriesItems = false, $isSortable = false)
     {
-        return $this->itemRepository->findItemsPaged($page, $limit, $visible, $category, $settings, $orderBy, $search, $subcategoriesItems);
+        return $this->itemRepository->findItemsPaged($page, $limit, $visible, $category, $settings, $orderBy, $search, $subcategoriesItems, $isSortable);
     }
 
     /**

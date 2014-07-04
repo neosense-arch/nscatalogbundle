@@ -49,6 +49,9 @@ class AdminCatalogController extends Controller
             }
         }
 
+        // sortable
+        $isSortable = !$orderBy;
+
         // search query
 		$search = $request->query->get('search');
 
@@ -61,7 +64,9 @@ class AdminCatalogController extends Controller
             $category,
             array(),
             $orderBy ? array($orderBy) : array(),
-            $search
+            $search,
+            false,
+            $isSortable
         );
 
 		// category choice
@@ -76,6 +81,7 @@ class AdminCatalogController extends Controller
             'viewportConfigForm' => $viewportConfigForm->createView(),
             'cols'               => $cols,
             'orderCol'           => $orderCol,
+            'isSortable'         => $isSortable,
 		));
 	}
 
@@ -134,15 +140,5 @@ class AdminCatalogController extends Controller
 		return $this->getDoctrine()
 			->getManager()
 			->getRepository('NSCatalogBundle:Category');
-	}
-
-	/**
-	 * @return ItemRepository
-	 */
-	private function getItemRepository()
-	{
-		return $this->getDoctrine()
-			->getManager()
-			->getRepository('NSCatalogBundle:Item');
 	}
 }

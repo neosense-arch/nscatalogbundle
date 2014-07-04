@@ -49,6 +49,10 @@ class ItemsBlockSettingsForm extends AbstractType
                 'label'    => 'Сортировка',
                 'required' => false,
             ))
+            ->add('isSortable', 'checkbox', array(
+                'label'    => 'Ручная сортировка',
+                'required' => false,
+            ))
 		;
     }
 

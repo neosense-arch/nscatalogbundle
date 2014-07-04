@@ -27,6 +27,7 @@ class Item implements ModelInterface
 	/**
 	 * @var Category
 	 *
+     * @Gedmo\SortableGroup
 	 * @ORM\ManyToOne(targetEntity="Category", inversedBy="items")
 	 * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
@@ -61,6 +62,13 @@ class Item implements ModelInterface
 	 * @var AbstractSettings
 	 */
 	private $settings;
+
+    /**
+     * @var int
+     * @ORM\Column(type="integer")
+     * @Gedmo\SortablePosition
+     */
+    private $position;
 
     /**
      * Constructor
@@ -245,4 +253,20 @@ class Item implements ModelInterface
 	{
 		return $this->getId();
 	}
+
+    /**
+     * @param int $position
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
 }
