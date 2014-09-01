@@ -248,11 +248,16 @@ class CatalogService
     /**
      * Creates new catalog instance
      *
+     * @param string|null $title
+     * @param string|null $name
      * @return Catalog
      */
-    public function createCatalog()
+    public function createCatalog($title = null, $name = null)
     {
-        return new Catalog();
+        $catalog = new Catalog();
+        $catalog->setTitle($title);
+        $catalog->setName($name);
+        return $catalog;
     }
 
     /**

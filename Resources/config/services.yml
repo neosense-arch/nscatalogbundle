@@ -33,6 +33,12 @@ services:
     ns_catalog.item_service:
         alias: ns_catalog.service.item
 
+    # Install event listener
+    ns_catalog.event.install_listener:
+        class: 'NS\CatalogBundle\Event\InstallListener'
+        arguments: [@ns_cms.service.page, @ns_catalog_service]
+        tags: [{ name: kernel.event_listener, event: ns_core.install, method: onInstall }]
+
     ns_catalog.form.type.category:
         class: %ns_catalog.form.type.category.class%
 
