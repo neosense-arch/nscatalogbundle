@@ -269,4 +269,9 @@ class Item implements ModelInterface
     {
         return $this->position;
     }
+    
+    public function __toString()
+    {
+        return $this->title;
+    }
 }
