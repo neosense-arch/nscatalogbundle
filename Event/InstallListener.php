@@ -51,7 +51,7 @@ class InstallListener
         $this->pageService->updatePage($categoryPage);
 
         // creating 'goods' catalog
-        $goods = $this->catalogService->createCatalog('Товары', 'goods');
+        $goods = $this->catalogService->createCatalog('Контент', 'goods');
         $this->catalogService->updateCatalog($goods);
     }
 }
