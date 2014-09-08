@@ -222,9 +222,10 @@ class BlocksController extends Controller
      * @param Block                   $block
      * @param ItemsBlockSettingsModel $settings
      * @param string                  $categorySlug
+     * @param string                  $itemSlug
      * @return Response
      */
-    public function itemsBlockAction(Request $request, Block $block, ItemsBlockSettingsModel $settings, $categorySlug = null)
+    public function itemsBlockAction(Request $request, Block $block, ItemsBlockSettingsModel $settings, $categorySlug = null, $itemSlug = null)
     {
         /** @var CatalogService $catalogService */
         $catalogService = $this->get('ns_catalog_service');
@@ -250,12 +251,19 @@ class BlocksController extends Controller
             $settings->getIsSortable()
         );
 
+        // current item (if set)
+        $currentItem = null;
+        if ($itemSlug) {
+            $currentItem = $catalogService->getItemBySlug($itemSlug);
+        }
+
         return $this->render($block->getTemplate('NSCatalogBundle:Blocks:itemsBlock.html.twig'), array(
-            'block'      => $block,
-            'settings'   => $settings,
-            'items'      => $items,
-            'pagination' => $items,
-            'category'   => $filterCategory,
+            'block'       => $block,
+            'settings'    => $settings,
+            'items'       => $items,
+            'pagination'  => $items,
+            'category'    => $filterCategory,
+            'currentItem' => $currentItem,
         ));
     }
 
