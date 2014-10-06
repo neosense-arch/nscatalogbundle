@@ -34,4 +34,5 @@ class NSCatalogBundle extends Bundle implements CoreBundle
     public function getTitle()
     {
         return 'Каталог';
-    }}
+    }
+}
