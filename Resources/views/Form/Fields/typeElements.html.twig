@@ -120,6 +120,7 @@
                     return false;
                 });
                 tbl.find('tbody tr:last-child').before(row);
+                row.find('.ns-title').select().focus();
                 fnSetValue();
             };
 
