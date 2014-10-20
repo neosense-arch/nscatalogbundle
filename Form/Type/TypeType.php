@@ -21,7 +21,7 @@ class TypeType extends AbstractType
 				'label'    => 'Название',
 				'required' => true,
 			))
-			->add('name', 'text', array(
+			->add('name', 'hidden', array(
 				'label'    => 'Имя (лат.)',
 				'required' => false,
 			))
