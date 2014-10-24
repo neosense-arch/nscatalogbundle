@@ -21,7 +21,10 @@
             </thead>
             <tbody>
                 <tr class="last">
-                    <td colspan="99"><a href="#" class="btn add"><i class="icon-plus"></i> Добавить элемент</a></td>
+                    <td colspan="99">
+                        <a href="#" class="btn add"><i class="icon-plus"></i> Добавить элемент</a>&nbsp;
+                        <a href="#" class="btn export"><i class="icon-download-alt"></i> Импорт/экспорт</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -178,6 +181,22 @@
                 container.find('.ns-input').val(JSON.stringify(arr));
             };
 
+            {# Retrieves values #}
+            var fnGetSerializedValues = function() {
+                return container.find('.ns-input').val();
+            };
+
+            {# Sets values #}
+            var fnSetValues = function(values){
+                tbl.find('.ns-row').remove();
+                $.each(values, function(){
+                    fnAddElement(this.id, this.title, this.category, this.name, this.options);
+                });
+            };
+            var fnSetSerializedValues = function(values){
+                fnSetValues($.parseJSON(values));
+            };
+
             {# Sortables #}
             tbl.find('tbody').sortable({
                 'items': '.ns-row',
@@ -197,11 +216,17 @@
                 return false;
             });
 
-            {# Loading values #}
-            var elements = $.parseJSON(container.find('.ns-input').val());
-            $.each(elements, function(){
-                fnAddElement(this.id, this.title, this.category, this.name, this.options);
+            {# Import/export button #}
+            container.find('.export').click(function(){
+                var values = prompt('Скорируйте или вставьте значения полей в текстовом виде', fnGetSerializedValues());
+                if (values) {
+                    fnSetSerializedValues(values);
+                }
+                return false;
             });
+
+            {# Loading values #}
+            fnSetSerializedValues(container.find('.ns-input').val());
 
             {# Options dialog #}
             container.find('.ns-options-dialog-trigger').click(function(){
