@@ -17,6 +17,7 @@ class FormPass implements CompilerPassInterface
             'NSCatalogBundle:Form:Fields/nodeDate.html.twig',
             'NSCatalogBundle:Form:Fields/typeElements.html.twig',
             'NSCatalogBundle:Form:Fields/table.html.twig',
+            'NSCatalogBundle:Form:Fields/nodeGeoPoint.html.twig',
         );
 
         $resources = $container->getParameter('twig.form.resources');

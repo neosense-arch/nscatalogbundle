@@ -84,6 +84,10 @@ services:
         class: 'NS\CatalogBundle\Form\Type\NodeGalleryType'
         tags: [{ name: form.type, alias: ns_catalog_node_gallery }]
 
+    ns_catalog.form.type.node_geo_point:
+        class: 'NS\CatalogBundle\Form\Type\NodeGeoPointType'
+        tags: [{ name: form.type, alias: ns_catalog_node_geo_point }]
+
     ns_catalog.form.type.node_select:
         class: 'NS\CatalogBundle\Form\Type\NodeSelectType'
         arguments: [@ns_catalog_service]

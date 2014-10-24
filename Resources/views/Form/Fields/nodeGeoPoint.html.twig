@@ -1,0 +1,63 @@
+{% block ns_catalog_node_geo_point_widget %}
+{% spaceless %}
+    {% set uid = 'ns-catalog-node-geo-point-' ~ random() %}
+    <div id="{{ uid }}" style="width:100%;height:350px;border: solid 1px #ccc;overflow: hidden; box-shadow: 1px 1px 3px #ccc;"></div>
+
+    <script type="text/javascript">
+        (function($){
+            // default map center
+            var center = [55.733835, 37.588227];
+
+            // map init
+            var map = new ymaps.Map('{{ uid }}', {
+                center: center,
+                zoom: 10
+            });
+            map.behaviors.disable('scrollZoom');
+
+            // value placemark
+            var marker = new ymaps.Placemark(center);
+            marker.options.set({'visible': false, 'draggable': true});
+            marker.events.add('drag', function(){
+                fnSetValue(marker.geometry.getCoordinates());
+            });
+            map.geoObjects.add(marker);
+
+            // sets coords
+            var fnSetCoords = function(coords) {
+                marker.geometry.setCoordinates(coords);
+                marker.options.set({'visible': true});
+                map.setCenter(coords, 16);
+                fnSetValue(coords);
+            };
+
+            // sets hidden input value
+            var fnSetValue = function(coords) {
+                $('.ns-input[name="{{ form.vars.full_name }}"]').val(coords.join(','));
+            };
+            // retrieves hidden input value or null
+            var fnGetValue = function(){
+                var value = $('.ns-input[name="{{ form.vars.full_name }}"]').val();
+                return value ? value.split(',') : null;
+            };
+
+            // search results
+            var search = map.controls.get('searchControl');
+            search.options.set({'noPlacemark': true, 'noCentering': true});
+            search.events.add('resultselect', function(e){
+                var coords = search.getResult(e.get('index')).valueOf().geometry.getCoordinates();
+                fnSetCoords(coords);
+            });
+
+            // setting default value
+            var value = fnGetValue();
+            if (value) {
+                fnSetCoords(fnGetValue());
+            }
+        })(jQuery);
+    </script>
+
+    <input class="ns-input" name="{{ form.vars.full_name }}" value="{{ value }}" type="hidden" />
+
+{% endspaceless %}
+{% endblock %}
