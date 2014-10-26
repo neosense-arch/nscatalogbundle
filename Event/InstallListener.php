@@ -40,16 +40,6 @@ class InstallListener
      */
     public function onInstall()
     {
-        // creating pages
-        $catalogPage = $this->pageService->createPage('Каталог', 'catalog', Page::MAIN_PAGE_NAME);
-        $this->pageService->updatePage($catalogPage);
-
-        $itemPage = $this->pageService->createPage('Страница товара', 'item', $catalogPage);
-        $this->pageService->updatePage($itemPage);
-
-        $categoryPage = $this->pageService->createPage('Страница категории', 'category', $catalogPage);
-        $this->pageService->updatePage($categoryPage);
-
         // creating 'goods' catalog
         $goods = $this->catalogService->createCatalog('Контент', 'goods');
         $this->catalogService->updateCatalog($goods);
