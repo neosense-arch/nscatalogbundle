@@ -118,6 +118,14 @@ class Item implements ModelInterface
 		return $this->slug;
 	}
 
+    /**
+     * @param string $slug
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+    }
+
 	/**
 	 * @param Category $category
 	 */
